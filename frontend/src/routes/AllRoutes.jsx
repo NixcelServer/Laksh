@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { Alert, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -18,10 +18,17 @@ import AddNewProduct from '../pages/Admin/AddNewProduct';
 import Home from "../pages/Home";
 
 import Login from "../pages/Login";
+import AdminTemplateDashboard from "../pages/AdminTemplate/AdminTemplateDashboard";
+
 import Sign from "../pages/Sign";
 
 import Sell from '../pages/sell';
 import PlywoodProductPage from "../pages/Products/PlywoodProductPage";
+import AdminTemplateMaincontent from "../pages/AdminTemplate/AdminTemplateMainContent";
+import AdminAlertPage from "../pages/AdminTemplate/AdminAlertPage";
+import AdminMainTemplate from "../pages/AdminTemplate/AdminMainTemplate";
+import AdminTemplateCategories from "../pages/AdminTemplate/AdminTemplateCategories";
+import AdminTemplateNavbar from "../pages/AdminTemplate/AdminTemplateNavbar";
 
 export default function AllRoutes() {
   return (
@@ -29,6 +36,12 @@ export default function AllRoutes() {
 
       <Routes>
         <Route path={"/"} element={<Home />} />
+        
+        <Route path={"/AdminTemplateMainContent"} element={<AdminTemplateMaincontent />} />
+        
+        <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
+        <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate/>} />
+
         <Route path={"/login"} element={<Login />} />
         <Route path={"/sign"} element={<Sign />} />
         <Route path={"/plywood"} element={<PlywoodProductPage/>} />
@@ -51,6 +64,40 @@ export default function AllRoutes() {
             </>
           }
         />
+
+
+
+<Route
+          path="/admintemplatedashboard"
+          element={
+            <>
+              <AdminTemplateNavbar/>
+              <AdminTemplateDashboard/>
+              
+            </>
+          }
+        />
+
+<Route
+          path="/admintemplatecategories"
+          element={
+            <>
+            <AdminTemplateNavbar/>
+              <AdminTemplateCategories/>
+            </>
+          }
+        />
+
+<Route
+          path="/admintemplatenavbar"
+          element={
+            <>
+              <AdminTemplateNavbar/>
+            </>
+          }
+        />
+
+
         <Route
           path="/admin"
           element={
@@ -60,7 +107,11 @@ export default function AllRoutes() {
             </>
           }
         />
+
+
         <Route
+
+        
           path="/addAdmin"
           element={
             <>

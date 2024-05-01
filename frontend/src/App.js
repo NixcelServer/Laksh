@@ -16,6 +16,11 @@ function App() {
       location.pathname === "/addProduct" ||
       location.pathname === "/addNewProduct" ||
       location.pathname === "/sell" ||
+  location.pathname === "/admintemplatenavbar" ||
+  location.pathname === "/admintemplatedashboard" ||
+  
+  location.pathname === "/admintemplatecategories" ||
+
       location.pathname === "/admin" ? (
 
         false
@@ -32,6 +37,9 @@ function App() {
       location.pathname === "/addProduct" ||
       location.pathname === "/addNewProduct" ||
       location.pathname === "/admin" ||
+      location.pathname === "/admintemplatedashboard" ||
+      location.pathname === "/admintemplatenavbar" ||
+      location.pathname === "/admintemplatecategories" ||
       location.pathname === "/sell"? (
 
         false
