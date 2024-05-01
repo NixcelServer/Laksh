@@ -1,255 +1,320 @@
-import { useNavigate } from "react-router-dom";
-import { getKeywords } from "../../redux/Admin/Keywords/keyword.action";
-import axios from "axios";
-
-import { useEffect, useRef, useState } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-
-
-
+import React, { useEffect, useState, useRef } from 'react';
+import feather from 'feather-icons';
 
 const Keywords = () => {
+    const [KeywordName, setNewKeywordName] = useState("");
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [KeywordToDelete, setKeywordToDelete] = useState(null);
+    const [showAddKeywordModal, setShowAddKeywordModal] = useState(false);
 
-  const closeButtonRef = useRef(null);
-  const navigate = useNavigate;
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const keywords = useSelector(state => state.keywordReducer.keywords);
-  
+    const closeButtonRef = useRef(null);
 
-  
-  console.log("delete", keywords);
+    useEffect(() => {
+        feather.replace();
+    }, []); // Empty dependency array means this effect runs only once after the component mounts
 
-
-  const dispatch = useDispatch();
-
-  // Updated mock data with only "Category 1"
-  const mockCategories = [
-    { id: 1, cat_name: "Category 1", add_date: "2024-04-18" }
-  ];
-
-  const fetchCategories = () => {
-    // Simulate fetching data from API (useEffect used for simulation)
-    dispatch(getKeywords(mockCategories));
-  };
-
-  const [keywordName, setNewKeywordName] = useState("");
-
-  const fetchKeywords = async () => {
-
-    setLoading(true); // Set loading state to true
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/keywords");
-      const keywords = response.data;
-      dispatch(getKeywords(keywords));
-    } catch (error) {
-      console.error("Error fetching keywords:", error);
-      setError("Failed to fetch keywords. Please try again later.");
-    } finally {
-      setLoading(false); // Set loading state to false regardless of success or failure
-
-    }
-
-  };
-
-  useEffect(() => {
-    fetchKeywords();
-  }, []);
-
-
-  const handleDelete = async (encKeywordId) => {
-    try {
-      const userString =  sessionStorage.getItem('user');
-      const user = JSON.parse(userString);
-      const encUserId = user.encUserId;
-  
-      // Include both encUserId and encKeywordId in the payload
-      const payload = {
-        encUserId
-      };
-  
-      // Perform delete operation using encKeywordId and encUserId
-      const response = await axios.delete(`http://127.0.0.1:8000/api/keywords/${encKeywordId}`, { data: payload });      
-      //console.log("Keyword deleted successfully:", response.data);
-      
-      // Refetch keywords after deletion
-      fetchKeywords();
-    } catch (error) {
-      console.error("Error deleting keyword:", error);
-    }
-  };
-
-  const handleSaveChanges = async (event) => {
-    event.preventDefault();
-    const userString = sessionStorage.getItem('user');
-    const user = JSON.parse(userString);
-    const encUserId = user.encUserId;
-    console.log(encUserId);
-
-    const payload = {
-      keywordName, encUserId
-    }
-
+    const handleCancelDelete = () => {
+        // Define the logic for canceling delete action
+    };
     
-    try {
-      let response = await axios.post("http://127.0.0.1:8000/api/keywords", payload);
-    console.warn("Response Status:", response.status); // Log response status
-    console.warn("Response Data:", response.data); // Log response data
-    fetchKeywords();
-    closeButtonRef.current.click();
+    const handleConfirmDelete = () => {
+        // Define the logic for confirming delete action
+    };
     
+    const handleSaveChanges = () => {
+        // Define the logic for saving changes
+    };
     
-  } catch (error) {
-      console.warn(error.response); // Log the response as a warning
-      setError("Failed to add keyword. Please try again later.");
-  } finally {
-      setLoading(false); // Set loading state to false regardless of success or failure
-  }
-
-  }
     return (
-      
-      
-
         <div>
-      {/* Error message display */}
-      {error && <div className="error-message">{error}</div>}
-
-
-        <div class='content-body'>
-          <div class='row page-titles mx-0'>
-            <div class='col p-md-0'>
-              <ol class='breadcrumb'>
-                <li class='breadcrumb-item'>
-                  <a href='#'>Dashboard</a>
-                </li>
-                <li class='breadcrumb-item active'>
-                  <a href='#'>Home</a>
-                </li>
-              </ol>
-            </div>
-          </div>
-          <div class='container-fluid'>
-            <div class='row'>
-              <div class='col-12'>
-                <div class='card'>
-                  <div class='card-body'>
-                    <div class='d-flex justify-content-between align-items-center mb-3'>
-                      <h4 class='card-title'>Keywords</h4>
-                      <button
-                        type='button'
-                        class='btn btn-primary'
-                        data-toggle='modal'
-                        data-target='#addUnitModal'
-                      >
-                        Add New
-                      </button>
+            {/* "Add New" button */}
+            <div className="main-content">
+                <section className="section">
+                    <div className="section-body">
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="card">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="card">
+                                    <div className="card-header">
+                                        <div>
+                                            <button
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 10,
+                                                    right: 10,
+                                                    padding: '1px 20px',
+                                                    backgroundColor: 'dodgerblue',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '5px',
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => setShowAddKeywordModal(true)}
+                                            >
+                                                {/* Plus sign icon */}
+                                                <i className="feather icon-plus"></i>
+                                                Add New
+                                            </button>
+                                        </div>
+                                        <h4>Keywords</h4>
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="table-responsive">
+                                            <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Position</th>
+                                                        <th>Office</th>
+                                                        <th>Age</th>
+                                                        <th>Start date</th>
+                                                        <th>Salary</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Tiger Nixon</td>
+                                                        <td>System Architect</td>
+                                                        <td>Edinburgh</td>
+                                                        <td>61</td>
+                                                        <td>2011/04/25</td>
+                                                        <td>$320,800</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Garrett Winters</td>
+                                                        <td>Accountant</td>
+                                                        <td>Tokyo</td>
+                                                        <td>63</td>
+                                                        <td>2011/07/25</td>
+                                                        <td>$170,750</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Donna Snider</td>
+                                                        <td>Customer Support</td>
+                                                        <td>New York</td>
+                                                        <td>27</td>
+                                                        <td>2011/01/25</td>
+                                                        <td>$112,000</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class='table-responsive'>
-                      <table class='table table-striped table-bordered zero-configuration'>
-                        <thead>
-                          <tr>
-                            <th>Sr no.</th>
-                            <th>Keyword</th>
+                </section>
 
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {keywords.map((keyword, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{keyword.keyword_name}</td> {/* Displaying the keyword name */}
-                              <td>
-
-                              <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px" }}
-                                onClick={() => handleDelete(keyword)}
-                              >
-                                Delete
-                              </button> 
-
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot></tfoot>
-                      </table>
+                {/* Delete confirmation modal */}
+                <div
+                    className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
+                    id="deleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="deleteConfirmationModalLabel"
+                    aria-hidden={!showDeleteConfirmation}
+                    style={{ display: showDeleteConfirmation ? "block" : "none" }}
+                >
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="deleteConfirmationModalLabel">
+                                    Confirm Deletion
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    onClick={handleCancelDelete}
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                Are you sure you want to delete{" "}
+                                {KeywordToDelete && KeywordToDelete.cat_name}?
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleCancelDelete}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={handleConfirmDelete}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          {/* <!-- Add Unit Modal --> */}
-          <div
-            class='modal fade'
-            id='addUnitModal'
-            tabindex='-1'
-            role='dialog'
-            aria-labelledby='addUnitModalLabel'
-            aria-hidden='true'
-          >
-            <div class='modal-dialog' role='document'>
-              <div class='modal-content'>
-                <form>
-                  <div class='modal-header'>
-                    <h5 class='modal-title' id='addUnitModalLabel'>
-                      Add New Keyword
-                    </h5>
-                    <button
-                      type='button'
-                      class='close'
-                      data-dismiss='modal'
-                      aria-label='Close'
-                    >
-                      <span aria-hidden='true'>&times;</span>
-                    </button>
-                  </div>
-                  <div class='modal-body'>
-                    <div class='form-group'>
-                      <label for='unitName'>Keyword</label>
-                      <input
-                        type='text'
-                        className='form-control'
-                        id='unitName'
-                        placeholder='Enter Keyword'
-                        value={keywordName} // Bind value to state
-                        onChange={(e) => setNewKeywordName(e.target.value)}
-                      />
+                {/* Add Unit Modal */}
+                <div
+                    className={`modal fade ${showAddKeywordModal ? "show" : ""}`}
+                    id="addUnitModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="addUnitModalLabel"
+                    aria-hidden={!showAddKeywordModal}
+                    style={{ display: showAddKeywordModal ? "block" : "none" }}
+                >
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <form>
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="addUnitModalLabel">
+                                        Add New Keyword
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        className="close"
+                                        onClick={() => setShowAddKeywordModal(false)}
+                                        aria-label="Close"
+                                    >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="form-group">
+                                        <label htmlFor="KeywordName">Keyword Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="KeywordName"
+                                            placeholder="Enter Keyword Name"
+                                            value={KeywordName}
+                                            onChange={(e) => setNewKeywordName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button
+                                        ref={closeButtonRef}
+                                        type='button'
+                                        className='btn btn-secondary'
+                                        onClick={() => setShowAddKeywordModal(false)}
+                                    >
+                                        Close
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={handleSaveChanges}
+                                        style={{ marginTop: '0px' }}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                  </div>
-                  <div class='modal-footer'>
-                    <button
-
-                    ref={closeButtonRef}
-
-                      type='button'
-                      class='btn btn-secondary'
-                      data-dismiss='modal'
-                    >
-                      Close
-                    </button>
-                    <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleSaveChanges}
-                    style={{ marginTop: '0px' }}
-                  >
-                    Submit
-                  </button>                  
-                  </div>
-                </form>
-              </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
-  export default Keywords; 
+            {/* SIDEBAR */}
+            <div className="settingSidebar">
+                <a href="javascript:void(0)" className="settingPanelToggle"> <i className="fa fa-spin fa-cog" />
+                </a>
+                <div className="settingSidebar-body ps-container ps-theme-default">
+                    <div className=" fade show active">
+                        <div className="setting-panel-header">Setting Panel
+                        </div>
+                        <div className="p-15 border-bottom">
+                            <h6 className="font-medium m-b-10">Select Layout</h6>
+                            <div className="selectgroup layout-color w-50">
+                                <label className="selectgroup-item">
+                                    <input type="radio" name="value" defaultValue={1} className="selectgroup-input-radio select-layout" defaultChecked />
+                                    <span className="selectgroup-button">Light</span>
+                                </label>
+                                <label className="selectgroup-item">
+                                    <input type="radio" name="value" defaultValue={2} className="selectgroup-input-radio select-layout" />
+                                    <span className="selectgroup-button">Dark</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="p-15 border-bottom">
+                            <h6 className="font-medium m-b-10">Sidebar Color</h6>
+                            <div className="selectgroup selectgroup-pills sidebar-color">
+                                <label className="selectgroup-item">
+                                    <input type="radio" name="icon-input" defaultValue={1} className="selectgroup-input select-sidebar" />
+                                    <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Light Sidebar"><i className="fas fa-sun" /></span>
+                                </label>
+                                <label className="selectgroup-item">
+                                    <input type="radio" name="icon-input" defaultValue={2} className="selectgroup-input select-sidebar" defaultChecked />
+                                    <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Dark Sidebar"><i className="fas fa-moon" /></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="p-15 border-bottom">
+                            <h6 className="font-medium m-b-10">Color Theme</h6>
+                            <div className="theme-setting-options">
+                                <ul className="choose-theme list-unstyled mb-0">
+                                    <li title="white" className="active">
+                                        <div className="white" />
+                                    </li>
+                                    <li title="cyan">
+                                        <div className="cyan" />
+                                    </li>
+                                    <li title="black">
+                                        <div className="black" />
+                                    </li>
+                                    <li title="purple">
+                                        <div className="purple" />
+                                    </li>
+                                    <li title="orange">
+                                        <div className="orange" />
+                                    </li>
+                                    <li title="green">
+                                        <div className="green" />
+                                    </li>
+                                    <li title="red">
+                                        <div className="red" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="p-15 border-bottom">
+                            <div className="theme-setting-options">
+                                <label className="m-b-0">
+                                    <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="mini_sidebar_setting" />
+                                    <span className="custom-switch-indicator" />
+                                    <span className="control-label p-l-10">Mini Sidebar</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="p-15 border-bottom">
+                            <div className="theme-setting-options">
+                                <label className="m-b-0">
+                                    <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="sticky_header_setting" />
+                                    <span className="custom-switch-indicator" />
+                                    <span className="control-label p-l-10">Sticky Header</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele">
+                            <a href="#" className="btn btn-icon icon-left btn-primary btn-restore-theme">
+                                <i className="fas fa-undo" /> Restore Default
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Keywords;

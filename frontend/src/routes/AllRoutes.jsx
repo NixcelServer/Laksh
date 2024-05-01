@@ -29,7 +29,8 @@ import AdminAlertPage from "../pages/AdminTemplate/AdminAlertPage";
 import AdminMainTemplate from "../pages/AdminTemplate/AdminMainTemplate";
 import AdminTemplateCategories from "../pages/AdminTemplate/AdminTemplateCategories";
 import AdminTemplateNavbar from "../pages/AdminTemplate/AdminTemplateNavbar";
-
+import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords";
+import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
 export default function AllRoutes() {
   return (
     <>
@@ -84,6 +85,26 @@ export default function AllRoutes() {
             <>
             <AdminTemplateNavbar/>
               <AdminTemplateCategories/>
+            </>
+          }
+        />
+
+<Route
+          path="/admintemplatekeywords"
+          element={
+            <>
+            <AdminTemplateNavbar/>
+              <AdminTemplateKeywords/>
+            </>
+          }
+        />
+
+<Route
+          path="/admintemplateuom"
+          element={
+            <>
+            <AdminTemplateNavbar/>
+              <AdminTemplateUOM/>
             </>
           }
         />

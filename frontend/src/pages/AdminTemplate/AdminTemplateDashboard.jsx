@@ -1,28 +1,14 @@
-import react,{Component} from 'react';
-// import { Link } from 'react-router-dom';
-// import 'feather-icons/dist/feather.css';
-
+import React, { useEffect } from 'react';
 import feather from 'feather-icons';
 
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// const Header = () => {
-    class AdminTemplateNavbar extends Component{
-      componentDidMount() {
+const AdminTemplateDashboard = () => {
+    useEffect(() => {
         feather.replace();
-    }
-    
-        render(){
-            return(
+    }, []); // Empty dependency array means this effect runs only once after the component mounts
 
-
-      <div>
-  
- 
-
-  
-  {/* // <!-- Main Content --> */}
+    return (
+        <div>
+            {/* // <!-- Main Content --> */}
       <div className="main-content">
   <section className="section">
     <div className="row ">
@@ -121,13 +107,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
   </section>
   
 </div>
-</div>
+        </div>
+    );
+};
 
-                
-                   
-            )
-        }
-        
-    }
-    export default AdminTemplateNavbar;
-    
+export default AdminTemplateDashboard;
