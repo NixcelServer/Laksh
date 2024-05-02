@@ -6,8 +6,6 @@ import { useSelector } from "react-redux";
 
 
 
-import AdminsPage from "../pages/Admin/AdminsPage";
-import Dashboard from "../pages/Admin/Dashboard";
 
 
 import ProtectedRoutes from "./ProtectedRoutes";
@@ -59,29 +57,10 @@ export default function AllRoutes() {
 
         <Route path={"/sign"} element={<Sign />} />
         <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
-        <Route
-          path="/adminDashboard"
-          element={
-            <>
-              <AdminNavbar />
-              <Dashboard />
-            </>
-          }
-        />
+        
 
 
-
-
-        <Route
-          path="/addProduct"
-          element={
-            <>
-              <AdminNavbar />
-              <AddProduct />
-            </>
-          }
-        />
-
+      
 
 
 <Route
@@ -205,7 +184,6 @@ export default function AllRoutes() {
 
        
            
-            <Route path='/addNewMachines' element={<><AdminNavbar/><AddNewMachines/></>}/><Route />
 
             
            
