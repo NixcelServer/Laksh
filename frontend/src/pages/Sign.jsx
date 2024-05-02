@@ -11,64 +11,138 @@ import {
   Stack,
   Button,
   Heading,
-  useToast
+  useToast,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Signin } from '../redux/auth/auth.action';
+import axios from 'axios';
 export default function Sign() {
   const [showPassword, setShowPassword] = useState(false);
-  const [firstname,setname] = useState('')
-  const [lastname,setLastname] = useState('')
+  const [name,setname] = useState('')
+  const [countryCode, setCountryCode] = useState('+91');
+  
   const [email,setEmail] = useState('')
   const [password,setPass] = useState('')
   const [mobile,setmob] = useState('')
+  const [emailExists, setEmailExists] = useState(false); // State to track if email exists
+  const [passwordError, setPasswordError] = useState('');
+
   const dispatch = useDispatch()
   const {error,isSign} = useSelector((store)=>store.authReducer)
   const navigate = useNavigate();
   const toast = useToast()
   // console.log(error,isSign)
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  };
+
+  const checkExistingEmail = async (email) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/check-existing-email?email=${email}`
+      );
+      setEmailExists(response.data.exists); // Update emailExists state based on API response
+    } catch (error) {
+      console.error('Error:', error);
+      
+    }
+  };
+
+  const onEmailChange = (e) => {
+    setEmail(e.target.value);
+    // setEmailExists(false); // Reset emailExists state when user changes the email
+    // checkExistingEmail(e.target.value); // Check if the entered email exists
+  };
+
   
-  const onsubmit = ()=>{
-    const payload ={
-      username: {
-        firstname,
-        lastname
-      },
+  const onsubmit = async(e)=>{
+    // const payload ={
+    //   name,
+    //   email,
+    //   password,
+    //   age: 0,
+    //   mobile,
+     
+      
+    // }
+    // console.log(payload);
+    // dispatch(Signin(payload))
+
+    try {
+      e.preventDefault();
+
+      // if (!validatePassword(password)) {
+      //   setPasswordError('Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.');
+      //   toast({
+      //     title: 'Invalid Password',
+      //     description: 'Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.',
+      //     status: 'error',
+      //     duration: 3000,
+      //     isClosable: true,
+      //   });
+      //   return;
+      // }
+        const payload ={
+      name,
       email,
       password,
       age: 0,
       mobile,
-      role:"user",
-      address: {
-        city: "",
-        state: "",
-        country: "",
-        pin: 0,
-      },
+     
+      
+    }
+    console.log(payload);
+    dispatch(Signin(payload))
+
+      
+      // toast({
+      //   title: 'Account Created Successfully',
+      //   status: 'success',
+      //   duration: 3000,
+      //   isClosable: true,
+      // });
+      // navigate('/'); // Redirect to home page after successful signup
+    } catch (error) {
+      // Handle error
+      console.error('Error:', error.response.data);
+      const errorMessage = error.response.data.message || 'An error occurred';
+      console.log("erroer",errorMessage);
+      toast({
+        title: errorMessage|| 'An error occurred',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
 
-    dispatch(Signin(payload))
 
   }
 
   useEffect(()=>{
     if(error){
       toast({
-        title: error,
+        title: error ,
         status: 'error',
-        duration: 1000,
+        duration: 3000,
         isClosable: true,
       })
+      dispatch({ type: 'SET_ERROR_FALSE', payload: false }); // Dispatch action to set isSign to false
+      
     }
     if(isSign){
       toast({
         title: 'Account Created Sucessfully',
         status: 'success',
-        duration: 1000,
+        duration: 2000,
         isClosable: true,
       })
+      
+      dispatch({ type: 'SET_SIGN_FALSE', payload: false }); // Dispatch action to set isSign to false
       navigate('/login')
     }
 
@@ -99,27 +173,33 @@ export default function Sign() {
           <Stack spacing={4}>
             <HStack>
               <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>FirstName</FormLabel>
-                  <Input type="text" value={firstname} onChange={(e)=>{setname(e.target.value)}} />
+                <FormControl id="name" isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input type="text" value={name} onChange={(e)=>{setname(e.target.value)}} />
                 </FormControl>
               </Box>
-              <Box>
-                <FormControl id="lastName" isRequired>
-                  <FormLabel>LastName</FormLabel>
-                  <Input type="text" value={lastname} onChange={(e)=>{setLastname(e.target.value)}} />
-                </FormControl>
-              </Box>
+             
             </HStack>
            
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}} />
+              <Input type="email" value={email} onChange={onEmailChange} />
+                {emailExists && (
+                  <FormLabel color="red.500">Email already exists</FormLabel>
+                )}
             </FormControl>
             <FormControl id="con_password" isRequired>
               <FormLabel>Mob No </FormLabel>
               <InputGroup>
-                <Input type={ 'text' } value={mobile}  onChange={(e)=>{setmob(e.target.value)}}/>
+              <InputLeftElement
+            pointerEvents="none"
+            children={countryCode}
+          />
+          <Input
+            type="number"
+            value={mobile}
+            onChange={(e)=>{setmob(e.target.value)}}
+          />
               </InputGroup>
             </FormControl>
             <FormControl id="password" isRequired>

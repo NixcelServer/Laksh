@@ -1,17 +1,25 @@
 import { Alert, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 
 
+import AdminsPage from "../pages/Admin/AdminsPage";
+import Dashboard from "../pages/Admin/Dashboard";
 
 
+import ProtectedRoutes from "./ProtectedRoutes";
 
 import Home from "../pages/Home";
 
 import Login from "../pages/Login";
+
 import AdminTemplateDashboard from "../pages/AdminTemplate/AdminTemplateDashboard";
+
+import AdminLogin from "../pages/AdminLogin";
+
 
 import Sign from "../pages/Sign";
 
@@ -32,6 +40,9 @@ import UserNavbar from "../pages/User/UserNavbar";
 import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
 
 export default function AllRoutes() {
+  const isAuthenticated = useSelector(state => state.authReducer.isLogin);
+  console.log("in all routes", isAuthenticated);
+
   return (
     <>
 
@@ -44,10 +55,32 @@ export default function AllRoutes() {
         <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate/>} />
 
         <Route path={"/login"} element={<Login />} />
+        <Route path={"/alogin"} element={<AdminLogin />} />
+
         <Route path={"/sign"} element={<Sign />} />
         <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
-      
-        
+        <Route
+          path="/adminDashboard"
+          element={
+            <>
+              <AdminNavbar />
+              <Dashboard />
+            </>
+          }
+        />
+
+
+
+
+        <Route
+          path="/addProduct"
+          element={
+            <>
+              <AdminNavbar />
+              <AddProduct />
+            </>
+          }
+        />
 
 
 
@@ -172,7 +205,18 @@ export default function AllRoutes() {
 
        
            
-            <Route path='/sell' element={<Sell/>} />
+            <Route path='/addNewMachines' element={<><AdminNavbar/><AddNewMachines/></>}/><Route />
+
+            
+           
+
+            <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} />}>
+            <Route path="/sell" element={
+            <>
+             <Sell/>
+            </>
+          }/>
+            </Route>
 
       </Routes>
     </>
