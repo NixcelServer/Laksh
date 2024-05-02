@@ -33,7 +33,7 @@ class AuthController extends Controller
             
             
             //unset some data while sending to the user
-            unset($user->tbl_user_id,$user->u_password,$user->u_designation,$user->add_date,$user->add_time,$user->update_date,
+            unset($user->tbl_user_id,$user->u_password,$user->add_date,$user->add_time,$user->update_date,
                     $user->update_time,$user->verified_by,$user->verified_date,
                     $user->verified_time,$user->flag);
                     
@@ -123,7 +123,7 @@ class AuthController extends Controller
             $encCompanyId = EncDecHelper::encDecId($companyId,'encrypt');
             $user->encCompanyId = $encCompanyId;
             // Unset the non-encrypted ID
-            unset($user->tbl_user_id,$user->u_password,$user->u_designation,$user->add_date,$user->add_time,$user->update_date,
+            unset($user->tbl_user_id,$user->u_password,$user->add_date,$user->add_time,$user->update_date,
                     $user->update_time,$user->verified_by,$user->verified_date,
                     $user->verified_time,$user->flag);
            // unset($user->tbl_user_id,$user->u_password);

@@ -1,28 +1,105 @@
 import React, { useEffect, useState, useRef } from 'react';
 import feather from 'feather-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { addKeyword, getKeywords } from '../../redux/Admin/admin.action';
+import axios from 'axios';
 
 const Keywords = () => {
-    const [KeywordName, setNewKeywordName] = useState("");
+    const [keywordName, setNewKeywordName] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const [KeywordToDelete, setKeywordToDelete] = useState(null);
+    const [keywordToDelete, setKeywordToDelete] = useState(null);
     const [showAddKeywordModal, setShowAddKeywordModal] = useState(false);
+    const dispatch = useDispatch();
+    const keywords = useSelector(state => state.masterData.keywords);
+    
+
 
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
         feather.replace();
+        dispatch(getKeywords());
     }, []); // Empty dependency array means this effect runs only once after the component mounts
+
+    const handleDelete = async(keyword) => {
+        // Define the logic for canceling delete action
+        setKeywordToDelete(keyword);
+        setShowDeleteConfirmation(true);
+    };
 
     const handleCancelDelete = () => {
         // Define the logic for canceling delete action
+        setShowDeleteConfirmation(false);
     };
     
-    const handleConfirmDelete = () => {
-        // Define the logic for confirming delete action
-    };
+    const handleConfirmDelete = async() => {
+        const keyword = keywordToDelete;
+        try {
+          const userString =  sessionStorage.getItem('user');
+          const user = JSON.parse(userString);
+          const encUserId = user.encUserId;
+      
+          // Include both encUserId and encKeywordId in the payload
+          const payload = {
+            encUserId
+          };
+      
+          // Perform delete operation using encKeywordId and encUserId
+          const response = await axios.delete(`http://127.0.0.1:8000/api/keywords/${keyword.encKeywordId}`, { data: payload });      
+          //console.log("Keyword deleted successfully:", response.data);
+          
+          // Refetch keywords after deletion
+          dispatch(getKeywords());
+        } catch (error) {
+          console.error("Error deleting keyword:", error);
+        }
+        //dispatch(getCategories(updatedCategories));
+        setShowDeleteConfirmation(false);
+        
+      };
     
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async (event) => {
         // Define the logic for saving changes
+        // Define the logic for saving changes
+        event.preventDefault();
+
+        const userString = sessionStorage.getItem('user');
+        // Parse the user object from the string format stored in sessionStorage
+        const user = JSON.parse(userString);
+    
+        // Retrieve the encUserId from the user object
+        const encUserId = user.encUserId;
+        console.log(encUserId);
+        
+        const payload ={
+          keywordName,encUserId   
+        }
+        console.log(payload);
+
+        try {
+          
+            console.log("in try block");
+            
+            await dispatch(addKeyword(payload));
+            console.log("category added");
+            
+           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+            dispatch(getKeywords());
+            console.log("update redux");
+            // console.log("Category added successfully:", response.data);
+      
+           // fetchCategories();
+            closeButtonRef.current.click();
+           
+            
+            
+          } catch (error) {
+            console.error("Error adding category:", error);
+           // setError(error.message); // Set error state
+          }
+
+
+
     };
     
     return (
@@ -70,39 +147,33 @@ const Keywords = () => {
                                             <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
                                                 <thead>
                                                     <tr>
-                                                        <th>Name</th>
-                                                        <th>Position</th>
-                                                        <th>Office</th>
-                                                        <th>Age</th>
-                                                        <th>Start date</th>
-                                                        <th>Salary</th>
+                                                        <th>Sr. No.</th>
+                                                        <th>Keyword</th>
+                                                        <th>Action</th>
+                                                    
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>Tiger Nixon</td>
-                                                        <td>System Architect</td>
-                                                        <td>Edinburgh</td>
-                                                        <td>61</td>
-                                                        <td>2011/04/25</td>
-                                                        <td>$320,800</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Garrett Winters</td>
-                                                        <td>Accountant</td>
-                                                        <td>Tokyo</td>
-                                                        <td>63</td>
-                                                        <td>2011/07/25</td>
-                                                        <td>$170,750</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Donna Snider</td>
-                                                        <td>Customer Support</td>
-                                                        <td>New York</td>
-                                                        <td>27</td>
-                                                        <td>2011/01/25</td>
-                                                        <td>$112,000</td>
-                                                    </tr>
+                                                {keywords.map((keyword, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{keyword.keyword_name}</td> {/* Displaying the keyword name */}
+                              <td>
+
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px" }}
+                                onClick={() => handleDelete(keyword)}
+                              >
+                                Delete
+                              </button>
+
+                               
+
+                              </td>
+                            </tr>
+                          ))}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -139,8 +210,8 @@ const Keywords = () => {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                Are you sure you want to delete{" "}
-                                {KeywordToDelete && KeywordToDelete.cat_name}?
+                                Are you sure you want to delete keyword{" "}
+                                {keywordToDelete && keywordToDelete.keyword_name}?
                             </div>
                             <div className="modal-footer">
                                 <button
@@ -196,7 +267,7 @@ const Keywords = () => {
                                             className="form-control"
                                             id="KeywordName"
                                             placeholder="Enter Keyword Name"
-                                            value={KeywordName}
+                                            value={keywordName}
                                             onChange={(e) => setNewKeywordName(e.target.value)}
                                         />
                                     </div>

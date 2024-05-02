@@ -8,14 +8,14 @@ import sellReducer from "./sell/sell.reducer"
 
 
 import thunk from "redux-thunk";
-import { reducer as productReducer } from "./Admin/admin.reducer";
+import { reducer as adminReducer } from "./Admin/admin.reducer";
 import { bulbReducer } from "./BulbAdmin/bulbadmin.reducer";
 import { machineReducer } from "./MachineAdmin/machineadmin.reducer";
 
 const root_reducer = combineReducers({
 	authReducer,
 	sellReducer,
-  product: productReducer,
+  masterData: adminReducer,
   bulb: bulbReducer,
   machine: machineReducer,
 });
