@@ -1,17 +1,33 @@
 import React, { useEffect, useState, useRef } from 'react';
 import feather from 'feather-icons';
+import { useDispatch, useSelector } from "react-redux";
+import { addCategory, getCategories } from '../../redux/Admin/admin.action';
 
 const Categories = () => {
+    const categories = useSelector(state => state.masterData.categories);
+    
     const [categoryName, setNewCategoryName] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
     const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+    const dispatch = useDispatch();
 
     const closeButtonRef = useRef(null);
-
+    
     useEffect(() => {
         feather.replace();
+        dispatch(getCategories());
     }, []); // Empty dependency array means this effect runs only once after the component mounts
+
+    const handleDelete = async (category) => {
+        setCategoryToDelete(category);
+        setShowDeleteConfirmation(true);
+        
+      };
+
+    const handleAssign = () => {
+        // Define the logic for canceling delete action
+    };
 
     const handleCancelDelete = () => {
         // Define the logic for canceling delete action
@@ -21,9 +37,49 @@ const Categories = () => {
         // Define the logic for confirming delete action
     };
     
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async(event) => {
         // Define the logic for saving changes
+        event.preventDefault();
+
+        const userString = sessionStorage.getItem('user');
+        // Parse the user object from the string format stored in sessionStorage
+        const user = JSON.parse(userString);
+    
+        // Retrieve the encUserId from the user object
+        const encUserId = user.encUserId;
+        console.log(encUserId);
+        
+        const payload ={
+          categoryName,encUserId   
+        }
+        console.log(payload);
+
+        try {
+          
+            console.log("in try block");
+            
+            await dispatch(addCategory(payload));
+            console.log("category added");
+            
+           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+            dispatch(getCategories());
+            console.log("update redux");
+            // console.log("Category added successfully:", response.data);
+      
+           // fetchCategories();
+            closeButtonRef.current.click();
+           
+            
+            
+          } catch (error) {
+            console.error("Error adding category:", error);
+           // setError(error.message); // Set error state
+          }
+
+
+
     };
+   
     
     return (
         <div>
@@ -58,11 +114,15 @@ const Categories = () => {
                                                 }}
                                                 onClick={() => setShowAddCategoryModal(true)}
                                             >
+
+                                    
+
                                                 {/* Plus sign icon */}
                                                 <i className="feather icon-plus"></i>
                                                 Add New
                                             </button>
                                         </div>
+                                        
                                         <h4>Categories</h4>
                                     </div>
                                     <div className="card-body">
@@ -70,39 +130,43 @@ const Categories = () => {
                                             <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
                                                 <thead>
                                                     <tr>
-                                                        <th>Name</th>
-                                                        <th>Position</th>
-                                                        <th>Office</th>
-                                                        <th>Age</th>
-                                                        <th>Start date</th>
-                                                        <th>Salary</th>
+                                                        <th>Sr. No.</th>
+                                                        <th>Category</th>
+                                                        <th>Action</th>
+                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>Tiger Nixon</td>
-                                                        <td>System Architect</td>
-                                                        <td>Edinburgh</td>
-                                                        <td>61</td>
-                                                        <td>2011/04/25</td>
-                                                        <td>$320,800</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Garrett Winters</td>
-                                                        <td>Accountant</td>
-                                                        <td>Tokyo</td>
-                                                        <td>63</td>
-                                                        <td>2011/07/25</td>
-                                                        <td>$170,750</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Donna Snider</td>
-                                                        <td>Customer Support</td>
-                                                        <td>New York</td>
-                                                        <td>27</td>
-                                                        <td>2011/01/25</td>
-                                                        <td>$112,000</td>
-                                                    </tr>
+                                                {categories.map((category, index) => (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+
+                            <td>{category.cat_name}</td> {/* Accessing the 'cat_name' property */}
+                            {/* <button onClick={() => handleDelete(category.encCatId)}>Delete</button> Accessing the 'add_date' property */}
+                            {/* Accessing the 'add_time' property */}
+
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px" }}
+                                onClick={() => handleDelete(category)}
+                              >
+                                Delete
+                              </button>
+                              
+                              <button
+                                type="button"
+                                className="btn btn-success btn-sm"
+                                style={{ margintop: "100px"}}
+                                onClick={() => handleAssign(category)}
+                                
+                                >
+                                Assign
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                                                 </tbody>
                                             </table>
                                         </div>

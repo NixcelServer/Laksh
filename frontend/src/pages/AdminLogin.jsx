@@ -52,7 +52,7 @@ export default function AdminLogin() {
           duration: 1000,
           isClosable: true,
         })
-        navigate('/')
+        navigate('/admintemplatedashboard')
       }
   
     },[error,isLogin])
