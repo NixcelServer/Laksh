@@ -24,7 +24,7 @@ export default function NavPopcover() {
                 <Box>for Buying</Box>
                 <Box>Share Your Feedback</Box>
                 <Box>Raise a Complaint</Box>
-                <Box>Email: customercare@martmate.com</Box>
+                <Box>Email: customercare@Laksh.com</Box>
                 <Box>Call us : 85745666</Box>
                 <Box>Chat With us</Box>
             </PopoverBody>
