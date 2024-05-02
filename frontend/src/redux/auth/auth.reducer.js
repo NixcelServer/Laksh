@@ -30,12 +30,29 @@ export default function authReducer(state = init,{type,payload}){
             return{...state,isLogin:true,token:payload.token,error:null}
         }
 
+        case types.ADMIN_LOGIN:{
+            sessionStorage.setItem("token",payload.token)
+            sessionStorage.setItem("user", JSON.stringify(payload.user))
+            return{...state,isLogin:true,token:payload.token,error:null}
+        }
+
         case types.RESET_AUTH:{
             sessionStorage.removeItem('token')
             sessionStorage.removeItem('user')
             return {...state,isLogin:false,isSign:false,token:null}
         }
 
+        case types.SET_SIGN_FALSE:
+      return {
+        ...state,
+        isSign: false,
+      };
+
+      case types.SET_ERROR_FALSE:
+      return {
+        ...state,
+        error: null,
+      };
         
 
         default: return state
