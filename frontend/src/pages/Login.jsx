@@ -42,6 +42,8 @@ export default function Login() {
           duration: 1000,
           isClosable: true,
         })
+        dispatch({ type: 'SET_ERROR_FALSE', payload: false }); // Dispatch action to set isSign to false
+
       }
       if(isLogin){
         toast({

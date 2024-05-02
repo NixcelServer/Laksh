@@ -24,10 +24,12 @@ export default function HomeTop() {
     useEffect(()=>{
 
         const user = JSON.parse(sessionStorage.getItem("user"))
+        
         if(user){
-            setName(user.username.firstname + " " + user.username.lastname)
-            setEmail(user.email)
-            setMob(user.mobile)
+            // setName(user.username.firstname + " " + user.username.lastname)
+            // setEmail(user.email)
+            // setMob(user.mobile)
+            setName(user.u_name);
         }
 
 
