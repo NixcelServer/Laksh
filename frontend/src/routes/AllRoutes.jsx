@@ -39,7 +39,15 @@ import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubc
 
 export default function AllRoutes() {
   const isAuthenticated = useSelector(state => state.authReducer.isLogin);
-  console.log("in all routes", isAuthenticated);
+  const userString = sessionStorage.getItem('user');
+  console.log("landing page",userString);
+  let userRole = null;
+
+  if (userString) {
+    const user = JSON.parse(userString);
+    userRole = user.u_designation;
+    console.log("in user role",userRole);
+  }
 
   return (
     <>

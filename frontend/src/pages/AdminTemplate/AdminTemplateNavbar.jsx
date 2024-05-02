@@ -2,14 +2,27 @@
 
 import React, { useEffect } from 'react';
 import feather from 'feather-icons'; // Import feather-icons
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { authLogout } from '../../redux/auth/auth.action';
 
 
 
 const AdminTemplateNavbar = () => {
 
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+
     useEffect(() => {
         feather.replace(); // Call feather.replace() in useEffect to replace icons
     }, []); 
+
+    const handleLogout = () => {
+      // Clear user session data
+      sessionStorage.removeItem('user');
+      dispatch(authLogout());
+      navigate('/');
+    };
     
     return(
 <div>
@@ -151,9 +164,10 @@ const AdminTemplateNavbar = () => {
                   Settings
                 </a>
                 <div className="dropdown-divider" />
-                <a href="auth-login.html" className="dropdown-item has-icon text-danger"> <i className="fas fa-sign-out-alt" />
-                  Logout
-                </a>
+                <Link to="/" className="dropdown-item has-icon text-danger" onClick={handleLogout}>
+      <i className="fas fa-sign-out-alt" />
+      Logout
+    </Link>
               </div>
             </li>
           </ul>
@@ -161,21 +175,21 @@ const AdminTemplateNavbar = () => {
         <div className="main-sidebar sidebar-style-2">
           <aside id="sidebar-wrapper">
             <div className="sidebar-brand" >
-            <a href="/"> 
+            <Link to="/admintemplatedashboard"> 
           <img alt="" src="" style={{ margin: '-10px' }} className="header-logo" /> 
           <span style={{ margin: '-10px' }} className="logo-name">Laksh</span>
-      </a>
+      </Link>
       
             </div>
             <ul className="sidebar-menu">
               <li className="menu-header"></li>
               <li className="dropdown active">
                 {/* <i data-feather="monitor" /> */}
-                <a href="/" className="nav-link"><span>Dashboard</span></a>
+                <Link to="/admintemplatedashboard" className="nav-link"><span>Dashboard</span></Link>
               </li>
               <li className="dropdown">
                 {/* <i data-feather="briefcase" /> */}
-                <a href="#" className=""><span>Categories</span></a>
+                <Link to="/admintemplatecategories" className=""><span>Categories</span></Link>
                 <ul className="dropdown-menu">
                   <li><a className="nav-link" href="widget-chart.html">Chart Widgets</a></li>
                   <li><a className="nav-link" href="widget-data.html">Data Widgets</a></li>
@@ -184,7 +198,7 @@ const AdminTemplateNavbar = () => {
               <li className="dropdown">
                 {/* <a href="#" className="menu-toggle nav-link has-dropdown"><i data-feather="command" /><span>Apps</span></a> */}
                 {/* <i data-feather="command" /> */}
-                <a href="#" className=""><span>Keywords</span></a>
+                <Link to="/admintemplatekeywords" className=""><span>Keywords</span></Link>
       
                 <ul className="dropdown-menu">
                   <li><a className="nav-link" href="chat.html">Chat</a></li>
@@ -195,7 +209,7 @@ const AdminTemplateNavbar = () => {
               </li>
               <li className="">
                 {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
-                <a href="#" className=""><span>UOM</span></a>
+                <Link to="/admintemplateuom" className=""><span>UOM</span></Link>
                 <ul className="dropdown-menu">
                   <li><a className="nav-link" href="email-inbox.html">Inbox</a></li>
                   <li><a className="nav-link" href="email-compose.html">Compose</a></li>
