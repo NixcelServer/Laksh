@@ -158,7 +158,7 @@ export default function MachinsPanal() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Machines</ModalHeader>
+          <ModalHeader>Modal Abhi Machines</ModalHeader>
           <ModalCloseButton />
 
           <Box w="80%" m="auto">
