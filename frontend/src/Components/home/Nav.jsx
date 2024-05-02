@@ -34,6 +34,8 @@ import { useNavigate } from 'react-router-dom'
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
 import {Link as Navlink} from 'react-router-dom'
 import React, { useState,useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+
  import {authLogout} from '../../redux/auth/auth.action'
 
 
@@ -56,8 +58,16 @@ export default function Navbar() {
 
   const handleLogout=()=>{
 
-
+    sessionStorage.removeItem('user');
      dispatch(authLogout())
+     //sessionStorage.removeItem('user');
+     navigate('/', { replace: true });    window.location.replace('/');
+
+    // Prevent caching by adding additional headers
+    window.location.reload(true); 
+
+    
+    
 
     
   }
@@ -66,7 +76,10 @@ export default function Navbar() {
 
     const user = JSON.parse(sessionStorage.getItem("user"))
     if(user){
-      setName(user.username.firstname + " " + user.username.lastname)
+      console.log(user);
+      
+      //setName(user.username.firstname + " " + user.username.lastname)
+      setName(user.u_name)
 
     }
 
@@ -89,9 +102,11 @@ export default function Navbar() {
 
           <HStack  alignItems={'center'} display={flag?{ base: 'none', md: 'flex' }:"flex"}    >
             <Box>
+
                 <Image src='' w='60px' objectFit={'cover'} onClick={()=>{navigate('/')}}  />
             </Box>
-                <Heading color={'red.500'} size={{ md: 'md', lg: 'lg' }} >Laksh</Heading>
+                <Heading color={'red.500'} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} >Laksh</Heading>
+
            
           </HStack>
           {
@@ -118,10 +133,8 @@ export default function Navbar() {
                             </Button>
                         </InputGroup>
                         </Box>
-
                     </Flex>
-          }
-         
+          }        
           <Flex alignItems={'center'}>
           <HStack
               as={'nav'}
@@ -161,17 +174,20 @@ export default function Navbar() {
               <MenuList>
                 <MenuItem >
                   {
-                    // !isLogin &&
+                     !isLogin &&
                      <Navlink to='/login' ><Button colorScheme='teal'>Login</Button></Navlink> 
                   }
                 </MenuItem>
                 <MenuItem>
-                    <Button colorScheme='blue'  >Admin</Button>
+                {
+                  !isLogin &&
+                <Navlink to='/alogin' ><Button colorScheme='teal'>Admin</Button></Navlink>
+                }
                 </MenuItem>
                 <MenuDivider />
                 <MenuItem>
                     {
-                        // isLogin &&
+                         isLogin &&
                       <Button colorScheme='red' onClick={handleLogout} >Logout</Button>
                     } 
                 </MenuItem>
