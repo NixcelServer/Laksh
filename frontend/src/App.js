@@ -3,7 +3,6 @@ import "./App.css";
 
 import Footer from "./Components/home/Footer";
 import Navbar from "./Components/home/Nav";
-import PlywoodProductPage from "./pages/Products/PlywoodProductPage";
 
 
 import AllRoutes from "./routes/AllRoutes";
@@ -13,14 +12,16 @@ function App() {
   return (
     <div className="App">
       {location.pathname === "/adminDashboard" ||
-      location.pathname === "/addProduct" ||
-      location.pathname === "/addNewProduct" ||
+  
+     
       location.pathname === "/sell" ||
   location.pathname === "/admintemplatenavbar" ||
   location.pathname === "/admintemplatedashboard" ||
   location.pathname === "/admintemplatekeywords" ||
   location.pathname === "/admintemplatecategories" ||
   location.pathname === "/admintemplateuom" ||
+
+
       location.pathname === "/admin" ? (
 
         false
@@ -34,7 +35,7 @@ function App() {
       <AllRoutes />
 
       {location.pathname === "/adminDashboard" ||
-      location.pathname === "/addProduct" ||
+     
       location.pathname === "/addNewProduct" ||
       location.pathname === "/admin" ||
       location.pathname === "/admintemplatedashboard" ||
@@ -42,8 +43,11 @@ function App() {
       location.pathname === "/admintemplatecategories" ||
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
+      location.pathname === "/usernavbar" ||
+      location.pathname === "/subcategories" ||
+     
       location.pathname === "/sell"? (
-
+       
         false
       ) : (
         <Footer />

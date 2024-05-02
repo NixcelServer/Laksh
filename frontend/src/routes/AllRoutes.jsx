@@ -3,15 +3,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 
-import AddProduct from "../pages/Admin/AddProduct";
 
-import AdminsPage from "../pages/Admin/AdminsPage";
-import Dashboard from "../pages/Admin/Dashboard";
 
-import AdminNavbar from '../Components/AdminNavbar';
-import AddAdmin from '../pages/Admin/AddAdmin';
-import AddNewMachines from "../pages/Admin/AddNewMachines";
-import AddNewProduct from '../pages/Admin/AddNewProduct';
 
 
 
@@ -23,7 +16,6 @@ import AdminTemplateDashboard from "../pages/AdminTemplate/AdminTemplateDashboar
 import Sign from "../pages/Sign";
 
 import Sell from '../pages/sell';
-import PlywoodProductPage from "../pages/Products/PlywoodProductPage";
 import AdminTemplateMaincontent from "../pages/AdminTemplate/AdminTemplateMainContent";
 import AdminAlertPage from "../pages/AdminTemplate/AdminAlertPage";
 import AdminMainTemplate from "../pages/AdminTemplate/AdminMainTemplate";
@@ -31,6 +23,14 @@ import AdminTemplateCategories from "../pages/AdminTemplate/AdminTemplateCategor
 import AdminTemplateNavbar from "../pages/AdminTemplate/AdminTemplateNavbar";
 import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords";
 import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
+import AddProduct from "../pages/Products/AddProduct";
+import SellerLeftMenu from "../pages/Seller/SellerLeftMenu";
+import Buyleads from "../pages/Seller/BuyLeads";
+import CompanySetup from "../pages/Company/CompanySetup";
+import UserDashboard from "../pages/User/UserDashboard";
+import UserNavbar from "../pages/User/UserNavbar";
+import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
+
 export default function AllRoutes() {
   return (
     <>
@@ -45,26 +45,9 @@ export default function AllRoutes() {
 
         <Route path={"/login"} element={<Login />} />
         <Route path={"/sign"} element={<Sign />} />
-        <Route path={"/plywood"} element={<PlywoodProductPage/>} />
         <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
-        <Route
-          path="/adminDashboard"
-          element={
-            <>
-              <AdminNavbar />
-              <Dashboard />
-            </>
-          }
-        />
-        <Route
-          path="/addProduct"
-          element={
-            <>
-              <AdminNavbar />
-              <AddProduct />
-            </>
-          }
-        />
+      
+        
 
 
 
@@ -85,6 +68,16 @@ export default function AllRoutes() {
             <>
             <AdminTemplateNavbar/>
               <AdminTemplateCategories/>
+            </>
+          }
+        />
+
+<Route
+          path="/subcategories"
+          element={
+            <>
+            <AdminTemplateNavbar/>
+              <AdminTemplateSubcategories/>
             </>
           }
         />
@@ -118,45 +111,67 @@ export default function AllRoutes() {
           }
         />
 
-
-        <Route
-          path="/admin"
+<Route
+          path="/userdashboard"
           element={
             <>
-              <AdminNavbar />
-              <AdminsPage />
+            
+              <UserDashboard/>
+            </>
+          }
+        />
+
+<Route
+          path="/usernavbar"
+          element={
+            <>
+            
+              <UserNavbar/>
+            </>
+          }
+        />
+
+<Route
+          path="/addmyproduct"
+          element={
+            <>
+            <UserNavbar/>
+              <AddProduct/>
+            </>
+          }
+        />
+
+<Route
+          path="/buyleads"
+          element={
+            <>
+            <UserNavbar/>
+              <Buyleads/>
+            </>
+          }
+        />
+
+<Route
+          path="/companysetup"
+          element={
+            <>
+            <UserNavbar/>
+              <CompanySetup/>
             </>
           }
         />
 
 
-        <Route
 
-        
-          path="/addAdmin"
-          element={
-            <>
-              <AdminNavbar />
-              <AddAdmin />
-            </>
-          }
-        />
-        <Route
-          path="/addNewProduct"
-          element={
-            <>
-              <AdminNavbar />
-              <AddNewProduct />
-            </>
-          }
-        />
+       
+       
+       
 
         <Route />
 
 
        
            
-            <Route path='/addNewMachines' element={<><AdminNavbar/><AddNewMachines/></>}/><Route />
             <Route path='/sell' element={<Sell/>} />
 
       </Routes>
