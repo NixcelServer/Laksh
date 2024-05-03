@@ -1,0 +1,76 @@
+.upload-files-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+  }
+  
+  .upload-files-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .option {
+    width: 150px;
+    height: 40px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .upload-files-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .drop-files-upload {
+    width: 400px;
+    height: 100px;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .nobody-notification {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .upload-files-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .send-copy-button,
+  .upload-files-button,
+  .cancel-button {
+    width: 150px;
+    height: 40px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .help-text {
+    font-size: 14px;
+    color: #666;
+  }

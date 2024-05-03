@@ -45,6 +45,7 @@ function App() {
       location.pathname === "/admintemplateuom" ||
       location.pathname === "/usernavbar" ||
       location.pathname === "/subcategories" ||
+      location.pathname === "/addproduct" ||
      
       location.pathname === "/sell"? (
        
