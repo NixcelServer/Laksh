@@ -17,6 +17,23 @@ export const addCategoryAPI = async(payload) => {
       return res.data;
 }
 
+export const getSubCategoriesAPI = async() => {
+  const res = await axios.get("http://127.0.0.1:8000/api/sub-categories");
+  
+  //const categories = res.data;
+  //   dispatch(getCategories(categories));
+    return res.data;
+}
+
+export const addSubCategoryAPI = async(payload) => {
+  const res = await axios.post("http://127.0.0.1:8000/api/sub-categories", payload);
+  
+  //const categories = res.data;
+  //   dispatch(getCategories(categories));
+    return res.data;
+}
+
+
 export const addKeywordAPI = async(payload) => {
     const res = await axios.post("http://127.0.0.1:8000/api/keywords", payload);
     

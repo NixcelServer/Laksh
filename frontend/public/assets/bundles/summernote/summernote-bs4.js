@@ -611,7 +611,7 @@ var lists = {
     unique: unique
 };
 
-var isSupportAmd = typeof define === 'function' && define.amd; // eslint-disable-line
+//var isSupportAmd = typeof define === 'function' && define.amd; // eslint-disable-line
 /**
  * returns whether font is installed or not.
  *
@@ -1975,7 +1975,7 @@ function textRangeToPoint(textRange, isStart) {
             curTextNode = curTextNode.nextSibling;
         }
         // [workaround] enforce IE to re-reference curTextNode, hack
-        var dummy = curTextNode.nodeValue; // eslint-disable-line
+       // var dummy = curTextNode.nodeValue; // eslint-disable-line
         if (isStart && curTextNode.nextSibling && dom.isText(curTextNode.nextSibling) &&
             textCount === curTextNode.nodeValue.length) {
             textCount -= curTextNode.nodeValue.length;

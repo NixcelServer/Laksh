@@ -1,7 +1,7 @@
 
 
  import * as types from "./admin.action.type"
- import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI } from "./admin.api"
+ import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI, getSubCategoriesAPI, addSubCategoryAPI } from "./admin.api"
 // import { deleteAdminDataAPI, deleteProductAPI, getAdminsDataAPI, getPlywoodAPI, getUsersDataAPI, postAdminDataAPI, postProductAPI, updateAdminDataAPI, updateProductAPI } from "./admin.api"
 
 // export const getPlywoodProducts =(color,Page,limit,order,price)=>async (dispatch)=>{
@@ -154,22 +154,29 @@ export const addCategory = (payload) => async(dispatch) => {
         // dispatch({ type: types.ERROR, payload: err.response.data.error });
     }
 };
-// export const Log = (payload) => async (dispatch) => {
-//     try {
-//       const res = await loginAPI(payload);
-//       // console.log(res);
-//       dispatch({ type: types.LOGIN, payload: res });
-//     } catch (err) {
-//       console.log(err);
-//       dispatch({ type: types.ERROR, payload: err.response.data.error });
-//     }
-//   };
 
-export const getSubCategories = (subCategories) => {
-    return {
-        type:types.GET_SUBCATEGORIES,
-        payload: subCategories
-    };
+
+
+export const getSubCategories = () => async(dispatch) => {
+    try{
+        
+        const res = await getSubCategoriesAPI();
+        dispatch({ type: types.GET_SUBCATEGORIES, payload:res});
+    } catch(err) {
+        console.log(err);
+        // dispatch({ type: types.ERROR, payload: err.response.data.error });
+    }
+};
+
+export const addSubCategory = (payload) => async(dispatch) => {
+    try{
+        
+        const res = await addSubCategoryAPI(payload);
+      //  dispatch({ type: types.GET_CATEGORIES, payload:res});
+    } catch(err) {
+        console.log(err);
+        // dispatch({ type: types.ERROR, payload: err.response.data.error });
+    }
 };
 
 export const getKeywords = () => async(dispatch) => {

@@ -1,41 +1,97 @@
 import React, { useEffect, useState, useRef } from 'react';
 import feather from 'feather-icons';
 import { useDispatch, useSelector } from "react-redux";
-import { addCategory, getCategories } from '../../redux/Admin/admin.action';
+import { addCategory, getCategories, getSubCategories } from '../../redux/Admin/admin.action';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Categories = () => {
     const categories = useSelector(state => state.masterData.categories);
+    const subCategories = useSelector(state => state.masterData.subCategories);
     
     const [categoryName, setNewCategoryName] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
     const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const closeButtonRef = useRef(null);
     
     useEffect(() => {
         feather.replace();
         dispatch(getCategories());
+        dispatch(getSubCategories());
     }, []); // Empty dependency array means this effect runs only once after the component mounts
 
     const handleDelete = async (category) => {
-        setCategoryToDelete(category);
-        setShowDeleteConfirmation(true);
-        
-      };
+       // Check if the category is assigned to any subcategories
+      
+const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encCatId === category.encCatId);
 
-    const handleAssign = () => {
-        // Define the logic for canceling delete action
+// Find the specific subcategory that matches the category
+// const matchingSubCategory = subCategories.find(subCategory => subCategory.encCatId === category.encCatId);
+
+// console.log(subcategoriesAssigned);
+// console.log(matchingSubCategory);
+
+        if (subcategoriesAssigned) {
+            console.log("cannot delete")
+            setCategoryToDelete(category);
+            // Show confirmation that the category cannot be deleted
+          // setShowDeleteConfirmation(false); // Hide the delete confirmation modal
+            setShowCannotDeleteConfirmation(true); // Show a new confirmation modal indicating that the category cannot be deleted
+        } else {
+            // Proceed with deletion
+            setCategoryToDelete(category);
+            setShowDeleteConfirmation(true);
+        }
+    };
+    
+
+    const handleAssign = (category) => {
+        const encCatId = category.encCatId;
+        //console.log(encryptedCategoryId);
+
+    navigate(`/subcategories/${encCatId}`);
     };
 
     const handleCancelDelete = () => {
         // Define the logic for canceling delete action
+        setShowDeleteConfirmation(false);
+    };
+
+    const handleOK = () => {
+        // Define the logic for canceling delete action
+        setShowCannotDeleteConfirmation(false);
     };
     
-    const handleConfirmDelete = () => {
-        // Define the logic for confirming delete action
-    };
+    const handleConfirmDelete = async() => {
+        const category = categoryToDelete;
+        try {
+          const userString =  sessionStorage.getItem('user');
+          const user = JSON.parse(userString);
+          const encUserId = user.encUserId;
+      
+          // Include both encUserId and encKeywordId in the payload
+          const payload = {
+            encUserId
+          };
+      
+          // Perform delete operation using encKeywordId and encUserId
+          const response = await axios.delete(`http://127.0.0.1:8000/api/categories/${category.encCatId}`, { data: payload });      
+          //console.log("Keyword deleted successfully:", response.data);
+          
+          // Refetch keywords after deletion
+          dispatch(getCategories());
+        } catch (error) {
+          console.error("Error deleting keyword:", error);
+        }
+        //dispatch(getCategories(updatedCategories));
+        setShowDeleteConfirmation(false);
+        
+      };
     
     const handleSaveChanges = async(event) => {
         // Define the logic for saving changes
@@ -221,6 +277,49 @@ const Categories = () => {
                                 >
                                     Delete
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 {/* Cannot Delete confirmation modal */}
+                 <div
+                    className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
+                    id="cannotDeleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="cannotDeleteConfirmationModalLabel"
+                    aria-hidden={!showCannotDeleteConfirmation}
+                    style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
+                >
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
+                                    Cannot Delete
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    onClick={handleOK}
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                            Unable to delete the category '{categoryToDelete && categoryToDelete.cat_name}' at the moment. It appears that this category still contains subcategories.
+                                
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleOK}
+                                >
+                                    Ok
+                                </button>
+                                
                             </div>
                         </div>
                     </div>

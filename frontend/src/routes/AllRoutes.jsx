@@ -102,8 +102,9 @@ export default function AllRoutes() {
           }
         />
 
+
 <Route
-          path="/subcategories"
+          path="/subcategories/:encCatId"
           element={
             <>
             <AdminTemplateNavbar/>
