@@ -8,8 +8,7 @@ const initalState = {
     keywords:[],
     uom:[],
     subCategories: [],
-    plyWoodProducts: [],
-    totalPly:0,
+   
     users: [],
     admins:[]
 }
