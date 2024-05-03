@@ -55,7 +55,6 @@ export default function AllRoutes() {
       <Routes>
         <Route path={"/"} element={<Home />} />
         
-        <Route path={"/AdminTemplateMainContent"} element={<AdminTemplateMaincontent />} />
         
         <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
         <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate/>} />
@@ -77,6 +76,17 @@ export default function AllRoutes() {
             <>
               <AdminTemplateNavbar/>
               <AdminTemplateDashboard/>
+              
+            </>
+          }
+        />
+
+<Route
+          path="/admintemplatemaincontent"
+          element={
+            <>
+              <UserNavbar/>
+              <AdminTemplateMaincontent/>
               
             </>
           }
@@ -153,7 +163,7 @@ export default function AllRoutes() {
         />
 
 <Route
-          path="/addmyproduct"
+          path="/addproduct"
           element={
             <>
             <UserNavbar/>
