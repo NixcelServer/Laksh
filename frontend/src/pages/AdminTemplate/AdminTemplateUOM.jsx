@@ -37,19 +37,19 @@ const UOM = () => {
           const user = JSON.parse(userString);
           const encUserId = user.encUserId;
       
-          // Include both encUserId and encKeywordId in the payload
+          // Include both encUserId and encuomId in the payload
           const payload = {
             encUserId
           };
       
-          // Perform delete operation using encKeywordId and encUserId
+          // Perform delete operation using encuomId and encUserId
           const response = await axios.delete(`http://127.0.0.1:8000/api/unit-of-measurements/${uom.encUomId}`, { data: payload });      
-          //console.log("Keyword deleted successfully:", response.data);
+          //console.log("uom deleted successfully:", response.data);
           
-          // Refetch keywords after deletion
+          // Refetch uoms after deletion
           dispatch(getUOM());
         } catch (error) {
-          console.error("Error deleting keyword:", error);
+          console.error("Error deleting uom:", error);
         }
         //dispatch(getCategories(updatedCategories));
         setShowDeleteConfirmation(false);
@@ -156,7 +156,7 @@ const UOM = () => {
                                                 {uoms.map((uom, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
-                              <td>{uom.unit_name}</td> {/* Displaying the keyword name */}
+                              <td>{uom.unit_name}</td> {/* Displaying the uom name */}
                               <td>
 
                               <button
@@ -239,56 +239,41 @@ const UOM = () => {
                     aria-hidden={!showAddUOMModal}
                     style={{ display: showAddUOMModal ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <form>
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="addUnitModalLabel">
-                                        Add New UOM
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        onClick={() => setShowAddUOMModal(false)}
-                                        aria-label="Close"
-                                    >
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="form-group">
-                                        <label htmlFor="UOMName">UOM Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="UOMName"
-                                            placeholder="Enter UOM Name"
-                                            value={uomName}
-                                            onChange={(e) => setNewUOMName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        ref={closeButtonRef}
-                                        type='button'
-                                        className='btn btn-secondary'
-                                        onClick={() => setShowAddUOMModal(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={handleSaveChanges}
-                                        style={{ marginTop: '0px' }}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                                             <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    <div className="modal-content">
+        <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
+            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div className="modal-body">
+            <div className="form-group"style={{textAlign:'left'}}>
+                <label htmlFor="uomName">UOM </label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="uomName"
+                    placeholder="Enter UOM"
+                    value={uomName}
+                    onChange={(e) => setNewUOMName(e.target.value)}
+                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
+                />
+            </div>
+        </div>
+        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
 

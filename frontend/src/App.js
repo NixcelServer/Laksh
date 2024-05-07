@@ -19,8 +19,9 @@ function App() {
   location.pathname === "/admintemplatedashboard" ||
   location.pathname === "/admintemplatekeywords" ||
   location.pathname === "/admintemplatecategories" ||
-  location.pathname.startsWith("/subcategories/") ||
+  location.pathname === "/subcategories" ||
   location.pathname === "/admintemplateuom" ||
+
 
   
 
@@ -43,10 +44,12 @@ function App() {
       location.pathname === "/admintemplatedashboard" ||
       location.pathname === "/admintemplatenavbar" ||
       location.pathname === "/admintemplatecategories" ||
-      location.pathname.startsWith("/subcategories/") ||
+      location.pathname === "/subcategories" ||
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
+      location.pathname === "/admintemplatemaincontent" ||
       location.pathname === "/usernavbar" ||
+      location.pathname === "/userdashboard" ||
 
     
 

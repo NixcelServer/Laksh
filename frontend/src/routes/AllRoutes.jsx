@@ -36,6 +36,7 @@ import CompanySetup from "../pages/Company/CompanySetup";
 import UserDashboard from "../pages/User/UserDashboard";
 import UserNavbar from "../pages/User/UserNavbar";
 import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
+import Example from "../pages/Products/Example";
 
 export default function AllRoutes() {
   const isAuthenticated = useSelector(state => state.authReducer.isLogin);
@@ -66,6 +67,17 @@ export default function AllRoutes() {
         <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
         
 
+
+    
+<Route
+          path="/example"
+          element={
+            <>
+            <UserNavbar/>
+              <Example/>
+            </>
+          }
+        />
 
       
 
@@ -104,7 +116,7 @@ export default function AllRoutes() {
 
 
 <Route
-          path="/subcategories/:encCatId"
+          path="/subcategories"
           element={
             <>
             <AdminTemplateNavbar/>
@@ -146,7 +158,7 @@ export default function AllRoutes() {
           path="/userdashboard"
           element={
             <>
-            
+            <UserNavbar/>
               <UserDashboard/>
             </>
           }
