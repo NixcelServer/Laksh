@@ -9,7 +9,6 @@ const AddNewProduct = () => {
   const [showForm, setShowForm] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
-  const [showKeywords, setShowKeywords] = useState(false);
 
   const toggleFormVisibility = () => {
     setShowForm(!showForm);
@@ -49,20 +48,8 @@ const AddNewProduct = () => {
     }
   };
 
-  const handleDropdownClick = () => {
-    setShowKeywords(!showKeywords);
-  };
-
-  const handleKeywordOptionClick = (keyword) => {
-    setSelectedKeywords((prevKeywords) =>
-      prevKeywords.includes(keyword)
-        ? prevKeywords.filter((k) => k !== keyword)
-        : [...prevKeywords, keyword]
-    );
-  };
-
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px" }}>
+    <div style={{ background: "#f2f2f2", padding: "20px" }}>
       <div className="main-content" style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
           <button
@@ -71,7 +58,7 @@ const AddNewProduct = () => {
               backgroundColor: "#4CAF50",
               border: "none",
               color: "white",
-              padding: "1px 10px",
+              padding: "10px 20px",
               fontSize: "1.5em",
               cursor: "pointer",
               borderRadius: "20px",
@@ -196,49 +183,19 @@ const AddNewProduct = () => {
                                   </div>
                                   <div className="form-group">
                                     <label>Keywords:</label>
-                                    <div
-                                      className="form-control"
-                                      style={{ height: "20px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
-                                      onClick={handleDropdownClick}
-                                    >
-                                      <span style={{ textAlign: "center" , padding:"0"}}></span>
-                                      {/* {showKeywords && (
-                                        <div
-                                          style={{
-                                            position: "absolute",
-                                            zIndex: 1,
-                                            top: "100%",
-                                            left: 0,
-                                            background: "#fff",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            maxHeight: "120px",
-                                            overflowY: "auto",
-                                            width: "100%",
-                                            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-                                            animation: "slideDown 0.3s ease forwards",
-                                          }}
-                                        >
-                                          {['Keyword 1', 'Keyword 2', 'Keyword 3'].map((keyword) => (
-                                            <div
-                                              key={keyword}
-                                              style={{ padding: "5px", cursor: "pointer", transition: "background-color 0.3s" }}
-                                              onClick={() => handleKeywordOptionClick(keyword)}
-                                            >
-                                              <input
-                                                type="checkbox"
-                                                value={keyword}
-                                                checked={selectedKeywords.includes(keyword)}
-                                                onChange={handleCheckboxChange}
-                                                onContextMenu={handleContextMenu}
-                                                style={{ marginRight: '5px' }}
-                                              />
-                                              {keyword}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )} */}
-                                    </div>
+                                    {['Keyword 1', 'Keyword 2', 'Keyword 3'].map(keyword => (
+                                      <div key={keyword} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                                        <input
+                                          type="checkbox"
+                                          value={keyword}
+                                          checked={selectedKeywords.includes(keyword)}
+                                          onChange={handleCheckboxChange}
+                                          onContextMenu={handleContextMenu}
+                                          style={{ marginRight: '5px' }}
+                                        />
+                                        <label>{keyword}</label>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               </div>

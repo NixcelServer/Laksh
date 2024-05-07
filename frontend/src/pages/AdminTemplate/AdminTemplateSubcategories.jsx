@@ -123,7 +123,7 @@ const AdminTemplateSubcategories = () => {
         
 <div className="main-content">
                 <section className="section">
-                    <div className="section-body" style={{marginTop:'-7%'}}>
+                    <div className="section-body" style={{marginTop:'-3%'}}>
                        
                         <div className="row">
                             <div className="col-12">
@@ -135,8 +135,8 @@ const AdminTemplateSubcategories = () => {
             {/* Start of Assign Subcategory Form */}
             <form>
                 
-                <div className="form-group">
-                <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block' }}>Category : </label>
+                <div className="form-group"style={{ marginBottom: '-2%' }}>
+                <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px', marginLeft: '-75%' }}>Category : </label>
       <span style={{ display: 'inline-block'}} >{matchingCategory && matchingCategory.cat_name}</span>
       </div>
 
@@ -148,7 +148,10 @@ const AdminTemplateSubcategories = () => {
 
                 </div>
                 {/* Additional form fields can be added here as needed */}
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Assign Subcategory</button>
+                <div style={{ textAlign: 'left' }}>
+    <button type="submit" className="btn btn-primary" onClick={handleSubmit} 
+    style={{ float: 'left', height:'25px',padding:'0' }}>Assign Subcategory</button>
+</div>
             </form>
             {/* End of Assign Subcategory Form */}
         </div>

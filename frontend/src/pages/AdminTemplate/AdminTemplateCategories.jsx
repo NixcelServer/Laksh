@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import feather from 'feather-icons';
 import { useDispatch, useSelector } from "react-redux";
 import { addCategory, getCategories, getSubCategories } from '../../redux/Admin/admin.action';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Categories = () => {
@@ -26,24 +26,12 @@ const Categories = () => {
     }, []); // Empty dependency array means this effect runs only once after the component mounts
 
     const handleDelete = async (category) => {
-       // Check if the category is assigned to any subcategories
-      
-const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encCatId === category.encCatId);
-
-// Find the specific subcategory that matches the category
-// const matchingSubCategory = subCategories.find(subCategory => subCategory.encCatId === category.encCatId);
-
-// console.log(subcategoriesAssigned);
-// console.log(matchingSubCategory);
+        const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encCatId === category.encCatId);
 
         if (subcategoriesAssigned) {
-            console.log("cannot delete")
             setCategoryToDelete(category);
-            // Show confirmation that the category cannot be deleted
-          // setShowDeleteConfirmation(false); // Hide the delete confirmation modal
-            setShowCannotDeleteConfirmation(true); // Show a new confirmation modal indicating that the category cannot be deleted
+            setShowCannotDeleteConfirmation(true);
         } else {
-            // Proceed with deletion
             setCategoryToDelete(category);
             setShowDeleteConfirmation(true);
         }
@@ -52,20 +40,17 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
 
     const handleAssign = (category) => {
         const encCatId = category.encCatId;
-        //console.log(encryptedCategoryId);
-
-    navigate(`/subcategories/${encCatId}`);
+        navigate(`/subcategories/${encCatId}`);
     };
 
     const handleCancelDelete = () => {
-        // Define the logic for canceling delete action
         setShowDeleteConfirmation(false);
     };
 
     const handleOK = () => {
-        // Define the logic for canceling delete action
         setShowCannotDeleteConfirmation(false);
     };
+    
     
     const handleConfirmDelete = async() => {
         const category = categoryToDelete;
@@ -74,72 +59,44 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
           const user = JSON.parse(userString);
           const encUserId = user.encUserId;
       
-          // Include both encUserId and encKeywordId in the payload
           const payload = {
             encUserId
           };
       
-          // Perform delete operation using encKeywordId and encUserId
           const response = await axios.delete(`http://127.0.0.1:8000/api/categories/${category.encCatId}`, { data: payload });      
-          //console.log("Keyword deleted successfully:", response.data);
-          
-          // Refetch keywords after deletion
           dispatch(getCategories());
         } catch (error) {
           console.error("Error deleting keyword:", error);
         }
-        //dispatch(getCategories(updatedCategories));
         setShowDeleteConfirmation(false);
-        
       };
     
     const handleSaveChanges = async(event) => {
-        // Define the logic for saving changes
         event.preventDefault();
 
         const userString = sessionStorage.getItem('user');
-        // Parse the user object from the string format stored in sessionStorage
         const user = JSON.parse(userString);
-    
-        // Retrieve the encUserId from the user object
         const encUserId = user.encUserId;
-        console.log(encUserId);
         
         const payload ={
           categoryName,encUserId   
         }
-        console.log(payload);
 
         try {
-          
-            console.log("in try block");
-            
             await dispatch(addCategory(payload));
-            console.log("category added");
-            
-           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
             dispatch(getCategories());
-            console.log("update redux");
-            // console.log("Category added successfully:", response.data);
-      
-           // fetchCategories();
             closeButtonRef.current.click();
-           
-            
+            // Reinitialize Feather Icons after adding a new category
+        feather.replace();
             
           } catch (error) {
             console.error("Error adding category:", error);
-           // setError(error.message); // Set error state
           }
-
-
-
     };
    
     
     return (
         <div>
-            {/* "Add New" button */}
             <div className="main-content">
                 <section className="section">
                     <div className="section-body">
@@ -170,10 +127,6 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                                                 }}
                                                 onClick={() => setShowAddCategoryModal(true)}
                                             >
-
-                                    
-
-                                                {/* Plus sign icon */}
                                                 <i className="feather icon-plus"></i>
                                                 Add New
                                             </button>
@@ -197,20 +150,20 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                           <tr key={index}>
                             <td>{index + 1}</td>
 
-                            <td>{category.cat_name}</td> {/* Accessing the 'cat_name' property */}
-                            {/* <button onClick={() => handleDelete(category.encCatId)}>Delete</button> Accessing the 'add_date' property */}
-                            {/* Accessing the 'add_time' property */}
+                            <td>{category.cat_name}</td>
 
                             <td>
-                              <button
+                            <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px" }}
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
                                 onClick={() => handleDelete(category)}
-                              >
-                                Delete
-                              </button>
-                              
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
+
+                            <Link to="/subcategories">
                               <button
                                 type="button"
                                 className="btn btn-success btn-sm"
@@ -220,6 +173,7 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                                 >
                                 Assign
                               </button>
+                              </Link>
                             </td>
                           </tr>
                         ))}
@@ -233,7 +187,6 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                     </div>
                 </section>
 
-                {/* Delete confirmation modal */}
                 <div
                     className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
                     id="deleteConfirmationModal"
@@ -244,46 +197,29 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                     style={{ display: showDeleteConfirmation ? "block" : "none" }}
                 >
                     <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="deleteConfirmationModalLabel">
-                                    Confirm Deletion
-                                </h5>
-                                <button
-                                    type="button"
-                                    className="close"
-                                    onClick={handleCancelDelete}
-                                    aria-label="Close"
-                                >
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                Are you sure you want to delete{" "}
-                                {categoryToDelete && categoryToDelete.cat_name}?
-                            </div>
-                            <div className="modal-footer">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={handleCancelDelete}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={handleConfirmDelete}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+        <div className="modal-content">
+            <div className="modal-header">
+                <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" className="close" onClick={handleCancelDelete} aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div className="modal-body">
+                Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?
+            </div>
+            <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCancelDelete}>
+                    Cancel
+                </button>
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
                 </div>
 
-                 {/* Cannot Delete confirmation modal */}
-                 <div
+                <div
                     className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
                     id="cannotDeleteConfirmationModal"
                     tabIndex="-1"
@@ -325,7 +261,6 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                     </div>
                 </div>
 
-                {/* Add Unit Modal */}
                 <div
                     className={`modal fade ${showAddCategoryModal ? "show" : ""}`}
                     id="addUnitModal"
@@ -335,60 +270,46 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                     aria-hidden={!showAddCategoryModal}
                     style={{ display: showAddCategoryModal ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <form>
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="addUnitModalLabel">
-                                        Add New Category
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        onClick={() => setShowAddCategoryModal(false)}
-                                        aria-label="Close"
-                                    >
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="form-group">
-                                        <label htmlFor="categoryName">Category Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="categoryName"
-                                            placeholder="Enter Category Name"
-                                            value={categoryName}
-                                            onChange={(e) => setNewCategoryName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        ref={closeButtonRef}
-                                        type='button'
-                                        className='btn btn-secondary'
-                                        onClick={() => setShowAddCategoryModal(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={handleSaveChanges}
-                                        style={{ marginTop: '0px' }}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                   
+                   <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    <div className="modal-content">
+        <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalCenterTitle">Add New Category</h5>
+            <button type="button" className="close" onClick={() => setShowAddCategoryModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div className="modal-body">
+            <div className="form-group"style={{textAlign:'left'}}>
+                <label htmlFor="categoryName">Category Name</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="categoryName"
+                    placeholder="Enter Category Name"
+                    value={categoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
+                />
+            </div>
+        </div>
+        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+
                 </div>
             </div>
 
-            {/* SIDEBAR */}
             <div className="settingSidebar">
                 <a href="javascript:void(0)" className="settingPanelToggle"> <i className="fa fa-spin fa-cog" />
                 </a>
@@ -476,24 +397,8 @@ const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encC
                     </div>
                 </div>
             </div>
-            {/* <!-- General JS Scripts --> */}
-  <script src="assets/js/app.min.js"></script>
-  {/* <!-- JS Libraies --> */}
-  <script src="assets/bundles/datatables/datatables.min.js"></script>
-  <script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
-  <script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
-  {/* <!-- Page Specific JS File --> */}
-  <script src="assets/js/page/datatables.js"></script>
-  {/* <!-- Template JS File --> */}
-  <script src="assets/js/scripts.js"></script>
-  {/* <!-- Custom JS File --> */}
-  <script src="assets/js/custom.js"></script>
         </div>
     );
 };
 
 export default Categories;
-
-
-
-

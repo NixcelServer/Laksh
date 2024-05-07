@@ -50,9 +50,9 @@ const AdminTemplateNavbar = () => {
           <ul className="navbar-nav navbar-right">
            
            
-            <li className="dropdown"><a href="#" data-toggle="dropdown" className="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt="image" src="assets/img/user.png" className="user-img-radious-style" /> <span className="d-sm-none d-lg-inline-block" /></a>
+            <li className="dropdown"><a href="#" data-toggle="dropdown"style={{ boxShadow: 'none' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt="image" src="images/adminlogo.png" className="user-img-radious-style" /> <span className="d-sm-none d-lg-inline-block" /></a>
               <div className="dropdown-menu dropdown-menu-right pullDown">
-                <div className="dropdown-title">Hello Sarah Smith</div>
+                <div className="dropdown-title"></div>
                 <a href="profile.html" className="dropdown-item has-icon"> <i className="far
                                               fa-user" /> Profile
                 </a> <a href="timeline.html" className="dropdown-item has-icon"> <i className="fas fa-bolt" />

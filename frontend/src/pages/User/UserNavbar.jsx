@@ -1,63 +1,58 @@
-
-
 import React, { useEffect } from 'react';
 import feather from 'feather-icons'; // Import feather-icons
-
-
+import { Link, useNavigate } from 'react-router-dom';
 
 const UserNavbar = () => {
-
     useEffect(() => {
         feather.replace(); // Call feather.replace() in useEffect to replace icons
     }, []); 
-    
-    return(
-<div>
-        <div className="navbar-bg" />
-        
-        <div className="main-sidebar sidebar-style-2" style={{ width: '10%',marginTop: '4.5em'  }}>
-          <aside id="sidebar-wrapper">
-           
-            <ul className="sidebar-menu">
-              <li className="menu-header"></li>
-              <li className="dropdown active" style={{ marginBottom: '2rem' }}>
-                            <a href="/" className="nav-link"><span>Dashboard</span></a>
+
+    const handleLogout = () => {
+        // Clear user session data
+        sessionStorage.removeItem('user');
+        dispatch(authLogout());
+        navigate('/');
+    };
+
+    return (
+        <div>
+            <div className="navbar-bg" />
+            <div className="main-sidebar sidebar-style-2" style={{ marginTop: "11vh" }}>
+                <ul className="sidebar-menu">
+                    <li className="menu-header"></li>
+                    <li className="dropdown active">
+                        <li>
+                            <a href="#" data-toggle="sidebar" className="nav-link nav-link-lg collapse-btn">
+                                <i data-feather="align-justify" />
+                            </a>
                         </li>
-                        <li className="dropdown" style={{ marginBottom: '2rem' }}>
-                            <a href="#" className=""><span>Lead Manager</span></a>
-                            {/* Dropdown menu content */}
-                        </li>
-                        <li className="dropdown" style={{ marginBottom: '2rem' }}>
-                            <a href="#" className=""><span>Company Setup</span></a>
-                            {/* Dropdown menu content */}
-                        </li>
-                        <li className="" style={{ marginBottom: '2rem' }}>
-                            <a href="#" className=""><span>Buy Leads</span></a>
-                            {/* Dropdown menu content */}
-                        </li>
-                        <li className="" style={{ marginBottom: '2rem' }}>
-                            <a href="#" className=""><span>Products</span></a>
-                                
-                <ul className="dropdown-menu">
-                  <li><a className="nav-link" href="email-inbox.html">Inbox</a></li>
-                  <li><a className="nav-link" href="email-compose.html">Compose</a></li>
-                  <li><a className="nav-link" href="email-read.html">read</a></li>
+                        <Link to="/userdashboard" className="nav-link">
+                            <i data-feather="monitor" />
+                            <span style={{ fontSize: '12px',textAlign:'left'  }}>Dashboard</span>
+                        </Link>
+                    </li>
+                    <li className="">
+                    <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Lead Manager</span></Link>
+                    </li>
+                    <li className="">
+                    <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>BuyLeads</span></Link>
+                    </li>
+                    <li className="">
+                    <Link to="/addproduct" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Products</span></Link>
+                    </li>
+                    <li className="">
+                        <Link to="/" className=""><i data-feather="key" /><span style={{ fontSize: '12px',textAlign:'left' }}>Photos and Docs</span></Link>
+                    </li>
+                    <li className="">
+                    <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Settings</span></Link>
+                    </li>
+                    <li className="">
+                        <Link to="/" className=""><i data-feather="layers" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Help</span></Link>
+                    </li>
                 </ul>
-              </li>
-              
-             
-            
-              
-             
-             
-                
-            </ul>
-          </aside>
+            </div>
         </div>
-
-        </div>
-
-    )
+    );
 }
 
 export default UserNavbar;
