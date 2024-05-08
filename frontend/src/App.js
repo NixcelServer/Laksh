@@ -50,6 +50,7 @@ function App() {
       location.pathname === "/admintemplatemaincontent" ||
       location.pathname === "/usernavbar" ||
       location.pathname === "/userdashboard" ||
+      location.pathname === "/buylead" ||
 
     
 

@@ -175,15 +175,22 @@ export default function Navbar() {
                 <MenuItem >
                   {
                      !isLogin &&
-                     <Navlink to='/login' ><Button colorScheme='teal'>Login</Button></Navlink> 
+                     <Navlink to='/login' ><Button colorScheme='gray'>Login</Button></Navlink> 
                   }
                 </MenuItem>
                 <MenuItem>
                 {
                   !isLogin &&
-                <Navlink to='/alogin' ><Button colorScheme='teal'>Admin</Button></Navlink>
+                <Navlink to='/alogin' ><Button colorScheme='gray'>Admin</Button></Navlink>
                 }
                 </MenuItem>
+                <MenuItem>
+                {
+                  !isLogin &&
+                <Navlink to='/' ><Button >My Orders</Button></Navlink>
+                }
+                </MenuItem>
+
                 <MenuDivider />
                 <MenuItem>
                     {

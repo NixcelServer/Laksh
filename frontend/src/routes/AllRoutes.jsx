@@ -37,6 +37,8 @@ import UserDashboard from "../pages/User/UserDashboard";
 import UserNavbar from "../pages/User/UserNavbar";
 import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
 import Example from "../pages/Products/Example";
+import BuyLead from "../pages/BuyLead";
+// import AdvertisementSlider from "../Components/home/Advertisement";
 
 export default function AllRoutes() {
   const isAuthenticated = useSelector(state => state.authReducer.isLogin);
@@ -175,6 +177,16 @@ export default function AllRoutes() {
         />
 
 <Route
+          path="/byelead"
+          element={
+            <>
+            
+              <BuyLead/>
+            </>
+          }
+        />
+
+<Route
           path="/addproduct"
           element={
             <>
@@ -193,6 +205,17 @@ export default function AllRoutes() {
             </>
           }
         />
+
+<Route
+          path="/buylead"
+          element={
+            <>
+            <UserNavbar/>
+              <BuyLead/>
+            </>
+          }
+        />
+
 
 <Route
           path="/companysetup"
