@@ -79,7 +79,7 @@ const UOM = () => {
             console.log("in try block");
             
             await dispatch(addUOM(payload));
-            console.log("category added");
+            console.log("uom added");
             
            // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
             dispatch(getUOM());
@@ -92,7 +92,7 @@ const UOM = () => {
             
             
           } catch (error) {
-            console.error("Error adding category:", error);
+            console.error("Error adding uom:", error);
            // setError(error.message); // Set error state
           }
 
@@ -162,11 +162,12 @@ const UOM = () => {
                               <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px" }}
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
                                 onClick={() => handleDelete(uom)}
-                              >
-                                Delete
-                              </button>                              </td>
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button></td>
 
                             </tr>
                           ))}
@@ -181,6 +182,7 @@ const UOM = () => {
                 </section>
 
                 {/* Delete confirmation modal */}
+                
                 <div
                     className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
                     id="deleteConfirmationModal"
@@ -188,9 +190,14 @@ const UOM = () => {
                     role="dialog"
                     aria-labelledby="deleteConfirmationModalLabel"
                     aria-hidden={!showDeleteConfirmation}
-                    style={{ display: showDeleteConfirmation ? "block" : "none" }}
+                    style={{ display: showDeleteConfirmation ? "block" : "none" ,
+                    }}
+                    
                 >
-                    <div className="modal-dialog" role="document">
+                    
+                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="deleteConfirmationModalLabel">
@@ -205,25 +212,31 @@ const UOM = () => {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+
+
+
                             <div className="modal-body">
                                 Are you sure you want to delete{" "}
                                 {UOMToDelete && UOMToDelete.cat_name}?
                             </div>
                             <div className="modal-footer">
-                                <button
+                                {/* <button
                                     type="button"
                                     className="btn btn-secondary"
                                     onClick={handleCancelDelete}
+                                    style={{backgroundColor: ""}}
                                 >
                                     Cancel
-                                </button>
+                                </button> */}
                                 <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={handleConfirmDelete}
-                                >
-                                    Delete
-                                </button>
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                onClick={() => handleDelete(UOM)}
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -239,7 +252,7 @@ const UOM = () => {
                     aria-hidden={!showAddUOMModal}
                     style={{ display: showAddUOMModal ? "block" : "none" }}
                 >
-                                             <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+        <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
     <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
     <div className="modal-content">
         <div className="modal-header">
@@ -370,3 +383,14 @@ const UOM = () => {
 };
 
 export default UOM;
+
+
+
+
+
+
+
+
+
+
+

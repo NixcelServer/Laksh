@@ -28,6 +28,40 @@
 // Accounting Software
 // Tally on Mobile
 // GST e-Invoice
+import React from 'react';
+
+const RequirementForm = () => {
+  return (
+    <div className="main-content">
+      <section className="section">
+        <div className="section-body">
+          <div className="row">
+            <div className="col-12 col-md-6 col-lg-6">
+              <div className="card">
+                <div className="card-header">
+                  <h4>Submit Requirement Form</h4>
+                </div>
+                <div className="card-body">
+                  <div className="form-group">
+                    <label>Text</label>
+                    <input type="text" className="form-control" />
+                  </div>
+                </div>
+                <div className="card-footer text-right">
+                  <button className="btn btn-primary mr-1" type="submit">Submit Requirement</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default RequirementForm;
+
+// Rest of your existing code...
 
 export const footerData = [
   {
@@ -64,6 +98,7 @@ export const footerData = [
 
 export const data = [
   {
+
     title: "Building Construction Material & Equipment",
     single: {
       img: "https://hm.imimg.com/imhome_gifs/building-construction.jpg",

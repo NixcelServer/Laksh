@@ -31,12 +31,14 @@ import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords"
 import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
 import AddProduct from "../pages/Products/AddProduct";
 import SellerLeftMenu from "../pages/Seller/SellerLeftMenu";
-import Buyleads from "../pages/Seller/BuyLeads";
 import CompanySetup from "../pages/Company/CompanySetup";
 import UserDashboard from "../pages/User/UserDashboard";
 import UserNavbar from "../pages/User/UserNavbar";
 import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
 import Example from "../pages/Products/Example";
+import BuyLead from "../pages/BuyLead";
+import MyOrder from "../pages/User/MyOrders";
+// import AdvertisementSlider from "../Components/home/Advertisement";
 
 export default function AllRoutes() {
   const isAuthenticated = useSelector(state => state.authReducer.isLogin);
@@ -175,6 +177,16 @@ export default function AllRoutes() {
         />
 
 <Route
+          path="/byelead"
+          element={
+            <>
+            
+              <BuyLead/>
+            </>
+          }
+        />
+
+<Route
           path="/addproduct"
           element={
             <>
@@ -184,15 +196,17 @@ export default function AllRoutes() {
           }
         />
 
+
 <Route
-          path="/buyleads"
+          path="/buylead"
           element={
             <>
             <UserNavbar/>
-              <Buyleads/>
+              <BuyLead/>
             </>
           }
         />
+
 
 <Route
           path="/companysetup"
@@ -204,20 +218,24 @@ export default function AllRoutes() {
           }
         />
 
+<Route
+          path="/myorders"
+          element={
+            <>
+            <UserNavbar/>
+              <MyOrder/>
+            </>
+          }
+        />
 
 
-       
-       
-       
+
+
+
+
+
 
         <Route />
-
-
-       
-           
-
-            
-           
 
             <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} />}>
             <Route path="/sell" element={

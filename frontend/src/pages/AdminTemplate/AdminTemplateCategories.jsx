@@ -196,7 +196,9 @@ const Categories = () => {
                     aria-hidden={!showDeleteConfirmation}
                     style={{ display: showDeleteConfirmation ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+
         <div className="modal-content">
             <div className="modal-header">
                 <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
@@ -208,10 +210,11 @@ const Categories = () => {
                 Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?
             </div>
             <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={handleCancelDelete}>
+                {/* <button type="button" className="btn btn-secondary" onClick={handleCancelDelete}>
                     Cancel
-                </button>
-                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}>
+                </button> */}
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}
+                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}                                                >
                     Delete
                 </button>
             </div>
