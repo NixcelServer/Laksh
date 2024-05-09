@@ -51,6 +51,7 @@ function App() {
       location.pathname === "/usernavbar" ||
       location.pathname === "/userdashboard" ||
       location.pathname === "/buylead" ||
+      location.pathname === "/myorders" ||
 
     
 

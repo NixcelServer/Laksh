@@ -105,7 +105,7 @@ export default function Navbar() {
 
                 <Image src='' w='60px' objectFit={'cover'} onClick={()=>{navigate('/')}}  />
             </Box>
-                <Heading color={'red.500'} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} >Laksh</Heading>
+                <Heading color={'#9B59B6 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold' }}>Laksh</Heading>
 
            
           </HStack>

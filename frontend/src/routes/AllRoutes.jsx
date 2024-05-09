@@ -31,13 +31,13 @@ import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords"
 import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
 import AddProduct from "../pages/Products/AddProduct";
 import SellerLeftMenu from "../pages/Seller/SellerLeftMenu";
-import Buyleads from "../pages/Seller/BuyLeads";
 import CompanySetup from "../pages/Company/CompanySetup";
 import UserDashboard from "../pages/User/UserDashboard";
 import UserNavbar from "../pages/User/UserNavbar";
 import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubcategories";
 import Example from "../pages/Products/Example";
 import BuyLead from "../pages/BuyLead";
+import MyOrder from "../pages/User/MyOrders";
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
 export default function AllRoutes() {
@@ -196,15 +196,6 @@ export default function AllRoutes() {
           }
         />
 
-<Route
-          path="/buyleads"
-          element={
-            <>
-            <UserNavbar/>
-              <Buyleads/>
-            </>
-          }
-        />
 
 <Route
           path="/buylead"
@@ -227,20 +218,24 @@ export default function AllRoutes() {
           }
         />
 
+<Route
+          path="/myorders"
+          element={
+            <>
+            <UserNavbar/>
+              <MyOrder/>
+            </>
+          }
+        />
 
 
-       
-       
-       
+
+
+
+
+
 
         <Route />
-
-
-       
-           
-
-            
-           
 
             <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} />}>
             <Route path="/sell" element={

@@ -164,12 +164,11 @@ const Keywords = () => {
                                 type="button"
                                 className="btn btn-danger btn-sm"
                                 style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-
                                 onClick={() => handleDelete(keyword)}
-
-                              >
-                                Delete
-                              </button>
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
 
                                
 
@@ -198,7 +197,8 @@ const Keywords = () => {
                     aria-hidden={!showDeleteConfirmation}
                     style={{ display: showDeleteConfirmation ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
+                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="deleteConfirmationModalLabel">
@@ -226,12 +226,14 @@ const Keywords = () => {
                                     Cancel
                                 </button>
                                 <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={handleConfirmDelete}
-                                >
-                                    Delete
-                                </button>
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                onClick={() => handleDelete(keyword)}
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
                             </div>
                         </div>
                     </div>

@@ -124,7 +124,7 @@ const HomeContent = () => {
       >
         <div
           className="card"
-          style={{ padding: "0px", borderRadius: "12px", height: "220px" }}
+          style={{ padding: "0px", borderRadius: "12px", height: "212px" }}
         >
           <div className="card-body" style={{ marginBottom: "0px" }}>
             <Slider {...carouselSettings}>

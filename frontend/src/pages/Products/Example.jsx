@@ -1,415 +1,715 @@
-import React, { useEffect, useState } from "react";
-import feather from "feather-icons";
+import React, { useEffect, useState, useRef } from 'react';
+import feather from 'feather-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUOM, getUOM } from '../../redux/Admin/admin.action';
+import axios from 'axios';
 
-const AddNewProduct = () => {
-  useEffect(() => {
-    feather.replace();
-  }, []);
+const Example = () => {
+    const [uomName, setNewUOMName] = useState("");
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [UOMToDelete, setUOMToDelete] = useState(null);
+    const [showAddUOMModal, setShowAddUOMModal] = useState(false);
+    const dispatch = useDispatch();
+    const uoms = useSelector(state => state.masterData.uom);
 
-  const [showForm, setShowForm] = useState(false); // Initially hide the add product form
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [selectedKeywords, setSelectedKeywords] = useState([]);
-  const [showKeywords, setShowKeywords] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [productDetails, setProductDetails] = useState(null); // State to hold product details
-  const [updateMode, setUpdateMode] = useState(false); 
 
-  const toggleFormVisibility = () => {
-    setShowForm(!showForm);
-  };
+    const closeButtonRef = useRef(null);
 
-  const handleSaveChanges = () => {
-    // Logic to save changes
-    console.log('Changes saved!');
-  };
+    useEffect(() => {
+        feather.replace();
+        dispatch(getUOM());
+    }, []); // Empty dependency array means this effect runs only once after the component mounts
 
-  const handleFileChange = (event, setPreview) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+    const handleDelete = async (uom) => {
 
-    reader.onloadend = () => {
-      setPreview(reader.result);
-    };
+        setUOMToDelete(uom);
+        setShowDeleteConfirmation(true);
+      };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
-
-  const handleSaveAndContinue = () => {
-    // Logic to save changes and continue
-    console.log('Changes saved and continue to next step!');
-    const formData = new FormData(document.querySelector('form'));
-    const data = Object.fromEntries(formData.entries());
-    setProductDetails(data);
-    setShowForm(false); // Hide the form after saving
-  };
-
-  const handleSubmit = () => {
-    setShowPopup(true);
-    // Set product details here
-    setProductDetails({
-      productName: document.getElementsByName("productName")[0].value,
-      category: document.getElementsByName("category")[0].value,
-      unit: document.getElementsByName("unit")[0].value,
-      price: document.getElementsByName("price")[0].value,
-      description: document.getElementsByName("description")[0].value,
-      subcategory: document.getElementsByName("subcategory")[0].value,
-      pricePer: document.getElementsByName("pricePer")[0].value,
-      keywords: selectedKeywords.join(", "),
-    });
-    // Hide the add product form after submitting
-    setShowForm(false);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
-  const handleDropdownClick = () => {
-    setShowKeywords(!showKeywords);
-  };
-
-  const handleCancelUpdate = () => {
-    setUpdateMode(false); // Exit update mode
-  };
-
-  // Function to handle update
-  const handleUpdate = () => {
-    // Logic to update product details
-    console.log('Product details updated!');
-    setUpdateMode(false); // Exit update mode after updating
-  };
-
-  const handleUpdateProductDetails = () => {
-    setShowForm(!showForm);
-  };
-
-  // Function to handle delete product details
-  const handleDeleteProductDetails = () => {
-    setProductDetails(falls); // Reset product details
-    // Hide the add product form after submitting
-   // setShowForm(false);
-
+      const handleCancelDelete = () => {
+        setShowDeleteConfirmation(false);
+      }
     
-  };
-  return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-90px" }}>
-      <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
-          <button
-            type="button"
-            style={{
-              backgroundColor: "#4CAF50",
-              border: "none",
-              color: "white",
-              padding: "1px 10px",
-              fontSize: "1.5em",
-              cursor: "pointer",
-              borderRadius: "20px",
-              fontSize: "1em" 
-            }}
-            onClick={toggleFormVisibility}
-          >
-            <span style={{ marginRight: "5px", fontWeight: "bold" }}>+</span> Add Product
-          </button>
-        </div>
+      const handleConfirmDelete = async() => {
+        const uom = UOMToDelete;
+        try {
+          const userString =  sessionStorage.getItem('user');
+          const user = JSON.parse(userString);
+          const encUserId = user.encUserId;
+      
+          // Include both encUserId and encuomId in the payload
+          const payload = {
+            encUserId
+          };
+      
+          // Perform delete operation using encuomId and encUserId
+          const response = await axios.delete(`http://127.0.0.1:8000/api/unit-of-measurements/${uom.encUomId}`, { data: payload });      
+          //console.log("uom deleted successfully:", response.data);
+          
+          // Refetch uoms after deletion
+          dispatch(getUOM());
+        } catch (error) {
+          console.error("Error deleting uom:", error);
+        }
+        //dispatch(getCategories(updatedCategories));
+        setShowDeleteConfirmation(false);
+        
+      };
+    
+    const handleSaveChanges = async (event) => {
+        // Define the logic for saving changes
+        // Define the logic for saving changes
+        event.preventDefault();
 
-        {showForm && (
-          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="card" style={{ width: "100%", marginBottom: "20px", background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
-                  <div className="card-statistic-4">
-                    <div className="align-items-center justify-content-between">
-                      <div className="row">
-                        <div className="col-lg-4">
-                          <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="card">
+        const userString = sessionStorage.getItem('user');
+        // Parse the user object from the string format stored in sessionStorage
+        const user = JSON.parse(userString);
+    
+        // Retrieve the encUserId from the user object
+        const encUserId = user.encUserId;
+        console.log(encUserId);
+        
+        const payload ={
+          uomName,encUserId   
+        }
+        console.log(payload);
+
+        try {
+          
+            console.log("in try block");
+            
+            await dispatch(addUOM(payload));
+            console.log("uom added");
+            
+           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+            dispatch(getUOM());
+            console.log("update redux");
+            // console.log("Category added successfully:", response.data);
+      
+           // fetchCategories();
+            closeButtonRef.current.click();
+           
+            
+            
+          } catch (error) {
+            console.error("Error adding uom:", error);
+           // setError(error.message); // Set error state
+          }
+
+
+
+    };
+    
+    return (
+        <div>
+            {/* "Add New" button */}
+            <div className="main-content">
+                <section className="section">
+                    <div className="section-body">
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="card">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="card">
                                     <div className="card-header">
-                                      <h4>Add Image</h4>
-                                    </div>
-                                    {photoPreview && (
-                                      <div className="file-preview">
-                                        <img
-                                          src={photoPreview}
-                                          alt="Photo Preview"
-                                          style={{ width: "100%", height: "auto" }}
-                                        />
-                                      </div>
-                                    )}
-                                    <div className="card-body">
-                                      <div className="fallback">
-                                        <input
-                                          type="file"
-                                          id="photo"
-                                          name="photo"
-                                          accept="image/*"
-                                          onChange={(e) =>
-                                            handleFileChange(
-                                              e,
-                                              setPhotoPreview
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </section>
-                          </div>
-                        </div>
-                        <div className="col-lg-4">
-                          <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
-                                    <label>Product Name:</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="productName"
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Category:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="category"
-                                    >
-                                      <option value="">Select Category</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Unit of Measurement:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="unit"
-                                    >
-                                      <option value="">Select Unit</option>
-                                      <option value="kg">Kilogram</option>
-                                      <option value="gm">Gram</option>
-                                      <option value="ltr">Liter</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Price :</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="price"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </section>
-                          </div>
-                        </div>
-                        <div className="col-lg-4">
-                          <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
-                                    <label>Product Description:</label>
-                                    <textarea
-                                      className="form-control"
-                                      rows="3"
-                                      style={{ height: "20px !important" }}
-                                      name="description"
-                                    ></textarea>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Subcategory:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="subcategory"
-                                    >
-                                      <option value="">Select Subcategory</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Price per:</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="pricePer"
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Keywords:</label>
-                                    <div
-                                      className="form-control"
-                                      style={{ height: "20px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
-                                      onClick={handleDropdownClick}
-                                    >
-                                      <span style={{ textAlign: "center" , padding:"0"}}></span>
-                                      {showKeywords && (
-                                        <div
-                                          style={{
-                                            position: "absolute",
-                                            zIndex: 1,
-                                            top: "100%",
-                                            left: 0,
-                                            background: "#fff",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            maxHeight: "120px",
-                                            overflowY: "auto",
-                                            width: "100%",
-                                            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-                                            animation: "slideDown 0.3s ease forwards",
-                                          }}
-                                        >
-                                          {['Keyword 1', 'Keyword 2', 'Keyword 3'].map((keyword) => (
-                                            <div
-                                              key={keyword}
-                                              style={{ padding: "5px", cursor: "pointer", transition: "background-color 0.3s" }}
-                                              onClick={() => handleKeywordOptionClick(keyword)}
+                                        <div>
+                                            <button
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 10,
+                                                    right: 10,
+                                                    padding: '1px 20px',
+                                                    backgroundColor: 'dodgerblue',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '5px',
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => setShowAddUOMModal(true)}
                                             >
-                                              <input
-                                                type="checkbox"
-                                                value={keyword}
-                                                checked={selectedKeywords.includes(keyword)}
-                                                onChange={handleCheckboxChange}
-                                                onContextMenu={handleContextMenu}
-                                                style={{ marginRight: '5px' }}
-                                              />
-                                              {keyword}
-                                            </div>
-                                          ))}
+                                                {/* Plus sign icon */}
+                                                <i className="feather icon-plus"></i>
+                                                Add New
+                                            </button>
                                         </div>
-                                      )}
+                                        <h4>Unit of Measurement</h4>
                                     </div>
-                                  </div>
-                                  {/* Submit and Continue Button */}
-                                  {showForm && (
-                                    <button
-                                      type="button"
-                                      style={{
-                                        bottom: "20px",
-                                        right: "70px",
-                                        backgroundColor: "#4CAF50",
-                                        border: "none",
-                                        color: "white",
-                                        padding: "8px 5px",
-                                        fontSize: "1em",
-                                        cursor: "pointer",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={handleSubmit}
-                                    >
-                                      Save and Continue
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </section>
+                                    
+
+                                    <div className="main-content">
+  <section className="section">
+    <div className="section-body">
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h4>Basic DataTables</h4>
+            </div>
+            <div className="card-body">
+              <div className="table-responsive">
+                <table className="table table-striped" id="table-1">
+                  <thead>
+                    <tr>
+                      <th className="text-center">
+                        #
+                      </th>
+                      <th>Task Name</th>
+                      <th>Progress</th>
+                      <th>Members</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        1
+                      </td>
+                      <td>Create a mobile app</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-40">
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Display product details card */}
-        {productDetails && (
-          <div className="card" style={{ 
-            padding: '20px',
-            maxWidth: '1000px', 
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
-            marginTop: '20px', // Add margin top for separation
-            position: 'relative' // Position relative for absolute positioning of delete button
-          }}>
-            <div className="row">
-              <div className="col-lg-6" style={{ padding: '20px' }}>
-                <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
-                  {photoPreview && (
-                    <img src={photoPreview} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
-                  )}
-                </div>
-              </div>
-              <div className="col-lg-6" style={{ padding: '10px' }}>
-                <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {productDetails.productName || 'Sample Product'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {productDetails.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {productDetails.category || 'Laboratory Equipment'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {productDetails.subcategory || 'Glassware'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {productDetails.keywords || 'Flask, Laboratory, Chemistry'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {productDetails.price || '$50'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {productDetails.unit || 'Each'}</p>
-{/* Buttons for update and delete */}
-{updateMode ? (
-              <>
-                <button onClick={handleUpdate} style={{ marginRight: '5px',marginRight: '5px', fontWeight: 'bold' }}>Update</button>
-                <button onClick={handleCancelUpdate} style={{marginRight: '5px', fontWeight: 'bold',backgroundColor:'#F9E79F'}}>Cancel</button>
-              </>
-            ) : (
-              <button onClick={handleUpdateProductDetails}style={{
-                backgroundColor: '#58D68D',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}  >Update</button>
-            )}
-
-
-
-            {/* Delete button */}
-            <button
-              type="button"
-              onClick={handleDeleteProductDetails}
-              style={{
-                backgroundColor: '#ff0000',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}
-            >
-              Delete
-            </button>
-                </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                      </td>
+                      <td>2018-01-20</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        2
+                      </td>
+                      <td>Redesign homepage</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar width-per-60" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-3.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                      </td>
+                      <td>2018-04-10</td>
+                      <td>
+                        <div className="badge badge-info badge-shadow">Todo</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        3
+                      </td>
+                      <td>Backup database</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-warning width-per-70" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                      </td>
+                      <td>2018-01-29</td>
+                      <td>
+                        <div className="badge badge-warning badge-shadow">In Progress</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        4
+                      </td>
+                      <td>Input data</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-90" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                      </td>
+                      <td>2018-01-16</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        5
+                      </td>
+                      <td>Create a mobile app</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-40">
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                      </td>
+                      <td>2018-01-20</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        6
+                      </td>
+                      <td>Redesign homepage</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar width-per-60" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-3.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                      </td>
+                      <td>2018-04-10</td>
+                      <td>
+                        <div className="badge badge-info badge-shadow">Todo</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        7
+                      </td>
+                      <td>Backup database</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-warning width-per-70" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                      </td>
+                      <td>2018-01-29</td>
+                      <td>
+                        <div className="badge badge-warning badge-shadow">In Progress</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        8
+                      </td>
+                      <td>Input data</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-90" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                      </td>
+                      <td>2018-01-16</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        9
+                      </td>
+                      <td>Create a mobile app</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-40">
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                      </td>
+                      <td>2018-01-20</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        10
+                      </td>
+                      <td>Redesign homepage</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar width-per-60" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-3.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                      </td>
+                      <td>2018-04-10</td>
+                      <td>
+                        <div className="badge badge-info badge-shadow">Todo</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        11
+                      </td>
+                      <td>Backup database</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-warning width-per-70" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                      </td>
+                      <td>2018-01-29</td>
+                      <td>
+                        <div className="badge badge-warning badge-shadow">In Progress</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        12
+                      </td>
+                      <td>Input data</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-90" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                      </td>
+                      <td>2018-01-16</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h4>Multi Select</h4>
+            </div>
+            <div className="card-body">
+              <div className="table-responsive">
+                <table className="table table-striped" id="table-2">
+                  <thead>
+                    <tr>
+                      <th className="text-center pt-3">
+                        <div className="custom-checkbox custom-checkbox-table custom-control">
+                          <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
+                          <label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
+                        </div>
+                      </th>
+                      <th>Task Name</th>
+                      <th>Progress</th>
+                      <th>Members</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="text-center pt-2">
+                        <div className="custom-checkbox custom-control">
+                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
+                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+                        </div>
+                      </td>
+                      <td>Create a mobile app</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar width-per-70" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                      </td>
+                      <td>2018-01-20</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td className="text-center pt-2">
+                        <div className="custom-checkbox custom-control">
+                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
+                          <label htmlFor="checkbox-2" className="custom-control-label">&nbsp;</label>
+                        </div>
+                      </td>
+                      <td>Redesign homepage</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar width-per-60" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-3.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                      </td>
+                      <td>2018-04-10</td>
+                      <td>
+                        <div className="badge badge-info badge-shadow">Todo</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td className="text-center pt-2">
+                        <div className="custom-checkbox custom-control">
+                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-3" />
+                          <label htmlFor="checkbox-3" className="custom-control-label">&nbsp;</label>
+                        </div>
+                      </td>
+                      <td>Backup database</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-warning width-per-70" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                      </td>
+                      <td>2018-01-29</td>
+                      <td>
+                        <div className="badge badge-warning badge-shadow">In Progress</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                    <tr>
+                      <td className="text-center pt-2">
+                        <div className="custom-checkbox custom-control">
+                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-4" />
+                          <label htmlFor="checkbox-4" className="custom-control-label">&nbsp;</label>
+                        </div>
+                      </td>
+                      <td>Input data</td>
+                      <td className="align-middle">
+                        <div className="progress progress-xs">
+                          <div className="progress-bar bg-success width-per-40" />
+                        </div>
+                      </td>
+                      <td>
+                        <img alt="image" src="assets/img/users/user-2.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-5.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-4.png" width={35} />
+                        <img alt="image" src="assets/img/users/user-1.png" width={35} />
+                      </td>
+                      <td>2018-01-16</td>
+                      <td>
+                        <div className="badge badge-success badge-shadow">Completed</div>
+                      </td>
+                      <td><a href="#" className="btn btn-primary">Detail</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-header">
+              <h4>Table With State Save</h4>
+            </div>
+            <div className="card-body">
+              <div className="table-responsive">
+                <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Office</th>
+                      <th>Age</th>
+                      <th>Start date</th>
+                      <th>Salary</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Tiger Nixon</td>
+                      <td>System Architect</td>
+                      <td>Edinburgh</td>
+                      <td>61</td>
+                      <td>2011/04/25</td>
+                      <td>$320,800</td>
+                    </tr>   
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  </section>
+  </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Delete confirmation modal */}
+                
+                <div
+                    className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
+                    id="deleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="deleteConfirmationModalLabel"
+                    aria-hidden={!showDeleteConfirmation}
+                    style={{ display: showDeleteConfirmation ? "block" : "none" ,
+                    }}
+                    
+                >
+                    
+                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="deleteConfirmationModalLabel">
+                                    Confirm Deletion
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    onClick={handleCancelDelete}
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+
+
+                            <div className="modal-body">
+                                Are you sure you want to delete{" "}
+                                {UOMToDelete && UOMToDelete.cat_name}?
+                            </div>
+                            <div className="modal-footer">
+                                {/* <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleCancelDelete}
+                                    style={{backgroundColor: ""}}
+                                >
+                                    Cancel
+                                </button> */}
+                                <button
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                onClick={() => handleDelete(UOM)}
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Add Unit Modal */}
+                <div
+                    className={`modal fade ${showAddUOMModal ? "show" : ""}`}
+                    id="addUnitModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="addUnitModalLabel"
+                    aria-hidden={!showAddUOMModal}
+                    style={{ display: showAddUOMModal ? "block" : "none" }}
+                >
+        <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    <div className="modal-content">
+        <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
+            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div className="modal-body">
+            <div className="form-group"style={{textAlign:'left'}}>
+                <label htmlFor="uomName">UOM </label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="uomName"
+                    placeholder="Enter UOM"
+                    value={uomName}
+                    onChange={(e) => setNewUOMName(e.target.value)}
+                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
+                />
+            </div>
+        </div>
+        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+
+           
+        </div>
+    );
 };
 
-export default AddNewProduct;
+export default Example;
