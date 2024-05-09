@@ -190,7 +190,7 @@ export default function Sign() {
             </FormControl>
             <FormControl id="con_password" isRequired>
               <FormLabel>Mob No </FormLabel>
-              <InputGroup>
+              <InputGroup>3
               <InputLeftElement
             pointerEvents="none"
             children={countryCode}
