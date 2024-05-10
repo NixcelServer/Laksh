@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Company;
-
-use App\Helpers\EncDecHelper;
+use App\Models\CompanyAddress;
+use App\Models\GstInfo;
+use App\Models\PanInfo;
+use App\Models\SocialInfo;
+use App\Models\BankDetails;
 use Illuminate\Support\Facades\Date;
+use App\Helpers\EncDecHelper;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class AuthController extends Controller
@@ -68,7 +74,7 @@ class AuthController extends Controller
         }
        // return response()->json($request);
         $encPass = EncDecHelper::encryptData($request->password);
-
+        
         $user = new User;
         $user->u_name = $request->name;
         $user->u_email = $request->email;
@@ -85,7 +91,25 @@ class AuthController extends Controller
         $company->tbl_user_id = $userId;
         $company->save();
 
+        $companyAddress = new CompanyAddress;
+        $companyAddress->tbl_company_id = $company->tbl_company_id;
+        $companyAddress->save();
 
+        $gstInfo = new GstInfo;
+        $gstInfo->tbl_company_id = $company->tbl_company_id;
+        $gstInfo->save();
+
+        $panInfo = new PanInfo;
+        $panInfo->tbl_company_id = $company->tbl_company_id;
+        $panInfo->save();
+
+        $bankDetails = new BankDetails;
+        $bankDetails->tbl_company_id = $company->tbl_company_id;
+        $bankDetails->save();
+
+        $csi = new SocialInfo;
+        $csi->tbl_company_id = $company->tbl_company_id;
+        $csi->save();
 
         //insert entry into mst_tbl_companies
         // $userId = $user->tbl_user_id;

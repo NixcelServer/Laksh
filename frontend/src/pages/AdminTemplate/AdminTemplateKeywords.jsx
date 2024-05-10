@@ -81,12 +81,12 @@ const Keywords = () => {
             console.log("in try block");
             
             await dispatch(addKeyword(payload));
-            console.log("category added");
+            console.log("keyword added");
             
            // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
             dispatch(getKeywords());
             console.log("update redux");
-            // console.log("Category added successfully:", response.data);
+            // console.log("keyword added successfully:", response.data);
       
            // fetchCategories();
             closeButtonRef.current.click();
@@ -94,7 +94,7 @@ const Keywords = () => {
             
             
           } catch (error) {
-            console.error("Error adding category:", error);
+            console.error("Error adding keyword:", error);
            // setError(error.message); // Set error state
           }
 
@@ -163,11 +163,12 @@ const Keywords = () => {
                               <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px" }}
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
                                 onClick={() => handleDelete(keyword)}
-                              >
-                                Delete
-                              </button>
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
 
                                
 
@@ -196,7 +197,8 @@ const Keywords = () => {
                     aria-hidden={!showDeleteConfirmation}
                     style={{ display: showDeleteConfirmation ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
+                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="deleteConfirmationModalLabel">
@@ -224,12 +226,14 @@ const Keywords = () => {
                                     Cancel
                                 </button>
                                 <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={handleConfirmDelete}
-                                >
-                                    Delete
-                                </button>
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                onClick={() => handleDelete(keyword)}
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -245,56 +249,41 @@ const Keywords = () => {
                     aria-hidden={!showAddKeywordModal}
                     style={{ display: showAddKeywordModal ? "block" : "none" }}
                 >
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <form>
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="addUnitModalLabel">
-                                        Add New Keyword
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="close"
-                                        onClick={() => setShowAddKeywordModal(false)}
-                                        aria-label="Close"
-                                    >
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="form-group">
-                                        <label htmlFor="KeywordName">Keyword Name</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="KeywordName"
-                                            placeholder="Enter Keyword Name"
-                                            value={keywordName}
-                                            onChange={(e) => setNewKeywordName(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        ref={closeButtonRef}
-                                        type='button'
-                                        className='btn btn-secondary'
-                                        onClick={() => setShowAddKeywordModal(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={handleSaveChanges}
-                                        style={{ marginTop: '0px' }}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                                <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    <div className="modal-content">
+        <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalCenterTitle">Add New keyword</h5>
+            <button type="button" className="close" onClick={() => setShowAddKeywordModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div className="modal-body">
+            <div className="form-group"style={{textAlign:'left'}}>
+                <label htmlFor="keywordName">keyword Name</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="keywordName"
+                    placeholder="Enter keyword Name"
+                    value={keywordName}
+                    onChange={(e) => setNewKeywordName(e.target.value)}
+                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
+                />
+            </div>
+        </div>
+        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
 

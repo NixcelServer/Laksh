@@ -1,19 +1,86 @@
-import React, { useEffect, useState } from "react";
+//import React, { useEffect, useState } from "react";
 import feather from "feather-icons";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
+// import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
+// import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
-const Addnewproduct = () => {
+const AddNewProduct = () => {
   useEffect(() => {
     feather.replace();
-  }, []); // Empty dependency array means this effect runs only once after the component mounts
+  }, []);
 
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [productDetails, setProductDetails] = useState(false);
-  const [updateMode, setUpdateMode] = useState(false);
+  const [selectedKeywords, setSelectedKeywords] = useState([]);
+  const [showKeywords, setShowKeywords] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [productDetails, setProductDetails] = useState(null); // State to hold product details
+  const [updateMode, setUpdateMode] = useState(false); 
+  const dispatch = useDispatch();
+
+  // const categories = useSelector(state => state.adminReducer.categories);
+  // console.log("in categoreis",categories);
+  const categories = useSelector(state => state.masterData.categories);
+  const [selectedCategory, setSelectedCategory] = useState('');
+ 
+  const fetchCategories = async() => {
+   //return async (dispatch, getState) => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/categories");
+        const categoriesData = response.data;
+        dispatch(getCategories(categoriesData)); // Dispatch the action to update categories in Redux store
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    //};
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, [dispatch]); // useEffect will run whenever dispatch changes
+
+
+  const subCategories = useSelector(state => state.masterData.subCategories);
+  console.log("in sub cat",subCategories);
+  const fetchSubCategories = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/sub-categories");
+      const subCategoriesData = response.data;
+      dispatch(getSubCategories(subCategoriesData));
+    } catch (error) {
+      console.error("Error fetching keywords:", error);
+      //setError("Failed to fetch keywords. Please try again later.");
+    } 
+  };
+  useEffect(() => {
+    fetchSubCategories();
+  }, []); 
+
+  const keywords = useSelector(state => state.masterData.keywords);
+
+  const fetchKeywords = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/keywords");
+      const keywordsData = response.data;
+      dispatch(getKeywords(keywordsData));
+    } catch (error) {
+      console.error("Error fetching keywords:", error);
+    } 
+  };
+
+  useEffect(() => {
+    fetchKeywords();
+  }, []); 
+
+  const toggleFormVisibility = () => {
+    setShowForm(!showForm);
+  };
 
   const handleSaveChanges = () => {
     // Logic to save changes
-    console.log("Changes saved!");
+    console.log('Changes saved!');
   };
 
   const handleFileChange = (event, setPreview) => {
@@ -33,226 +100,287 @@ const Addnewproduct = () => {
 
   const handleSaveAndContinue = () => {
     // Logic to save changes and continue
-    console.log("Changes saved and continue to next step!");
-    const formData = new FormData(document.querySelector("form"));
+    console.log('Changes saved and continue to next step!');
+    const formData = new FormData(document.querySelector('form'));
     const data = Object.fromEntries(formData.entries());
     setProductDetails(data);
     setShowForm(false); // Hide the form after saving
   };
 
-  const toggleFormVisibility = () => {
-    setShowForm(!showForm);
+  const handleSubmit = () => {
+    setShowPopup(true);
+    // Set product details here
+    setProductDetails({
+      productName: document.getElementsByName("productName")[0].value,
+      category: document.getElementsByName("category")[0].value,
+      unit: document.getElementsByName("unit")[0].value,
+      price: document.getElementsByName("price")[0].value,
+      description: document.getElementsByName("description")[0].value,
+      subcategory: document.getElementsByName("subcategory")[0].value,
+      pricePer: document.getElementsByName("pricePer")[0].value,
+      keywords: selectedKeywords.join(", "),
+    });
+    // Hide the add product form after submitting
+    setShowForm(false);
   };
 
-  const handleDeleteProductDetails = () => {
-    // Logic to delete product details
-    setProductDetails(false);
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
-  const handleUpdateProductDetails = () => {
-    setShowForm(!showForm);
+  const handleDropdownClick = () => {
+    setShowKeywords(!showKeywords);
   };
 
   const handleCancelUpdate = () => {
     setUpdateMode(false); // Exit update mode
   };
 
+  // Function to handle update
   const handleUpdate = () => {
     // Logic to update product details
-    console.log("Product details updated!");
+    console.log('Product details updated!');
     setUpdateMode(false); // Exit update mode after updating
   };
 
+  const handleUpdateProductDetails = () => {
+    setShowForm(!showForm);
+  };
+
+  // Function to handle delete product details
+  const handleDeleteProductDetails = () => {
+    setProductDetails(false); // Reset product details
+    // Hide the add product form after submitting
+   // setShowForm(false);
+
+    
+  };
   return (
-    <div>
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Add Product Button */}
-        <div style={{ marginTop:"-10%",marginLeft: "30%", marginBottom: "2%", color: "black" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-90px" }}>
+      <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <button
             type="button"
             style={{
               backgroundColor: "#4CAF50",
               border: "none",
               color: "white",
-              padding: "2vh 4vw",
-              textAlign: "center",
-              textDecoration: "none",
-              display: "inline-block",
-              fontSize: "2.5vh",
-              margin: "1vh 1vw",
+              padding: "1px 10px",
+              fontSize: "1.5em",
               cursor: "pointer",
-              borderRadius: "2vw",
-              transition: "background-color 0.3s ease",
+              borderRadius: "20px",
+              fontSize: "1em" 
             }}
             onClick={toggleFormVisibility}
           >
-            <span
-              style={{ marginRight: "1vw", fontWeight: "bold", color: "black" }}
-            >
-              +
-            </span>{" "}
-            Add Product
+            <span style={{ marginRight: "5px", fontWeight: "bold" }}>+</span> Add Product
           </button>
         </div>
 
-        {/* Product Details Section */}
-        <section className="section">
-          <div className="row ">
-            <div className="col-xl-9 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-              <div className="card" style={{ height: "60vh", width: "120%" }}>
-                <div className="card-statistic-4">
-                  <div className="align-items-center justify-content-between">
-                    <div className="row ">
-                      {/* Add Image Section */}
-                      <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
-                        <div className="card-content">
-                          <section className="section">
-                            <div className="section-body">
-                              <div className="row">
-                                <div className="col-7">
+        {showForm && (
+          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="card" style={{ width: "100%", marginBottom: "20px", background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
+                  <div className="card-statistic-4">
+                    <div className="align-items-center justify-content-between">
+                      <div className="row">
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
                                   <div className="card">
                                     <div className="card-header">
                                       <h4>Add Image</h4>
                                     </div>
                                     {photoPreview && (
-                              <div className="file-preview">
-                                <img
-                                  src={photoPreview}
-                                  alt="Photo Preview"
-                                  style={{
-                                    height: "20%",
-                                    width: "110%",
-                                    marginTop: "1%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                  }}
-                                />
-                              </div>
-                            )}
-                                    <div
-                                      className="card-body"
-                                    
-                                    >
-                                      
-                                    
-                                      
-                                        <div className="fallback">
-                                          <input
-                                            type="file"
-                                            id="photo"
-                                            name="photo"
-                                            accept="image/*"
-                                            onChange={(e) =>
-                                              handleFileChange(
-                                                e,
-                                                setPhotoPreview
-                                              )
-                                            }
-                                          />
-                                        </div>
-                                      
+                                      <div className="file-preview">
+                                        <img
+                                          src={photoPreview}
+                                          alt="Photo Preview"
+                                          style={{ width: "100%", height: "auto" }}
+                                        />
+                                      </div>
+                                    )}
+                                    <div className="card-body">
+                                      <div className="fallback">
+                                        <input
+                                          type="file"
+                                          id="photo"
+                                          name="photo"
+                                          accept="image/*"
+                                          onChange={(e) =>
+                                            handleFileChange(
+                                              e,
+                                              setPhotoPreview
+                                            )
+                                          }
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </section>
-                        </div>
-                      </div>
-                      {/* Other Product Details */}
-                      <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                        <div className="d-flex">
-                          <div
-                            className="flex-grow-1 "
-                            style={{ marginLeft: "-20vh" }}
-                          >
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Product Name:</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              />
-                            </div>
-                            
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Category:</label>
-                              <select
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              >
-                                <option value="">Select Category</option>
-                                {/* options will be populated dynamically */}
-                              </select>
-                            </div>
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Subcategory:</label>
-                              <select
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              >
-                                <option value="">Select Subcategory</option>
-                                {/* options will be populated dynamically */}
-                              </select>
-                            </div>
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Unit of Measurement:</label>
-                              <select
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              >
-                                <option value="">Select Unit</option>
-                                <option value="kg">Kilogram</option>
-                                <option value="gm">Gram</option>
-                                <option value="ltr">Liter</option>
-                                {/* more options can be added */}
-                              </select>
-                            </div>
+                            </section>
                           </div>
-                          <div
-                            className="flex-grow-1"
-                            style={{ marginLeft: "6%" }}
-                          >
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Product Description:</label>
-                              <textarea
-                                className="form-control" 
-                                rows="1"
-                                style={{ height: "20px", width: "200px" }}
-                              ></textarea>
-                            </div>
-                            
-                            
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Price per:</label>
-                              <input
-                                type="number"
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              />
-                              <select
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              >
-                                <option value="">Select Unit</option>
-                                <option value="kg">Kilogram</option>
-                                <option value="gm">Gram</option>
-                                <option value="ltr">Liter</option>
-                                {/* more options can be added */}
-                              </select>
-                            </div>
-                            <div className="form-group" style={{ textAlign: "left" }}>
-                              <label>Keywords:</label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                style={{ height: "20px", width: "200px" }}
-                              />
-                            </div>
-
-                          
-                            
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group">
+                                    <label>Product Name:</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="productName"
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Category:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="category"
+                                    >
+                                      <option value="">Select Category</option>
+                                      {categories.map(category => (
+                                        <option key={category.encCatId} value={category.encCatId}>{category.cat_name}</option>
+                                    ))}
+                                    </select>
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Unit of Measurement:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="unit"
+                                    >
+                                      
+                                    </select>
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Price :</label>
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="price"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </section>
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group">
+                                    <label>Product Description:</label>
+                                    <textarea
+                                      className="form-control"
+                                      rows="3"
+                                      style={{ height: "20px !important" }}
+                                      name="description"
+                                    ></textarea>
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Subcategory:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="subcategory"
+                                    >
+                                      <option value="">Select Subcategory</option>
+                                      {subCategories.map(subCategory => (
+                                        <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
+                                    ))}
+                                    </select>
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Price per:</label>
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      style={{ height: "20px" }}
+                                      name="pricePer"
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Keywords:</label>
+                                    <div
+                                      className="form-control"
+                                      style={{ height: "20px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
+                                      onClick={handleDropdownClick}
+                                    >
+                                      <span style={{ textAlign: "center" , padding:"0"}}></span>
+                                      {showKeywords && (
+                                        <div
+                                          style={{
+                                            position: "absolute",
+                                            zIndex: 1,
+                                            top: "100%",
+                                            left: 0,
+                                            background: "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            maxHeight: "120px",
+                                            overflowY: "auto",
+                                            width: "100%",
+                                            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
+                                            animation: "slideDown 0.3s ease forwards",
+                                          }}
+                                        >
+                                          {['Keyword 1', 'Keyword 2', 'Keyword 3'].map((keyword) => (
+                                            <div
+                                              key={keyword}
+                                              style={{ padding: "5px", cursor: "pointer", transition: "background-color 0.3s" }}
+                                              onClick={() => handleKeywordOptionClick(keyword)}
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                value={keyword}
+                                                checked={selectedKeywords.includes(keyword)}
+                                                // onChange={handleCheckboxChange}
+                                                onContextMenu={handleContextMenu}
+                                                style={{ marginRight: '5px' }}
+                                              />
+                                              {keyword}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {/* Submit and Continue Button */}
+                                  {showForm && (
+                                    <button
+                                      type="button"
+                                      style={{
+                                        bottom: "20px",
+                                        right: "70px",
+                                        backgroundColor: "#4CAF50",
+                                        border: "none",
+                                        color: "white",
+                                        padding: "8px 5px",
+                                        fontSize: "1em",
+                                        cursor: "pointer",
+                                        borderRadius: "5px",
+                                      }}
+                                      onClick={handleSubmit}
+                                    >
+                                      Save and Continue
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </section>
                           </div>
                         </div>
                       </div>
@@ -261,11 +389,90 @@ const Addnewproduct = () => {
                 </div>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* Display product details card */}
+        {productDetails && (
+          <div className="card" style={{ 
+            padding: '20px',
+            maxWidth: '1000px', 
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
+            marginTop: '20px', // Add margin top for separation
+            position: 'relative' // Position relative for absolute positioning of delete button
+          }}>
+            <div className="row">
+              <div className="col-lg-6" style={{ padding: '20px' }}>
+                <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
+                  {photoPreview && (
+                    <img src={photoPreview} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
+                  )}
+                </div>
+              </div>
+              <div className="col-lg-6" style={{ padding: '10px' }}>
+                <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {productDetails.productName || 'Sample Product'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {productDetails.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {productDetails.category || 'Laboratory Equipment'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {productDetails.subcategory || 'Glassware'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {productDetails.keywords || 'Flask, Laboratory, Chemistry'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {productDetails.price || '$50'}</p>
+                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {productDetails.unit || 'Each'}</p>
+{/* Buttons for update and delete */}
+{updateMode ? (
+              <>
+                <button onClick={handleUpdate} style={{ marginRight: '5px',marginRight: '5px', fontWeight: 'bold' }}>Update</button>
+                <button onClick={handleCancelUpdate} style={{marginRight: '5px', fontWeight: 'bold',backgroundColor:'#F9E79F'}}>Cancel</button>
+              </>
+            ) : (
+              <button onClick={handleUpdateProductDetails}style={{
+                backgroundColor: '#58D68D',
+                border: 'none',
+                color: 'white',
+                padding: '2px 12px',
+                textAlign: 'center',
+                textDecoration: 'none',
+                display: 'inline-block',
+                fontSize: '14px',
+                margin: '10px 0',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                
+              }}  >Update</button>
+            )}
+
+
+
+            {/* Delete button */}
+            <button
+              type="button"
+              onClick={handleDeleteProductDetails}
+              style={{
+                backgroundColor: '#ff0000',
+                border: 'none',
+                color: 'white',
+                padding: '2px 12px',
+                textAlign: 'center',
+                textDecoration: 'none',
+                display: 'inline-block',
+                fontSize: '14px',
+                margin: '10px 0',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                
+              }}
+            >
+              Delete
+            </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
+        )}
       </div>
     </div>
   );
 };
 
-export default Addnewproduct;
+export default AddNewProduct;

@@ -11,7 +11,8 @@ function App() {
   const location = useLocation();
   return (
     <div className="App">
-      {location.pathname === "/adminDashboard" ||
+      {
+      location.pathname === "/adminDashboard" ||
   
      
       location.pathname === "/sell" ||
@@ -19,20 +20,14 @@ function App() {
   location.pathname === "/admintemplatedashboard" ||
   location.pathname === "/admintemplatekeywords" ||
   location.pathname === "/admintemplatecategories" ||
-  location.pathname.startsWith("/subcategories/") ||
+  location.pathname === "/subcategories" ||
   location.pathname === "/admintemplateuom" ||
-
-  
-
-      location.pathname === "/admin" ? (
+  location.pathname === "/admin" ? (
 
         false
       ) : (
         <Navbar />
-      )}
-
-
-      
+      )} 
 
       <AllRoutes />
 
@@ -43,10 +38,18 @@ function App() {
       location.pathname === "/admintemplatedashboard" ||
       location.pathname === "/admintemplatenavbar" ||
       location.pathname === "/admintemplatecategories" ||
-      location.pathname.startsWith("/subcategories/") ||
+      location.pathname === "/subcategories" ||
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
+      location.pathname === "/admintemplatemaincontent" ||
       location.pathname === "/usernavbar" ||
+      location.pathname === "/userdashboard" ||
+
+      location.pathname === "/companysetup" ||
+
+      location.pathname === "/buylead" ||
+      location.pathname === "/myorders" ||
+
 
     
 
