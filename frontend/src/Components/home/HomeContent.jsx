@@ -85,12 +85,12 @@ const HomeContent = () => {
                   marginBottom: "5px",
                 }}
               >
-                Product
+                Requirements
               </label>
               <input
                 type="text"
                 className="form-control text-center"
-                placeholder="Enter Product Name"
+                placeholder="Enter Your Requirements"
                 style={{
                   textAlign: "center",
                   height: "30px",
