@@ -77,12 +77,12 @@ export default function Login() {
           boxShadow={'lg'}
           p={8}>
           <Stack spacing={4}>
-            <FormControl id="email">
+            <FormControl id="email" required>
               <FormLabel>Email address</FormLabel>
               <Input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}} />
             </FormControl>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
+            <FormControl id="password" required>
+              <FormLabel>Password</FormLabel >
               <Input type="password" value={password} onChange={(e)=>{setPass(e.target.value)}} />
             </FormControl>
             <Stack spacing={10}>
