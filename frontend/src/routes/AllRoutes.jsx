@@ -38,6 +38,8 @@ import AdminTemplateSubcategories from "../pages/AdminTemplate/AdminTemplateSubc
 import Example from "../pages/Products/Example";
 import BuyLead from "../pages/BuyLead";
 import MyOrder from "../pages/User/MyOrders";
+import Eg from "../pages/Products/Eg";
+
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
 export default function AllRoutes() {
@@ -176,15 +178,7 @@ export default function AllRoutes() {
           }
         />
 
-<Route
-          path="/byelead"
-          element={
-            <>
-            
-              <BuyLead/>
-            </>
-          }
-        />
+
 
 <Route
           path="/addproduct"
@@ -224,6 +218,16 @@ export default function AllRoutes() {
             <>
             <UserNavbar/>
               <MyOrder/>
+            </>
+          }
+        />
+
+<Route
+          path="/datatables"
+          element={
+            <>
+            <Eg/>
+
             </>
           }
         />

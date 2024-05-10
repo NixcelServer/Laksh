@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import feather from "feather-icons";
 
+// install react slick use following commands
+// npm install react-slick --save
+//or
+// npm install slick-carousel
+//or
+// npm install react-slick slick carousel
+
 const AddNewProduct = () => {
   useEffect(() => {
     feather.replace();
