@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
+//import React, { useEffect, useState } from "react";
 import feather from "feather-icons";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
+// import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
+// import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
 const AddNewProduct = () => {
   useEffect(() => {
@@ -13,6 +19,60 @@ const AddNewProduct = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [productDetails, setProductDetails] = useState(null); // State to hold product details
   const [updateMode, setUpdateMode] = useState(false); 
+  const dispatch = useDispatch();
+
+  // const categories = useSelector(state => state.adminReducer.categories);
+  // console.log("in categoreis",categories);
+  const categories = useSelector(state => state.masterData.categories);
+  const [selectedCategory, setSelectedCategory] = useState('');
+ 
+  const fetchCategories = async() => {
+   //return async (dispatch, getState) => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/categories");
+        const categoriesData = response.data;
+        dispatch(getCategories(categoriesData)); // Dispatch the action to update categories in Redux store
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    //};
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, [dispatch]); // useEffect will run whenever dispatch changes
+
+
+  const subCategories = useSelector(state => state.masterData.subCategories);
+  console.log("in sub cat",subCategories);
+  const fetchSubCategories = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/sub-categories");
+      const subCategoriesData = response.data;
+      dispatch(getSubCategories(subCategoriesData));
+    } catch (error) {
+      console.error("Error fetching keywords:", error);
+      //setError("Failed to fetch keywords. Please try again later.");
+    } 
+  };
+  useEffect(() => {
+    fetchSubCategories();
+  }, []); 
+
+  const keywords = useSelector(state => state.masterData.keywords);
+
+  const fetchKeywords = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/keywords");
+      const keywordsData = response.data;
+      dispatch(getKeywords(keywordsData));
+    } catch (error) {
+      console.error("Error fetching keywords:", error);
+    } 
+  };
+
+  useEffect(() => {
+    fetchKeywords();
+  }, []); 
 
   const toggleFormVisibility = () => {
     setShowForm(!showForm);
@@ -187,6 +247,9 @@ const AddNewProduct = () => {
                                       name="category"
                                     >
                                       <option value="">Select Category</option>
+                                      {categories.map(category => (
+                                        <option key={category.encCatId} value={category.encCatId}>{category.cat_name}</option>
+                                    ))}
                                     </select>
                                   </div>
                                   <div className="form-group">
@@ -196,10 +259,7 @@ const AddNewProduct = () => {
                                       style={{ height: "20px" }}
                                       name="unit"
                                     >
-                                      <option value="">Select Unit</option>
-                                      <option value="kg">Kilogram</option>
-                                      <option value="gm">Gram</option>
-                                      <option value="ltr">Liter</option>
+                                      
                                     </select>
                                   </div>
                                   <div className="form-group">
@@ -238,6 +298,9 @@ const AddNewProduct = () => {
                                       name="subcategory"
                                     >
                                       <option value="">Select Subcategory</option>
+                                      {subCategories.map(subCategory => (
+                                        <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
+                                    ))}
                                     </select>
                                   </div>
                                   <div className="form-group">
@@ -284,7 +347,7 @@ const AddNewProduct = () => {
                                                 type="checkbox"
                                                 value={keyword}
                                                 checked={selectedKeywords.includes(keyword)}
-                                                onChange={handleCheckboxChange}
+                                                // onChange={handleCheckboxChange}
                                                 onContextMenu={handleContextMenu}
                                                 style={{ marginRight: '5px' }}
                                               />

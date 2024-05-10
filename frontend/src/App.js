@@ -44,12 +44,12 @@ function App() {
       location.pathname === "/admintemplatemaincontent" ||
       location.pathname === "/usernavbar" ||
       location.pathname === "/userdashboard" ||
-<<<<<<< HEAD
+
       location.pathname === "/companysetup" ||
-=======
+
       location.pathname === "/buylead" ||
       location.pathname === "/myorders" ||
->>>>>>> 916d31515144a11efc20afb5f99f6fd8d816c73c
+
 
     
 
