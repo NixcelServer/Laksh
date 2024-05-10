@@ -10,6 +10,7 @@ use App\Http\Controllers\KeywordController;
 use App\Http\Controllers\UOMController;
 use App\Http\Controllers\CompanyRegistrationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PostController;
 
 
 /*
@@ -91,7 +92,7 @@ Route::post('/registeryourcompany',[CompanyRegistrationController::class,'regist
 
 Route::get('/companydetails/{id}',[CompanyRegistrationController::class,'getCompany']);
 
-// validations 
+// validations for company registration
 Route::post('/check-cin-no/{id}',[CompanyRegistrationController::class,'checkCINNO']);
 Route::post('/check-company-name/{id}',[CompanyRegistrationController::class,'checkCompanyName']);
 Route::post('/check-tan-no/{id}',[CompanyRegistrationController::class,'checkTANNO']);
@@ -108,6 +109,9 @@ Route::post('/registerProduct',[ProductController::class,'registerProduct']);
 Route::get('/getall',[AdminController::class,'getAllAdmin']);
 
 Route::post('/product/store',[ProductController::class,'storeProduct']);
+
+//submit requirements routes
+Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

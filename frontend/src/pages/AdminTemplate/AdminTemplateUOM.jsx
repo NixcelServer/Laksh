@@ -231,7 +231,7 @@ const UOM = () => {
                                 type="button"
                                 className="btn btn-danger btn-sm"
                                 style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleDelete(UOM)}
+                                onClick={() => handleConfirmDelete(UOM)}
                             >
                                 {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
                                 delete
@@ -256,7 +256,7 @@ const UOM = () => {
     <div className="modal-content">
         <div className="modal-header">
             <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
-            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} ref={closeButtonRef} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

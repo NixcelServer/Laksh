@@ -1,6 +1,7 @@
 //import React, { useEffect, useState } from "react";
 import feather from "feather-icons";
 import axios from 'axios';
+import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
@@ -10,69 +11,98 @@ import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux
 const AddNewProduct = () => {
   useEffect(() => {
     feather.replace();
+    dispatch(getCategories());
+    dispatch(getSubCategories());
+    dispatch(getKeywords());
+    dispatch(getUOM());
   }, []);
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  // Sample data (you will get this from your reducer)
+  const options = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' },
+    // Add more options as needed
+  ];
+
+  const handleChange = selected => {
+    setSelectedOptions(selected);
+    const selectedKeywords = selected.map(option => option.label); // Extracting keyword names
+    setProductDetails(prevState => ({
+      ...prevState,
+      keywords: selectedKeywords // Update the keywords field in productDetails
+    }));
+    console.log(productDetails);
+    console.log(JSON.stringify(productDetails, null, 2));
+    console.log("Selected File:", productDetails.file);
+
+  };
 
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
   const [showKeywords, setShowKeywords] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [productDetails, setProductDetails] = useState(null); // State to hold product details
+  //te to hold product details
   const [updateMode, setUpdateMode] = useState(false); 
   const dispatch = useDispatch();
-
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
-  const categories = useSelector(state => state.masterData.categories);
+  
+  const [productDetails, setProductDetails] = useState({
+    encCompanyId: '',
+    prodName: '',
+    prodDescription: '',
+    prodCat: '',
+    prodSubCat: '',
+    keywords: [],
+    prodPrice: '',
+    pricePer: '',
+    minOrderQty: '',
+    prodUOM: '',
+    file: '',
+});
+
+
   const [selectedCategory, setSelectedCategory] = useState('');
  
-  const fetchCategories = async() => {
-   //return async (dispatch, getState) => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/categories");
-        const categoriesData = response.data;
-        dispatch(getCategories(categoriesData)); // Dispatch the action to update categories in Redux store
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    //};
-  };
-  useEffect(() => {
-    fetchCategories();
-  }, [dispatch]); // useEffect will run whenever dispatch changes
+   // useEffect will run whenever dispatch changes
 
-
+   const categories = useSelector(state => state.masterData.categories);
   const subCategories = useSelector(state => state.masterData.subCategories);
-  console.log("in sub cat",subCategories);
-  const fetchSubCategories = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/sub-categories");
-      const subCategoriesData = response.data;
-      dispatch(getSubCategories(subCategoriesData));
-    } catch (error) {
-      console.error("Error fetching keywords:", error);
-      //setError("Failed to fetch keywords. Please try again later.");
-    } 
-  };
-  useEffect(() => {
-    fetchSubCategories();
-  }, []); 
+  
+ 
 
   const keywords = useSelector(state => state.masterData.keywords);
 
-  const fetchKeywords = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/keywords");
-      const keywordsData = response.data;
-      dispatch(getKeywords(keywordsData));
-    } catch (error) {
-      console.error("Error fetching keywords:", error);
-    } 
-  };
+  const uoms = useSelector(state => state.masterData.uom);
 
-  useEffect(() => {
-    fetchKeywords();
-  }, []); 
+   //filtered out the sub categories based on category selected
+   const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    console.log("selected category",selectedCategory)
+    setProductDetails({ ...productDetails, prodCat: selectedCategory });
+    // Filter subcategories based on the selected category
+    const filteredSubcategories = subCategories.filter(subCategory => subCategory.encCatId === selectedCategory);
+    console.log("filtered sub cat", filteredSubcategories);
+    setFilteredSubCategories(filteredSubcategories);
+};
+
+  const handleUomChange = (e) => {
+    const selectedUom = e.target.value;
+    setProductDetails({...productDetails, prodUOM:selectedUom,});
+    
+  }
+
+  const handleCheckboxChange = () =>{}
+
+  const handleContextMenu = () => {}
+
+  const handleKeywordOptionClick = () => {
+  }
 
   const toggleFormVisibility = () => {
     setShowForm(!showForm);
@@ -83,8 +113,9 @@ const AddNewProduct = () => {
     console.log('Changes saved!');
   };
 
-  const handleFileChange = (event, setPreview) => {
-    const file = event.target.files[0];
+  const handleFileChange = (e, setPreview) => {
+    const file = e.target.files[0]; // Get the selected file
+    setProductDetails({ ...productDetails, file });
     const reader = new FileReader();
 
     reader.onloadend = () => {
@@ -97,31 +128,66 @@ const AddNewProduct = () => {
       setPreview(null);
     }
   };
+//   const handleFileChange = (e) => {
+//     setProductDetails({ ...productDetails, file: e.target.files[0] })
+// };
 
-  const handleSaveAndContinue = () => {
-    // Logic to save changes and continue
-    console.log('Changes saved and continue to next step!');
-    const formData = new FormData(document.querySelector('form'));
-    const data = Object.fromEntries(formData.entries());
-    setProductDetails(data);
-    setShowForm(false); // Hide the form after saving
-  };
+const handleSaveAndContinue = (e) => {
+  e.preventDefault();
 
-  const handleSubmit = () => {
-    setShowPopup(true);
-    // Set product details here
-    setProductDetails({
-      productName: document.getElementsByName("productName")[0].value,
-      category: document.getElementsByName("category")[0].value,
-      unit: document.getElementsByName("unit")[0].value,
-      price: document.getElementsByName("price")[0].value,
-      description: document.getElementsByName("description")[0].value,
-      subcategory: document.getElementsByName("subcategory")[0].value,
-      pricePer: document.getElementsByName("pricePer")[0].value,
-      keywords: selectedKeywords.join(", "),
-    });
-    // Hide the add product form after submitting
-    setShowForm(false);
+  
+console.log(encCompanyId);
+
+  // Update productDetails state with the obtained encCompanyId
+setProductDetails(prevProductDetails => ({
+...prevProductDetails,
+encCompanyId: encCompanyId
+}));
+  // Logic to save changes and continue
+  console.log(productDetails);
+  //debugger;
+  const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+      headers: {
+          'Content-Type': 'multipart/form-data'
+      }
+
+  });
+  //navigate('/');
+  setShowForm(false); // Hide the form after saving
+};
+const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+
+    useEffect(() => {
+        setProductDetails(prevProductDetails => ({
+            ...prevProductDetails,
+            encCompanyId: encCompanyId
+        }));
+    }, [encCompanyId]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    
+  
+    console.log(encCompanyId);
+    
+      // Update productDetails state with the obtained encCompanyId
+    setProductDetails(prevProductDetails => ({
+    ...prevProductDetails,
+    encCompanyId: encCompanyId
+    }));
+      // Logic to save changes and continue
+      console.log(productDetails);
+      //debugger;
+      const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+    
+      });
+      //navigate('/');
+      setShowForm(false); // Hide the form after saving
   };
 
   const handleClosePopup = () => {
@@ -135,7 +201,10 @@ const AddNewProduct = () => {
   const handleCancelUpdate = () => {
     setUpdateMode(false); // Exit update mode
   };
-
+  const formattedOptions = keywords.map(keyword => ({
+    value: keyword.encKeywordId, // assuming keyword_id is the unique identifier
+    label: keyword.keyword_name
+  }));
   // Function to handle update
   const handleUpdate = () => {
     // Logic to update product details
@@ -235,16 +304,21 @@ const AddNewProduct = () => {
                                     <input
                                       type="text"
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="productName"
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
+
                                     />
                                   </div>
                                   <div className="form-group">
                                     <label>Category:</label>
                                     <select
+                                    id="category"
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="category"
+                                      value={productDetails.prodCat}
+                                      onChange={handleCategoryChange}
                                     >
                                       <option value="">Select Category</option>
                                       {categories.map(category => (
@@ -252,14 +326,21 @@ const AddNewProduct = () => {
                                     ))}
                                     </select>
                                   </div>
+                                
+
                                   <div className="form-group">
-                                    <label>Unit of Measurement:</label>
+                                    <label>Price per:</label>
                                     <select
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="unit"
-                                    >
+                                      onChange={handleUomChange}
                                       
+                                    >
+                                       <option value="">Select Unit of Measurements</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
                                     </select>
                                   </div>
                                   <div className="form-group">
@@ -267,8 +348,9 @@ const AddNewProduct = () => {
                                     <input
                                       type="number"
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="price"
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
                                     />
                                   </div>
                                 </div>
@@ -288,35 +370,58 @@ const AddNewProduct = () => {
                                       rows="3"
                                       style={{ height: "20px !important" }}
                                       name="description"
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodDescription: e.target.value })}
+
                                     ></textarea>
                                   </div>
                                   <div className="form-group">
                                     <label>Subcategory:</label>
                                     <select
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="subcategory"
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodSubCat: e.target.value })}
+
                                     >
                                       <option value="">Select Subcategory</option>
-                                      {subCategories.map(subCategory => (
+                                      {filteredSubCategories.map(subCategory => (
                                         <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
                                     ))}
                                     </select>
                                   </div>
+                                  
                                   <div className="form-group">
-                                    <label>Price per:</label>
+                                    <label>Minimum Order Quantity:</label>
                                     <input
                                       type="number"
                                       className="form-control"
-                                      style={{ height: "20px" }}
+                                      style={{ height: "40px" }}
                                       name="pricePer"
+                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
                                     />
                                   </div>
                                   <div className="form-group">
                                     <label>Keywords:</label>
+                                  <div>
+      <Select
+        options={formattedOptions}
+        isMulti
+        onChange={handleChange}
+        value={selectedOptions}
+      />
+      <div>
+        {/* Render selected values */}
+        {selectedOptions.map(option => (
+          <div key={option.value}>{option.keyword_name}</div>
+        ))}
+      </div>
+    </div>
+      </div>                           
+                                  <div className="form-group">
+                                    <label>Keywords:</label>
                                     <div
                                       className="form-control"
-                                      style={{ height: "20px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
+                                      style={{ height: "40px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
                                       onClick={handleDropdownClick}
                                     >
                                       <span style={{ textAlign: "center" , padding:"0"}}></span>
