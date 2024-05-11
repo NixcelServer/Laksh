@@ -21,15 +21,19 @@ const UserNavbar = () => {
                 <ul className="sidebar-menu">
                     <li className="menu-header"></li>
                     <li className="dropdown active">
-                        <li>
-                            <a href="#" data-toggle="sidebar" className="nav-link nav-link-lg collapse-btn">
-                                <i data-feather="align-justify" />
-                            </a>
+
+<li>
+    <Link to="" data-toggle="sidebar" className="nav-link nav-link-lg collapse-btn">
+        <i data-feather="align-justify" />
+    </Link>
+</li>
+
+
                         </li>
-                        <Link to="/userdashboard" className="nav-link">
-                            <i data-feather="monitor" />
-                            <span style={{ fontSize: '12px',textAlign:'left'  }}>Dashboard</span>
-                        </Link>
+                       
+                    
+                        <li className="">
+                    <Link to="/userdashboard" className=""><i data-feather="monitor" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Dashboard</span></Link>
                     </li>
                     <li className="">
                     <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Lead Manager</span></Link>
