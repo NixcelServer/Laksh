@@ -20,10 +20,10 @@ return new class extends Migration
             $table->date('updated_date')->nullable();
             $table->time('updated_time')->nullable();
             
-            $table->string('flag', 45)->default('show');
+            $table->string('flag', 7)->default('show');
 
-            $table->foreign('tbl_prod_id')->references('id')->on('tbl_products')->onDelete('cascade');
-            $table->foreign('tbl_keyword_id')->references('id')->on('mst_tbl_keywords')->onDelete('cascade');
+            $table->foreign('tbl_prod_id')->references('tbl_prod_id')->on('tbl_products')->onDelete('cascade');
+            $table->foreign('tbl_keyword_id')->references('tbl_keyword_id')->on('mst_tbl_keywords')->onDelete('cascade');
             
         });
     }

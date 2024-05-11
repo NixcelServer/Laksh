@@ -5,6 +5,7 @@ import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
+import { getProducts } from "../../redux/Product/product.action";
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
@@ -15,30 +16,18 @@ const AddNewProduct = () => {
     dispatch(getSubCategories());
     dispatch(getKeywords());
     dispatch(getUOM());
+    const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+    dispatch(getProducts(encCompanyId));
+
   }, []);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   // Sample data (you will get this from your reducer)
-  const options = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-    // Add more options as needed
-  ];
+ 
 
-  const handleChange = selected => {
-    setSelectedOptions(selected);
-    const selectedKeywords = selected.map(option => option.label); // Extracting keyword names
-    setProductDetails(prevState => ({
-      ...prevState,
-      keywords: selectedKeywords // Update the keywords field in productDetails
-    }));
-    console.log(productDetails);
-    console.log(JSON.stringify(productDetails, null, 2));
-    console.log("Selected File:", productDetails.file);
-
-  };
 
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -80,6 +69,9 @@ const AddNewProduct = () => {
 
   const uoms = useSelector(state => state.masterData.uom);
 
+  const products = useSelector(state => state.productReducer.products)
+  console.log("pro",products)
+
    //filtered out the sub categories based on category selected
    const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
@@ -95,6 +87,45 @@ const AddNewProduct = () => {
     const selectedUom = e.target.value;
     setProductDetails({...productDetails, prodUOM:selectedUom,});
     
+  }
+
+  
+  const handleChange = selected => {
+    setSelectedOptions(selected);
+    const selectedKeywords = selected.map(option => option.value); // Extracting keyword names
+    setProductDetails(prevState => ({
+      ...prevState,
+      keywords: selectedKeywords // Update the keywords field in productDetails
+    }));
+    console.log(productDetails);
+    console.log(JSON.stringify(productDetails, null, 2));
+    console.log("Selected File:", productDetails.file);
+
+  };
+
+  const categoryNameFromId = (encCatId) => {
+    const category = categories.find(cat => cat.encCatId === encCatId);
+    return category ? category.cat_name : 'Category not found';
+  };
+
+  const subCategoryNameFromId = (encSubCatId) => {
+    const subCategory = subCategories.find(subCat =>subCat.encSubCatId === encSubCatId);
+    return subCategory ? subCategory.sub_cat_name : 'Sub-Category not found';
+  }
+
+  const uomNameFromId = (encUomId) => {
+    const uom = uoms.find(uom =>uom.encUomId === encUomId);
+    return uom ? uom.unit_name : 'Uom not found';
+  }
+
+  const keywordsNameFromId = (encKeywords) => {
+    const keywordNames = encKeywords.map(encKeywordId => {
+      const keyword = keywords.find(keyword => keyword.encKeywordId === encKeywordId);
+      return keyword ? keyword.keyword_name : 'Unknown'; // Return 'Unknown' if no match found
+  });
+
+  return keywordNames.join(', '); // Return comma-separated keyword names
+
   }
 
   const handleCheckboxChange = () =>{}
@@ -132,29 +163,8 @@ const AddNewProduct = () => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
 
-const handleSaveAndContinue = (e) => {
-  e.preventDefault();
 
-  
-console.log(encCompanyId);
 
-  // Update productDetails state with the obtained encCompanyId
-setProductDetails(prevProductDetails => ({
-...prevProductDetails,
-encCompanyId: encCompanyId
-}));
-  // Logic to save changes and continue
-  console.log(productDetails);
-  //debugger;
-  const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
-      headers: {
-          'Content-Type': 'multipart/form-data'
-      }
-
-  });
-  //navigate('/');
-  setShowForm(false); // Hide the form after saving
-};
 const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
     const encCompanyId = user.encCompanyId;
@@ -212,6 +222,8 @@ const userString = sessionStorage.getItem('user');
     setUpdateMode(false); // Exit update mode after updating
   };
 
+
+
   const handleUpdateProductDetails = () => {
     setShowForm(!showForm);
   };
@@ -222,6 +234,10 @@ const userString = sessionStorage.getItem('user');
     // Hide the add product form after submitting
    // setShowForm(false);
 
+    // Function to map encCatId to categoryName
+ 
+
+  
     
   };
   return (
@@ -498,83 +514,81 @@ const userString = sessionStorage.getItem('user');
         )}
 
         {/* Display product details card */}
-        {productDetails && (
-          <div className="card" style={{ 
-            padding: '20px',
-            maxWidth: '1000px', 
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
-            marginTop: '20px', // Add margin top for separation
-            position: 'relative' // Position relative for absolute positioning of delete button
-          }}>
-            <div className="row">
-              <div className="col-lg-6" style={{ padding: '20px' }}>
-                <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
-                  {photoPreview && (
-                    <img src={photoPreview} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
-                  )}
-                </div>
-              </div>
-              <div className="col-lg-6" style={{ padding: '10px' }}>
-                <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {productDetails.productName || 'Sample Product'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {productDetails.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {productDetails.category || 'Laboratory Equipment'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {productDetails.subcategory || 'Glassware'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {productDetails.keywords || 'Flask, Laboratory, Chemistry'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {productDetails.price || '$50'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {productDetails.unit || 'Each'}</p>
-{/* Buttons for update and delete */}
-{updateMode ? (
-              <>
-                <button onClick={handleUpdate} style={{ marginRight: '5px',marginRight: '5px', fontWeight: 'bold' }}>Update</button>
-                <button onClick={handleCancelUpdate} style={{marginRight: '5px', fontWeight: 'bold',backgroundColor:'#F9E79F'}}>Cancel</button>
-              </>
-            ) : (
-              <button onClick={handleUpdateProductDetails}style={{
-                backgroundColor: '#58D68D',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}  >Update</button>
-            )}
+        {products && products.map((product, index) => (
+  <div className="card" key={index} style={{ 
+    padding: '20px',
+    maxWidth: '1000px', 
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
+    marginTop: '20px', // Add margin top for separation
+    position: 'relative' // Position relative for absolute positioning of delete button
+  }}>
+    <div className="row">
+      <div className="col-lg-6" style={{ padding: '20px' }}>
+        <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
+        {product.prod_img_path && (
+            <img src={product.prod_img_path} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
+          )}
+        </div>
+      </div>
+      <div className="col-lg-6" style={{ padding: '10px' }}>
+        <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
 
+          {/* Update and Delete buttons */}
+          {updateMode ? (
+            <>
+              <button onClick={handleUpdate} style={{ marginRight: '5px', fontWeight: 'bold' }}>Update</button>
+              <button onClick={handleCancelUpdate} style={{ marginRight: '5px', fontWeight: 'bold', backgroundColor:'#F9E79F' }}>Cancel</button>
+            </>
+          ) : (
+            <button onClick={() => handleUpdateProductDetails(product)} style={{
+              backgroundColor: '#58D68D',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}>Update</button>
+          )}
 
+          {/* Delete button */}
+          <button
+            type="button"
+            onClick={() => handleDeleteProductDetails(product)}
+            style={{
+              backgroundColor: '#ff0000',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+))}
 
-            {/* Delete button */}
-            <button
-              type="button"
-              onClick={handleDeleteProductDetails}
-              style={{
-                backgroundColor: '#ff0000',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}
-            >
-              Delete
-            </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

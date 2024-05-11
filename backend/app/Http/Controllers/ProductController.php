@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductKeyword;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Date;
+
 
 class ProductController extends Controller
 {
@@ -31,6 +33,20 @@ class ProductController extends Controller
         
         
         $prod->save();
+
+        foreach ($request->keywords as $encKeywordId) {
+            // Decrypt the keyword ID
+            $decKeywordId = EncDecHelper::encDecId($encKeywordId, 'decrypt');
+            
+            // Create a new record in tbl_prod_keywords using the ProductKeywords model
+            $productKeyword = new ProductKeyword();
+            $productKeyword->tbl_prod_id = $prod->tbl_prod_id; // Assuming you have stored the product already and it has an ID
+            $productKeyword->tbl_keyword_id = $decKeywordId;
+            $productKeyword->add_date = Date::now()->toDateString();
+            $productKeyword->add_time = Date::now()->toTimeString();
+            $productKeyword->save();
+        }
+
         return response()->json($prod);
 
         
@@ -40,5 +56,23 @@ class ProductController extends Controller
         // $prod->prod_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
         // return response()->json("success");
 
+    }
+
+    public function getProducts($id)
+    {
+        $products = Product::where('tbl_company_id',EncDecHelper::encDecId($id,'decrypt'))->where('flag','show')->get();
+        foreach($products as $product){
+            $product->encProdId = EncDecHelper::encDecId($product->tbl_prod_id,'encrypt');
+            $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
+            $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id,'encrypt');
+            $product->encUomId = EncDecHelper::encDecId($product->tbl_uom_id,'encrypt');
+
+            $product->encKeywords = $product->keywords->pluck('pivot.tbl_keyword_id')->map(function ($keywordId) {
+                return EncDecHelper::encDecId($keywordId, 'encrypt');
+            }) ->toArray();
+
+            unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id,$product->tbl_uom_id,$product->keywords);
+        }
+        return $products;
     }
 }
