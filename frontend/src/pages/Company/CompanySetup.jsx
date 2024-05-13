@@ -26,33 +26,35 @@ const CompanySetup = () => {
   const nextStep = async (e) => {
     e.preventDefault();
     
-    // Check if all required fields are filled for the current step
-    const requiredFields = getRequiredFieldsForStep(step);
-    const missingFields = requiredFields.filter(field => !formData[field]);
     
     // Check if there are any errors displayed on the form
     const hasErrors = Object.values(error).some(errorMessage => errorMessage !== '');
   
-    // Check if any error message is present for any field
-    if (missingFields.length > 0 || hasErrors) {
-      // If there are missing required fields or errors, prevent advancing and display an error message
-      if (missingFields.length > 0) {
-        toast({
-          title: 'Error',
-          description: `Please fill in all required fields: ${missingFields.join(', ')}`,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Please fix the errors on the form before proceeding.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+    // If there are errors, prevent advancing and display an error message
+    if (hasErrors) {
+      toast({
+        title: 'Error',
+        description: 'Please fix the errors on the form before proceeding.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return; // Prevent advancing to the next step
+    }
+    
+    // Check if all required fields are filled for the current step
+    const requiredFields = getRequiredFieldsForStep(step);
+    const missingFields = requiredFields.filter(field => !formData[field]);
+  
+    // If there are missing required fields, prevent advancing and display an error message
+    if (missingFields.length > 0) {
+      toast({
+        title: 'Error',
+        description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       return; // Prevent advancing to the next step
     }
   

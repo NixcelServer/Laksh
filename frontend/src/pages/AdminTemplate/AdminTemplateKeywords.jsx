@@ -229,7 +229,7 @@ const Keywords = () => {
                                 type="button"
                                 className="btn btn-danger btn-sm"
                                 style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleDelete(keyword)}
+                                onClick= {handleConfirmDelete}
                             >
                                 {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
                                 delete

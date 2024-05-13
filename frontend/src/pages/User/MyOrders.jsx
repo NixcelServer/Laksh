@@ -1,10 +1,40 @@
-import React, { useEffect } from 'react';
-import feather from 'feather-icons';
+import React, { useEffect,useState } from 'react';
+//import feather from 'feather-icons';
+import axios from 'axios';
+import { SET_PRODUCT_DETAILS } from '../../redux/Product/product.action.type';
+import { useSelector, useDispatch } from 'react-redux';
 
 const MyOrder = () => {
-    useEffect(() => {
-        feather.replace();
-    }, []);
+    //const [productDetails, setProductDetails] = useState(null);
+    
+    const [productDetails, setProductDetails] = useState({
+        encCompanyId: '',
+        prodName: '',
+        prodDescription: '',
+        prodCat: '',
+        prodSubCat: '',
+        prodPrice: '',
+        prodUOM: '',
+      });
+    
+      const dispatch = useDispatch();
+      const productDetail = useSelector(state => state.productReducer.productDetails);
+    
+      const fetchProducts = async () => {
+        try {
+          const userString = sessionStorage.getItem('user');
+          const user = JSON.parse(userString);
+          const encCompanyId = user.encCompanyId;
+    
+          const response = await axios.get(`http://127.0.0.1:8000/api/products/get/${encCompanyId}`);
+          
+          console.log('API Response:', response.data); // Log API response
+      
+          dispatch(setProductDetails(response.data)); // Dispatch action to update product details in Redux store
+        } catch (error) {
+          console.error('Error fetching product details:', error);
+        }
+      };
 
     return (
         /* Main Content */
@@ -27,7 +57,7 @@ const MyOrder = () => {
                             </div>
                         </div>
                         <div class="card-body">
-    <div className="row gx-1">
+    {/* <div className="row gx-1">
         <div className="col-lg-6" style={{  paddingRight: '0%'  }}>
             <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
                 <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' , marginTop:'-2%'}}> Posted On: </p>
@@ -35,14 +65,14 @@ const MyOrder = () => {
                 <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px', fontFamily:'serif' }}> I want to buy Dell laptop. Kindly sent me price and other details. </p>
 
             </div>
-        </div>
+        </div> */}
         {/* <div className="col-lg-6" style={{paddingLeft: '0%' }}>
             <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
                 <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}> Posted On: </p>
                 <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}> Suppliers Connected: </p>
             </div>
         </div> */}
-    </div>
+    {/* </div> */}
                     </div>
 
                    

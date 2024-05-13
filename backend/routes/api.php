@@ -10,6 +10,8 @@ use App\Http\Controllers\KeywordController;
 use App\Http\Controllers\UOMController;
 use App\Http\Controllers\CompanyRegistrationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PostController;
+
 
 
 /*
@@ -111,6 +113,7 @@ Route::post('/product/store',[ProductController::class,'storeProduct']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 
+Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
 
 
 });

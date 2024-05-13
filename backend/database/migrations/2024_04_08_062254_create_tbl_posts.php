@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('tbl_post_id');
             $table->unsignedBigInteger('tbl_company_id');
             $table->string('prod_name', 100);
-            $table->integer('prod_qty');
+            $table->integer('prod_qty')->nullable();
             $table->unsignedBigInteger('tbl_uom_id')->nullable();
             $table->string('prod_brand')->nullable();
             $table->text('prod_des')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
            
 
             $table->foreign('tbl_company_id')->references('tbl_company_id')->on('mst_tbl_companies');
-            $table->foreign('tbl_uom_id')->references('tbl_uom_id')->on('tbl_uom')->nullable();
+            $table->foreign('tbl_uom_id')->references('tbl_uom_id')->on('mst_tbl_uom')->nullable();
             $table->foreign('tbl_cat_id')->references('tbl_cat_id')->on('mst_tbl_categories');
             $table->foreign('tbl_sub_cat_id')->references('tbl_sub_cat_id')->on('tbl_sub_categories');
         });
