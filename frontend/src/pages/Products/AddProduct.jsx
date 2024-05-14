@@ -5,7 +5,9 @@ import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
+
 import { getProducts } from "../../redux/Product/product.action";
+
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
@@ -16,6 +18,7 @@ const AddNewProduct = () => {
     dispatch(getSubCategories());
     dispatch(getKeywords());
     dispatch(getUOM());
+
     const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
     const encCompanyId = user.encCompanyId;
@@ -26,7 +29,13 @@ const AddNewProduct = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   // Sample data (you will get this from your reducer)
- 
+
+  const options = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' },
+    // Add more options as needed
+  ];
 
 
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
@@ -68,6 +77,7 @@ const AddNewProduct = () => {
   const keywords = useSelector(state => state.masterData.keywords);
 
   const uoms = useSelector(state => state.masterData.uom);
+
 
   const products = useSelector(state => state.productReducer.products)
   console.log("pro",products)
@@ -163,7 +173,30 @@ const AddNewProduct = () => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
 
+const handleSaveAndContinue = async(e) => {
+  e.preventDefault();
 
+  
+console.log(encCompanyId);
+
+  // Update productDetails state with the obtained encCompanyId
+setProductDetails(prevProductDetails => ({
+...prevProductDetails,
+encCompanyId: encCompanyId
+}));
+  // Logic to save changes and continue
+  console.log(productDetails);
+  //debugger;
+  const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+      headers: {
+          'Content-Type': 'multipart/form-data'
+      }
+
+  });
+  await dispatch(getProducts(encCompanyId));
+  //navigate('/');
+  setShowForm(false); // Hide the form after saving
+};
 
 const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
@@ -196,6 +229,7 @@ const userString = sessionStorage.getItem('user');
           }
     
       });
+      dispatch(getProducts(encCompanyId));
       //navigate('/');
       setShowForm(false); // Hide the form after saving
   };
@@ -241,7 +275,7 @@ const userString = sessionStorage.getItem('user');
     
   };
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-90px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <button
@@ -314,8 +348,8 @@ const userString = sessionStorage.getItem('user');
                           <div className="card-content">
                             <section className="section">
                               <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
+                                <div className="product-details" style={{ textAlign:"left", padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group" style={{marginBottom:'50px'}}>
                                     <label>Product Name:</label>
                                     <input
                                       type="text"
@@ -326,7 +360,7 @@ const userString = sessionStorage.getItem('user');
 
                                     />
                                   </div>
-                                  <div className="form-group">
+                                  <div className="form-group" >
                                     <label>Category:</label>
                                     <select
                                     id="category"
@@ -344,21 +378,7 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                 
 
-                                  <div className="form-group">
-                                    <label>Price per:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "40px" }}
-                                      name="unit"
-                                      onChange={handleUomChange}
-                                      
-                                    >
-                                       <option value="">Select Unit of Measurements</option>
-                                      {uoms.map(uom => (
-                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
-                                    ))}
-                                    </select>
-                                  </div>
+                               
                                   <div className="form-group">
                                     <label>Price :</label>
                                     <input
@@ -367,6 +387,18 @@ const userString = sessionStorage.getItem('user');
                                       style={{ height: "40px" }}
                                       name="price"
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
+
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Minimum Order Quantity:</label>
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="pricePer"
+                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+
                                     />
                                   </div>
                                 </div>
@@ -378,7 +410,7 @@ const userString = sessionStorage.getItem('user');
                           <div className="card-content">
                             <section className="section">
                               <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                <div className="product-details" style={{  textAlign:"left",padding: "10px", background: "#fff", borderRadius: "10px" }}>
                                   <div className="form-group">
                                     <label>Product Description:</label>
                                     <textarea
@@ -406,79 +438,65 @@ const userString = sessionStorage.getItem('user');
                                     </select>
                                   </div>
                                   
-                                  <div className="form-group">
-                                    <label>Minimum Order Quantity:</label>
-                                    <input
-                                      type="number"
+
+                                    <div className="form-group">
+                                    <label>Price per:</label>
+                                    <select
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="pricePer"
-                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Keywords:</label>
-                                  <div>
-      <Select
-        options={formattedOptions}
-        isMulti
-        onChange={handleChange}
-        value={selectedOptions}
-      />
-      <div>
-        {/* Render selected values */}
-        {selectedOptions.map(option => (
-          <div key={option.value}>{option.keyword_name}</div>
-        ))}
-      </div>
-    </div>
-      </div>                           
-                                  <div className="form-group">
-                                    <label>Keywords:</label>
-                                    <div
-                                      className="form-control"
-                                      style={{ height: "40px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
-                                      onClick={handleDropdownClick}
+                                      name="unit"
+                                      onChange={handleUomChange}
+                                      
                                     >
-                                      <span style={{ textAlign: "center" , padding:"0"}}></span>
-                                      {showKeywords && (
-                                        <div
-                                          style={{
-                                            position: "absolute",
-                                            zIndex: 1,
-                                            top: "100%",
-                                            left: 0,
-                                            background: "#fff",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            maxHeight: "120px",
-                                            overflowY: "auto",
-                                            width: "100%",
-                                            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-                                            animation: "slideDown 0.3s ease forwards",
-                                          }}
-                                        >
-                                          {['Keyword 1', 'Keyword 2', 'Keyword 3'].map((keyword) => (
-                                            <div
-                                              key={keyword}
-                                              style={{ padding: "5px", cursor: "pointer", transition: "background-color 0.3s" }}
-                                              onClick={() => handleKeywordOptionClick(keyword)}
-                                            >
-                                              <input
-                                                type="checkbox"
-                                                value={keyword}
-                                                checked={selectedKeywords.includes(keyword)}
-                                                // onChange={handleCheckboxChange}
-                                                onContextMenu={handleContextMenu}
-                                                style={{ marginRight: '5px' }}
-                                              />
-                                              {keyword}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
+                                       <option value="">Select Unit of Measurements</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
                                   </div>
+<div className="form-group">
+  <label>Keywords:</label>
+  <div style={{ position: "relative" }}>
+    <Select
+      options={formattedOptions}
+      isMulti
+      onChange={handleChange}
+      value={selectedOptions}
+      menuPlacement="auto" // Ensure the dropdown opens based on available space
+      menuShouldScrollIntoView={true}
+      menuPosition="fixed" // Fix the position of the dropdown to avoid it being cut off by overflow
+      menuPortalTarget={document.body} // Render the dropdown in the body to avoid overflow issues
+      styles={{ // Custom styles for the dropdown menu
+        menu: provided => ({
+          ...provided,
+          maxHeight: "200px", // Set the fixed height of the dropdown menu container
+          overflowY: "auto", // Enable vertical scrolling
+          "&::-webkit-scrollbar": {
+            display: "none", // Hide scrollbar for Chrome, Safari, and Opera
+          },
+          scrollbarWidth: "none", // Hide scrollbar for Firefox
+        }),
+        menuList: provided => ({
+          ...provided,
+          "&::-webkit-scrollbar": {
+            display: "none", // Hide any additional scrollbars in WebKit browsers
+          },
+          scrollbarWidth: "none", // Hide any additional scrollbars in Firefox
+        }),
+      }}
+    />
+    <div>
+      {/* Render selected values */}
+      {selectedOptions.map(option => (
+        <div key={option.value}>{option.keyword_name}</div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+                        
+                                  
                                   {/* Submit and Continue Button */}
                                   {showForm && (
                                     <button
@@ -526,7 +544,8 @@ const userString = sessionStorage.getItem('user');
       <div className="col-lg-6" style={{ padding: '20px' }}>
         <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
         {product.prod_img_path && (
-            <img src={product.prod_img_path} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
+            <img src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt="Product Preview" style={{ width: '100%', height: 'auto',display: 'block' }} />
+            
           )}
         </div>
       </div>

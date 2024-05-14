@@ -53,9 +53,9 @@ const AdminTemplateNavbar = () => {
             <li className="dropdown"><a href="#" data-toggle="dropdown"style={{ boxShadow: 'none' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt="image" src="images/adminlogo.png" className="user-img-radious-style" /> <span className="d-sm-none d-lg-inline-block" /></a>
               <div className="dropdown-menu dropdown-menu-right pullDown">
                 <div className="dropdown-title"></div>
-                <a href="profile.html" className="dropdown-item has-icon"> <i className="far
+                <a href="#" className="dropdown-item has-icon"> <i className="far
                                               fa-user" /> Profile
-                </a> <a href="timeline.html" className="dropdown-item has-icon"> <i className="fas fa-bolt" />
+                </a> <a href="#" className="dropdown-item has-icon"> <i className="fas fa-bolt" />
                   Activities
                 </a> <a href="#" className="dropdown-item has-icon"> <i className="fas fa-cog" />
                   Settings

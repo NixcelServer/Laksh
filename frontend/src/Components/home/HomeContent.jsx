@@ -75,7 +75,7 @@ const HomeContent = () => {
   return (
     <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}>
       <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px">
-        <div className="card" style={{ padding: "10px", borderRadius: "12px" }}>
+        <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "212px"}}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
             <div className="form-group">
               <label
@@ -85,15 +85,16 @@ const HomeContent = () => {
                   marginBottom: "5px",
                 }}
               >
-                Requirements
+                
               </label>
               <input
                 type="text"
-                className="form-control text-center"
-                placeholder="Enter Your Requirements"
+                className="form-control text-center mx-auto"
+                placeholder="Enter Product Name"
                 style={{
                   textAlign: "center",
                   height: "30px",
+                  width: "200px", 
                   borderRadius: "5px",
                   border: "1px solid #ccc",
                 }}
@@ -103,11 +104,11 @@ const HomeContent = () => {
           <label style={{ fontSize: "0.9rem", marginBottom: "5px" }}>
             We are here to help!! Discover your needs.
           </label>
-          <div className="d-grid gap-2">
+          <div className="d-grid gap-2 justify-content-center">
             <button
               className="btn btn-primary"
               type="submit"
-              style={{ padding: "8px", fontSize: "0.9rem" }}
+              style={{ padding: "8px", fontSize: "0.9rem", width: "180px" , backgroundColor:"#9B59B6" }}
               onClick={onOpen}
             >
               Submit Requirement
@@ -120,13 +121,13 @@ const HomeContent = () => {
         className="main-content"
         p={{ base: "10px", md: "20px" }}
         mb="0px"
-        style={{ overflow: "hidden" }}
+        style={{ overflow: "hidden", marginBottom:"0px" }}
       >
         <div
           className="card"
           style={{ padding: "0px", borderRadius: "12px", height: "212px" }}
         >
-          <div className="card-body" style={{ marginBottom: "0px" }}>
+          <div className="card-body" style={{ }}>
             <Slider {...carouselSettings}>
               <div>
                 <img
@@ -161,129 +162,139 @@ const HomeContent = () => {
         </div>
       </Box>
 
+<Box>
+  
+</Box>
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
   <ModalOverlay />
-  <ModalContent style={{ maxWidth: "500px", maxHeight: "500px", borderRadius: "40px"  }}>
-  <ModalHeader textAlign="center" fontWeight="bold" fontSize="xl" color="black#9f98e9"   borderRadius="20px 20px 0 0"  backgroundColor="#b4e998" borderBottomWidth="1px" pb="2">
-  Submit Requirement
-</ModalHeader>    <ModalCloseButton  _focus={{ border: "none" }} _hover={{ bg: "none" }}/>
+  <ModalContent style={{ maxWidth: "500px", borderRadius: "40px" }}>
+    <ModalHeader
+      textAlign="center"
+      fontWeight="bold"
+      fontSize="xl"
+      color="#9f98e9"
+      backgroundColor="#b4e998"
+      borderRadius="20px 20px 0 0"
+      borderBottomWidth="1px"
+      pb="2"
+    >
+      Submit Requirement
+    </ModalHeader>
+    <ModalCloseButton _focus={{ border: "none" }} _hover={{ bg: "none" }} />
     <ModalBody>
-     
-    <div className="row">
-                        
-                        <div className="col-lg-6">
-                          <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
-                                    <label>Product Name:</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="productName"
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Category:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="category"
-                                    >
-                                      <option value="">Select Category</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Unit of Measurement:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="unit"
-                                    >
-                                      <option value="">Select Unit</option>
-                                      <option value="kg">Kilogram</option>
-                                      <option value="gm">Gram</option>
-                                      <option value="ltr">Liter</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Price :</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="price"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </section>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
-                                    <label>Product Description:</label>
-                                    <textarea
-                                      className="form-control"
-                                      rows="1"
-                                      style={{ height: "5px !important" }}
-                                      name="description"
-                                    ></textarea>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Subcategory:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="subcategory"
-                                    >
-                                      <option value="">Select Subcategory</option>
-                                    </select>
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Price per:</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ height: "20px" }}
-                                      name="pricePer"
-                                    />
-                                  </div>
-                                 
-                                  {/* Submit and Continue Button */}
-                                  {showForm && (
-                                    <button
-                                      type="button"
-                                      style={{
-                                        bottom: "20px",
-                                        right: "70px",
-                                        backgroundColor: "#4CAF50",
-                                        border: "none",
-                                        color: "white",
-                                        padding: "8px 5px",
-                                        fontSize: "1em",
-                                        cursor: "pointer",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={handleSubmit}
-                                    >
-                                      Save and Continue
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </section>
-                          </div>
-                        </div>
-                      </div>
-      
+      <div className="modal-container">
+        <div className="row">
+          <div className="col-lg-6">
+            <div className="card-content">
+              <section className="section">
+                <div className="section-body">
+                  <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                    <div className="form-group">
+                      <label>Product Name:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="productName"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Category:</label>
+                      <select
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="category"
+                      >
+                        <option value="">Select Category</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Unit of Measurement:</label>
+                      <select
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="unit"
+                      >
+                        <option value="">Select Unit</option>
+                        <option value="kg">Kilogram</option>
+                        <option value="gm">Gram</option>
+                        <option value="ltr">Liter</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Price :</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="price"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div className="col-lg-6">
+            <div className="card-content">
+              <section className="section">
+                <div className="section-body">
+                  <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                    <div className="form-group">
+                      <label>Product Description:</label>
+                      <textarea
+                        className="form-control"
+                        rows="1"
+                        style={{ height: "5px !important" }}
+                        name="description"
+                      ></textarea>
+                    </div>
+                    <div className="form-group">
+                      <label>Subcategory:</label>
+                      <select
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="subcategory"
+                      >
+                        <option value="">Select Subcategory</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Price per:</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        style={{ height: "20px" }}
+                        name="pricePer"
+                      />
+                    </div>
+                    {showForm && (
+                      <button
+                        type="button"
+                        style={{
+                          bottom: "20px",
+                          right: "70px",
+                          backgroundColor: "#4CAF50",
+                          border: "none",
+                          color: "white",
+                          padding: "8px 5px",
+                          fontSize: "1em",
+                          cursor: "pointer",
+                          borderRadius: "5px",
+                        }}
+                        onClick={handleSubmit}
+                      >
+                        Save and Continue
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
     </ModalBody>
     <ModalFooter>
       <button
@@ -308,8 +319,12 @@ const HomeContent = () => {
   </ModalContent>
 </Modal>
 
+
+
     </Grid>
   );
 };
 
 export default HomeContent;
+
+
