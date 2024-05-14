@@ -107,7 +107,7 @@ export default function Navbar() {
 
                 <Image src='' w='60px' objectFit={'cover'} onClick={()=>{navigate('/')}}  />
             </Box>
-                <Heading color={'#9B59B6 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold' }}>Laksh</Heading>
+                <Heading color={'#9B59B6 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold', marginLeft: '-60px'  }}>Laksh</Heading>
 
            
           </HStack>
@@ -150,11 +150,15 @@ export default function Navbar() {
                 </Button>
                 <Button flexDirection={'column'} size='lg' p='10px'  >
                      <Icon  as={''} boxSize={5} /> 
-                     <Text  fontWeight={'bold'} _hover={{ color:'teal' }} >Help</Text>
+                     <Text  fontWeight={'bold'} _hover={{ color:'teal' }}  style={{ fontSize: '16px' }} >Help</Text>
                 </Button>
-                <Button flexDirection={'column'} size='lg' p='10px' _hover={{ color:'teal' }}  >
+                <Button flexDirection={'column'} size='lg' p='10px' _hover={{ color:'teal' }} style={{ fontSize: '16px' }}   >
                      <Icon   as={MdOutlineMessage} boxSize={5} /> 
-                     <Text  fontWeight={'bold'}>masaage</Text>
+                     <Text  fontWeight={'bold'}>Message</Text>
+                </Button>
+                <Button flexDirection={'column'} size='lg' p='10px' _hover={{ color:'teal' }}  style={{ fontSize: '16px' }}  >
+                     <Icon   as={MdOutlineMessage} boxSize={5} /> 
+                     <Text  fontWeight={'bold'}>About us</Text>
                 </Button>
             </HStack>
 

@@ -112,12 +112,46 @@ const AdminTemplateSubcategories = () => {
   };
   
     useEffect(() => {
+      const script1 = document.createElement('script');
+      script1.src = 'assets/bundles/datatables/datatables.min.js';
+      script1.async = true;
+      document.body.appendChild(script1);
+
+      const script2 = document.createElement('script');
+      script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
+      script2.async = true;
+      document.body.appendChild(script2);
+
+      const script3 = document.createElement('script');
+      script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
+      script3.async = true;
+      document.body.appendChild(script3);
+
+      const script4 = document.createElement('script');
+      script4.src = 'assets/js/page/datatables.js';
+      script4.async = true;
+      document.body.appendChild(script4);
+
+      // Initialize Feather icons
+     
+
       console.log("hello");
-        feather.replace();
-        dispatch(getCategories());
-        dispatch(getSubCategories());
+      feather.replace();
+      dispatch(getCategories());
+      dispatch(getSubCategories());
+      // Cleanup function to remove the scripts when the component unmounts
+      return () => {
+          document.body.removeChild(script1);
+          document.body.removeChild(script2);
+          document.body.removeChild(script3);
+          document.body.removeChild(script4);
+      };
+      
+     
+  }, []);
+     
         
-    }, []); // Empty dependency array means this effect runs only once after the component mounts
+   // Empty dependency array means this effect runs only once after the component mounts
     const matchingCategory = categories.find(category => category.encCatId === encCatId);
     return (
         
@@ -131,18 +165,18 @@ const AdminTemplateSubcategories = () => {
                                 <div className="row" style={{ paddingRight: '0', paddingTop: '3%', width: '100%',marginLeft:'3px' , marginTop:'-5%'}}>
             <div className="col-xl-4 col-lg-8 col-md-8 col-sm-8 col-xs-12" style={{ paddingRight: '0', paddingTop: '3%', width: '150%',marginLeft:'3px' }}>
         <div className="card-content" style={{marginBottom: '6%'}}>
-            <h5 className="font-15"style={{marginBottom: '6%', marginTop:'1%'}}>Assign Subcategory</h5>
+            <h5 className="font-15"style={{marginBottom: '6%', marginTop:'1%',color:'#A569BD'}}>Assign Subcategory</h5>
             {/* Start of Assign Subcategory Form */}
             <form>
                 
                 <div className="form-group"style={{ marginBottom: '-2%' }}>
-                <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px', marginLeft: '-75%' }}>Category : </label>
+                <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px', marginLeft: '-92%' }}>Category : </label>
       <span style={{ display: 'inline-block'}} >{matchingCategory && matchingCategory.cat_name}</span>
       </div>
 
                     <div className="form-group">
                     <label htmlFor="subcategory"style={{ textAlign: 'left', display: 'block',marginTop:'4%' }}>Subcategory Name</label>
-                    <input type="text" className="form-control" id="subcategory" placeholder="Enter subcategory name" value={subcategory}
+                    <input type="text" className="form-control" id="subcategory" style={{width:"200px"}} placeholder="Enter subcategory name" value={subcategory}
               onChange={(e) => setSubcategory(e.target.value)}/>
                 
 
