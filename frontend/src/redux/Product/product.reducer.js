@@ -1,7 +1,8 @@
-import { SET_PRODUCT_DETAILS } from './product.action.type';
+import { GET_PRODUCTS, SET_PRODUCT_DETAILS } from './product.action.type';
 
 const initialState = {
   productDetails: [],
+  products: [],
 };
 
 export const productReducer = (state = initialState, action) => {
@@ -11,10 +12,16 @@ export const productReducer = (state = initialState, action) => {
         ...state,
         productDetails: action.payload,
       };
+
+      case GET_PRODUCTS:
+          return { ...state, products: action.payload };  
+
     default:
       return state;
   }
 };
+
+
 
 
 // export const selectedProductsReducer = (state = {}, { type, payload }) => {

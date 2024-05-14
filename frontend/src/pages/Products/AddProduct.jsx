@@ -5,6 +5,9 @@ import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
+
+import { getProducts } from "../../redux/Product/product.action";
+
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
@@ -15,11 +18,18 @@ const AddNewProduct = () => {
     dispatch(getSubCategories());
     dispatch(getKeywords());
     dispatch(getUOM());
+
+    const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+    dispatch(getProducts(encCompanyId));
+
   }, []);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   // Sample data (you will get this from your reducer)
+
   const options = [
     { value: 'option1', label: 'Option 1' },
     { value: 'option2', label: 'Option 2' },
@@ -27,18 +37,6 @@ const AddNewProduct = () => {
     // Add more options as needed
   ];
 
-  const handleChange = selected => {
-    setSelectedOptions(selected);
-    const selectedKeywords = selected.map(option => option.label); // Extracting keyword names
-    setProductDetails(prevState => ({
-      ...prevState,
-      keywords: selectedKeywords // Update the keywords field in productDetails
-    }));
-    console.log(productDetails);
-    console.log(JSON.stringify(productDetails, null, 2));
-    console.log("Selected File:", productDetails.file);
-
-  };
 
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -80,6 +78,10 @@ const AddNewProduct = () => {
 
   const uoms = useSelector(state => state.masterData.uom);
 
+
+  const products = useSelector(state => state.productReducer.products)
+  console.log("pro",products)
+
    //filtered out the sub categories based on category selected
    const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
@@ -95,6 +97,45 @@ const AddNewProduct = () => {
     const selectedUom = e.target.value;
     setProductDetails({...productDetails, prodUOM:selectedUom,});
     
+  }
+
+  
+  const handleChange = selected => {
+    setSelectedOptions(selected);
+    const selectedKeywords = selected.map(option => option.value); // Extracting keyword names
+    setProductDetails(prevState => ({
+      ...prevState,
+      keywords: selectedKeywords // Update the keywords field in productDetails
+    }));
+    console.log(productDetails);
+    console.log(JSON.stringify(productDetails, null, 2));
+    console.log("Selected File:", productDetails.file);
+
+  };
+
+  const categoryNameFromId = (encCatId) => {
+    const category = categories.find(cat => cat.encCatId === encCatId);
+    return category ? category.cat_name : 'Category not found';
+  };
+
+  const subCategoryNameFromId = (encSubCatId) => {
+    const subCategory = subCategories.find(subCat =>subCat.encSubCatId === encSubCatId);
+    return subCategory ? subCategory.sub_cat_name : 'Sub-Category not found';
+  }
+
+  const uomNameFromId = (encUomId) => {
+    const uom = uoms.find(uom =>uom.encUomId === encUomId);
+    return uom ? uom.unit_name : 'Uom not found';
+  }
+
+  const keywordsNameFromId = (encKeywords) => {
+    const keywordNames = encKeywords.map(encKeywordId => {
+      const keyword = keywords.find(keyword => keyword.encKeywordId === encKeywordId);
+      return keyword ? keyword.keyword_name : 'Unknown'; // Return 'Unknown' if no match found
+  });
+
+  return keywordNames.join(', '); // Return comma-separated keyword names
+
   }
 
   const handleCheckboxChange = () =>{}
@@ -132,7 +173,7 @@ const AddNewProduct = () => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
 
-const handleSaveAndContinue = (e) => {
+const handleSaveAndContinue = async(e) => {
   e.preventDefault();
 
   
@@ -146,15 +187,17 @@ encCompanyId: encCompanyId
   // Logic to save changes and continue
   console.log(productDetails);
   //debugger;
-  const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+  const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
       headers: {
           'Content-Type': 'multipart/form-data'
       }
 
   });
+  await dispatch(getProducts(encCompanyId));
   //navigate('/');
   setShowForm(false); // Hide the form after saving
 };
+
 const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
     const encCompanyId = user.encCompanyId;
@@ -186,6 +229,7 @@ const userString = sessionStorage.getItem('user');
           }
     
       });
+      dispatch(getProducts(encCompanyId));
       //navigate('/');
       setShowForm(false); // Hide the form after saving
   };
@@ -212,6 +256,8 @@ const userString = sessionStorage.getItem('user');
     setUpdateMode(false); // Exit update mode after updating
   };
 
+
+
   const handleUpdateProductDetails = () => {
     setShowForm(!showForm);
   };
@@ -222,10 +268,14 @@ const userString = sessionStorage.getItem('user');
     // Hide the add product form after submitting
    // setShowForm(false);
 
+    // Function to map encCatId to categoryName
+ 
+
+  
     
   };
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-90px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <button
@@ -298,8 +348,8 @@ const userString = sessionStorage.getItem('user');
                           <div className="card-content">
                             <section className="section">
                               <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
+                                <div className="product-details" style={{ textAlign:"left", padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group" style={{marginBottom:'50px'}}>
                                     <label>Product Name:</label>
                                     <input
                                       type="text"
@@ -310,7 +360,7 @@ const userString = sessionStorage.getItem('user');
 
                                     />
                                   </div>
-                                  <div className="form-group">
+                                  <div className="form-group" >
                                     <label>Category:</label>
                                     <select
                                     id="category"
@@ -328,21 +378,7 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                 
 
-                                  <div className="form-group">
-                                    <label>Price per:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "40px" }}
-                                      name="unit"
-                                      onChange={handleUomChange}
-                                      
-                                    >
-                                       <option value="">Select Unit of Measurements</option>
-                                      {uoms.map(uom => (
-                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
-                                    ))}
-                                    </select>
-                                  </div>
+                               
                                   <div className="form-group">
                                     <label>Price :</label>
                                     <input
@@ -351,6 +387,18 @@ const userString = sessionStorage.getItem('user');
                                       style={{ height: "40px" }}
                                       name="price"
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
+
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Minimum Order Quantity:</label>
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="pricePer"
+                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+
                                     />
                                   </div>
                                 </div>
@@ -362,7 +410,7 @@ const userString = sessionStorage.getItem('user');
                           <div className="card-content">
                             <section className="section">
                               <div className="section-body">
-                                <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                <div className="product-details" style={{  textAlign:"left",padding: "10px", background: "#fff", borderRadius: "10px" }}>
                                   <div className="form-group">
                                     <label>Product Description:</label>
                                     <textarea
@@ -390,79 +438,65 @@ const userString = sessionStorage.getItem('user');
                                     </select>
                                   </div>
                                   
-                                  <div className="form-group">
-                                    <label>Minimum Order Quantity:</label>
-                                    <input
-                                      type="number"
+
+                                    <div className="form-group">
+                                    <label>Price per:</label>
+                                    <select
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="pricePer"
-                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Keywords:</label>
-                                  <div>
-      <Select
-        options={formattedOptions}
-        isMulti
-        onChange={handleChange}
-        value={selectedOptions}
-      />
-      <div>
-        {/* Render selected values */}
-        {selectedOptions.map(option => (
-          <div key={option.value}>{option.keyword_name}</div>
-        ))}
-      </div>
-    </div>
-      </div>                           
-                                  <div className="form-group">
-                                    <label>Keywords:</label>
-                                    <div
-                                      className="form-control"
-                                      style={{ height: "40px", fontSize:"14px", textAlign:"center", position: "relative", cursor: "pointer" }}
-                                      onClick={handleDropdownClick}
+                                      name="unit"
+                                      onChange={handleUomChange}
+                                      
                                     >
-                                      <span style={{ textAlign: "center" , padding:"0"}}></span>
-                                      {showKeywords && (
-                                        <div
-                                          style={{
-                                            position: "absolute",
-                                            zIndex: 1,
-                                            top: "100%",
-                                            left: 0,
-                                            background: "#fff",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            maxHeight: "120px",
-                                            overflowY: "auto",
-                                            width: "100%",
-                                            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-                                            animation: "slideDown 0.3s ease forwards",
-                                          }}
-                                        >
-                                          {['Keyword 1', 'Keyword 2', 'Keyword 3'].map((keyword) => (
-                                            <div
-                                              key={keyword}
-                                              style={{ padding: "5px", cursor: "pointer", transition: "background-color 0.3s" }}
-                                              onClick={() => handleKeywordOptionClick(keyword)}
-                                            >
-                                              <input
-                                                type="checkbox"
-                                                value={keyword}
-                                                checked={selectedKeywords.includes(keyword)}
-                                                // onChange={handleCheckboxChange}
-                                                onContextMenu={handleContextMenu}
-                                                style={{ marginRight: '5px' }}
-                                              />
-                                              {keyword}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
+                                       <option value="">Select Unit of Measurements</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
                                   </div>
+<div className="form-group">
+  <label>Keywords:</label>
+  <div style={{ position: "relative" }}>
+    <Select
+      options={formattedOptions}
+      isMulti
+      onChange={handleChange}
+      value={selectedOptions}
+      menuPlacement="auto" // Ensure the dropdown opens based on available space
+      menuShouldScrollIntoView={true}
+      menuPosition="fixed" // Fix the position of the dropdown to avoid it being cut off by overflow
+      menuPortalTarget={document.body} // Render the dropdown in the body to avoid overflow issues
+      styles={{ // Custom styles for the dropdown menu
+        menu: provided => ({
+          ...provided,
+          maxHeight: "200px", // Set the fixed height of the dropdown menu container
+          overflowY: "auto", // Enable vertical scrolling
+          "&::-webkit-scrollbar": {
+            display: "none", // Hide scrollbar for Chrome, Safari, and Opera
+          },
+          scrollbarWidth: "none", // Hide scrollbar for Firefox
+        }),
+        menuList: provided => ({
+          ...provided,
+          "&::-webkit-scrollbar": {
+            display: "none", // Hide any additional scrollbars in WebKit browsers
+          },
+          scrollbarWidth: "none", // Hide any additional scrollbars in Firefox
+        }),
+      }}
+    />
+    <div>
+      {/* Render selected values */}
+      {selectedOptions.map(option => (
+        <div key={option.value}>{option.keyword_name}</div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+                        
+                                  
                                   {/* Submit and Continue Button */}
                                   {showForm && (
                                     <button
@@ -498,83 +532,82 @@ const userString = sessionStorage.getItem('user');
         )}
 
         {/* Display product details card */}
-        {productDetails && (
-          <div className="card" style={{ 
-            padding: '20px',
-            maxWidth: '1000px', 
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
-            marginTop: '20px', // Add margin top for separation
-            position: 'relative' // Position relative for absolute positioning of delete button
-          }}>
-            <div className="row">
-              <div className="col-lg-6" style={{ padding: '20px' }}>
-                <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
-                  {photoPreview && (
-                    <img src={photoPreview} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
-                  )}
-                </div>
-              </div>
-              <div className="col-lg-6" style={{ padding: '10px' }}>
-                <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {productDetails.productName || 'Sample Product'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {productDetails.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {productDetails.category || 'Laboratory Equipment'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {productDetails.subcategory || 'Glassware'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {productDetails.keywords || 'Flask, Laboratory, Chemistry'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {productDetails.price || '$50'}</p>
-                  <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {productDetails.unit || 'Each'}</p>
-{/* Buttons for update and delete */}
-{updateMode ? (
-              <>
-                <button onClick={handleUpdate} style={{ marginRight: '5px',marginRight: '5px', fontWeight: 'bold' }}>Update</button>
-                <button onClick={handleCancelUpdate} style={{marginRight: '5px', fontWeight: 'bold',backgroundColor:'#F9E79F'}}>Cancel</button>
-              </>
-            ) : (
-              <button onClick={handleUpdateProductDetails}style={{
-                backgroundColor: '#58D68D',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}  >Update</button>
-            )}
+        {products && products.map((product, index) => (
+  <div className="card" key={index} style={{ 
+    padding: '20px',
+    maxWidth: '1000px', 
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
+    marginTop: '20px', // Add margin top for separation
+    position: 'relative' // Position relative for absolute positioning of delete button
+  }}>
+    <div className="row">
+      <div className="col-lg-6" style={{ padding: '20px' }}>
+        <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
+        {product.prod_img_path && (
+            <img src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt="Product Preview" style={{ width: '100%', height: 'auto',display: 'block' }} />
+            
+          )}
+        </div>
+      </div>
+      <div className="col-lg-6" style={{ padding: '10px' }}>
+        <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
 
+          {/* Update and Delete buttons */}
+          {updateMode ? (
+            <>
+              <button onClick={handleUpdate} style={{ marginRight: '5px', fontWeight: 'bold' }}>Update</button>
+              <button onClick={handleCancelUpdate} style={{ marginRight: '5px', fontWeight: 'bold', backgroundColor:'#F9E79F' }}>Cancel</button>
+            </>
+          ) : (
+            <button onClick={() => handleUpdateProductDetails(product)} style={{
+              backgroundColor: '#58D68D',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}>Update</button>
+          )}
 
+          {/* Delete button */}
+          <button
+            type="button"
+            onClick={() => handleDeleteProductDetails(product)}
+            style={{
+              backgroundColor: '#ff0000',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+))}
 
-            {/* Delete button */}
-            <button
-              type="button"
-              onClick={handleDeleteProductDetails}
-              style={{
-                backgroundColor: '#ff0000',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}
-            >
-              Delete
-            </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

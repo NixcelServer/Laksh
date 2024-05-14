@@ -34,9 +34,11 @@ import { useNavigate } from 'react-router-dom'
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
 import {Link as Navlink} from 'react-router-dom'
 import React, { useState,useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-
+import { Link as NavLink } from 'react-router-dom';
  import {authLogout} from '../../redux/auth/auth.action'
+ import { Link } from 'react-router-dom';
+ import { FaUser, FaBolt, FaCog } from 'react-icons/fa';
+
 
 
 
@@ -157,49 +159,19 @@ export default function Navbar() {
             </HStack>
 
             <Menu>
-              <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
-                minW={0}>
-                <Avatar
-                  size={'sm'}
-                  name={name} 
-                  // src={
-                  //   'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  // }
-                />
-              </MenuButton>
-              <MenuList>
-                <MenuItem >
-                  {
-                     !isLogin &&
-                     <Navlink to='/login' ><Button colorScheme='gray'>Login</Button></Navlink> 
-                  }
-                </MenuItem>
-                <MenuItem>
-                {
-                  !isLogin &&
-                <Navlink to='/alogin' ><Button colorScheme='gray'>Admin</Button></Navlink>
-                }
-                </MenuItem>
-                <MenuItem>
-                {
-                  !isLogin &&
-                <Navlink to='/' ><Button >My Orders</Button></Navlink>
-                }
-                </MenuItem>
+          
 
-                <MenuDivider />
-                <MenuItem>
-                    {
-                         isLogin &&
-                      <Button colorScheme='red' onClick={handleLogout} >Logout</Button>
-                    } 
-                </MenuItem>
-              </MenuList>
-            </Menu>
+<MenuButton as={Link} to="#" style={{ boxShadow: 'none' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user">
+  <Image src="images/adminlogo.png" className="user-img-radious-style" alt="image" boxSize="30px" /> {/* Adjust the boxSize as needed */}
+  <Box as="span" className="d-sm-none d-lg-inline-block" />
+</MenuButton>
+
+      <MenuList>
+        <MenuItem as={Link} to="login" icon={<FaUser />}>login</MenuItem>
+        <MenuItem as={Link} to="alogin" icon={<FaBolt />}>Admin</MenuItem>
+        <MenuItem as={Link} to="#" icon={<FaCog />}>Settings</MenuItem>
+      </MenuList>
+    </Menu>
           </Flex>
         </Flex>
 

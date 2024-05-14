@@ -16,8 +16,38 @@ const UOM = () => {
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
+        const script1 = document.createElement('script');
+        script1.src = 'assets/bundles/datatables/datatables.min.js';
+        script1.async = true;
+        document.body.appendChild(script1);
+
+        const script2 = document.createElement('script');
+        script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
+        script2.async = true;
+        document.body.appendChild(script2);
+
+        const script3 = document.createElement('script');
+        script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
+        script3.async = true;
+        document.body.appendChild(script3);
+
+        const script4 = document.createElement('script');
+        script4.src = 'assets/js/page/datatables.js';
+        script4.async = true;
+        document.body.appendChild(script4);
+
+        // Initialize Feather icons
         feather.replace();
         dispatch(getUOM());
+        // Cleanup function to remove the scripts when the component unmounts
+        return () => {
+            document.body.removeChild(script1);
+            document.body.removeChild(script2);
+            document.body.removeChild(script3);
+            document.body.removeChild(script4);
+        };
+        
+       
     }, []); // Empty dependency array means this effect runs only once after the component mounts
 
     const handleDelete = async (uom) => {
@@ -101,7 +131,7 @@ const UOM = () => {
     };
 
     return (
-        <div>
+        <div >
             {/* "Add New" button */}
             <div className="main-content">
                 <section className="section">
