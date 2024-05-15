@@ -75,4 +75,26 @@ class ProductController extends Controller
         }
         return $products;
     }
+
+    public function limitedProducts($id)
+    {
+        
+         $decCatId = EncDecHelper::encDecId($id,'decrypt');
+         $products = Product::where('tbl_cat_id', $decCatId)
+         ->latest('add_date')
+         ->take(9)
+         ->get();
+
+         foreach($products as $product)
+         {
+            $product->encProdId = EncDecHelper::encDecId($product->tbl_prod_id,'encrypt');
+            $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
+            $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id,'encrypt');
+            unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id);
+
+         }
+        return response()->json($products);
+        // return response()->json("hi");
+    }
+  
 }

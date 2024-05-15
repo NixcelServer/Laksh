@@ -116,6 +116,10 @@ Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
 //get products 
 Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
+
+Route::get('/limited-products/{id}', [ProductController::class, 'limitedProducts']);
+
+
 Route::middleware(['preventBackHistory'])->group(function () {
 
 

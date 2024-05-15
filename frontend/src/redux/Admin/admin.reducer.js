@@ -5,6 +5,7 @@ const initalState = {
     isLoading: false,
     isError: true,
     categories: [],
+    selectedCategories:[],
     keywords:[],
     uom:[],
     subCategories: [],
@@ -20,6 +21,12 @@ export const reducer = (state = initalState, { type,payload }) => {
       case types.GET_CATEGORIES:
         return { ...state, categories: payload };
 
+        case types.SET_CATEGORIES:
+      return {
+        ...state,
+        selectedCategories: payload,
+      };
+
         case types.GET_KEYWORDS:
           return { ...state, keywords: payload };  
 
@@ -28,6 +35,8 @@ export const reducer = (state = initalState, { type,payload }) => {
 
     case types.GET_SUBCATEGORIES:
         return { ...state, subCategories: payload };
+
+        
 
 //         case types.GET_PRODUCT_LOADING:
 //             return {

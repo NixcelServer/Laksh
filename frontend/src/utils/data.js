@@ -99,7 +99,7 @@ export const footerData = [
 export const data = [
  
   {
-    title: "Electronics & Electrical Goods & Supplies",
+    title: "Electron & Electrical Goods & Supplies",
     single: {
       img: "https://hm.imimg.com/imhome_gifs/electronics-electrical-goods.jpg",
       tittle: "Voltage & Power Stabilizers",

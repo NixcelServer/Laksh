@@ -155,6 +155,12 @@ export const addCategory = (payload) => async(dispatch) => {
     }
 };
 
+export const setCategories = (categories) => async(dispatch) => {
+    dispatch({ type: types.SET_CATEGORIES, payload:categories});
+    
+
+  };
+  
 
 
 export const getSubCategories = () => async(dispatch) => {
@@ -222,3 +228,4 @@ export const addUOM = (payload) => async(dispatch) => {
         // dispatch({ type: types.ERROR, payload: err.response.data.error });
     }
 };
+

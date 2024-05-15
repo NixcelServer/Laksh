@@ -18,3 +18,5 @@ export const GET_KEYWORDS = "get/keywords"
 
 export const GET_UOM = "get/uom"
 
+export const SET_CATEGORIES = "set/categories"
+

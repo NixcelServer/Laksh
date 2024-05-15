@@ -7,3 +7,11 @@ export const getProductsAPI = async(payload) => {
     //   dispatch(getCategories(categories));
       return res.data;
 }
+
+export const getAllProductsAPI = async(payload) => {
+  const res = await axios.get(`http://127.0.0.1:8000/api/getallproducts`);
+  
+  //const categories = res.data;
+  //   dispatch(getCategories(categories));
+    return res.data;
+}

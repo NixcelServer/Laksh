@@ -27,15 +27,12 @@ const AddNewProduct = () => {
   }, []);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [productToDelete, setProductToDelete] = useState(null);
+
 
   // Sample data (you will get this from your reducer)
 
-  const options = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-    // Add more options as needed
-  ];
+  
 
 
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
@@ -263,12 +260,9 @@ const userString = sessionStorage.getItem('user');
   };
 
   // Function to handle delete product details
-  const handleDeleteProductDetails = () => {
-    setProductDetails(false); // Reset product details
-    // Hide the add product form after submitting
-   // setShowForm(false);
-
-    // Function to map encCatId to categoryName
+  const handleDeleteProductDetails = (product) => {
+    setProductToDelete(product);
+  
  
 
   

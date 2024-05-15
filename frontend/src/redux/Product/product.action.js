@@ -1,5 +1,5 @@
-import { SET_PRODUCT_DETAILS, GET_PRODUCTS } from "./product.action.type";
-import { getProductsAPI } from "./product.api";
+import { SET_PRODUCT_DETAILS, GET_PRODUCTS, GET_ALL_PRODUCTS, SELECTED_PRODUCTS } from "./product.action.type";
+import { getAllProductsAPI, getProductsAPI } from "./product.api";
 
 export const setProductDetails = (details) => {
   return {
@@ -16,4 +16,20 @@ export const getProducts = (payload) => async (dispatch) => {
     console.log(err);
     // Dispatch an error action or handle the error in some way
   }
+};
+
+export const getAllProducts = () => async () => {
+  try {
+    const res = await getAllProductsAPI();
+    dispatch({ type: GET_ALL_PRODUCTS, payload: res });
+  } catch (err) {
+    console.log(err);
+    // Dispatch an error action or handle the error in some way
+  }
+}
+
+export const setSelectedProducts = (limitedProducts) => async(dispatch) => {
+  dispatch({ type: SELECTED_PRODUCTS, payload:limitedProducts});
+  
+
 };
