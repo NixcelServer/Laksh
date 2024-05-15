@@ -193,7 +193,7 @@ const Categories = () => {
                                 delete
                             </button>
 
-                            <Link to="/subcategories">
+                            
                               <button
                                 type="button"
                                 className="btn btn-success btn-sm"
@@ -203,7 +203,7 @@ const Categories = () => {
                                 >
                                 Assign
                               </button>
-                              </Link>
+                              
                             </td>
                           </tr>
                         ))}
@@ -234,7 +234,8 @@ const Categories = () => {
                 <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
                 <button type="button" className="close" onClick={handleCancelDelete} aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
+                </button>                            
+                mbb
             </div>
             <div className="modal-body">
                 Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?
@@ -309,7 +310,8 @@ const Categories = () => {
     <div className="modal-content">
         <div className="modal-header">
             <h5 className="modal-title" id="exampleModalCenterTitle">Add New Category</h5>
-            <button type="button" className="close" onClick={() => setShowAddCategoryModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+            <button type="button" className="close" onClick={() => setShowAddCategoryModal(false)} aria-label="Close" ref={closeButtonRef} style={{ border: 'none', outline: 'none' }}>
+                
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -328,6 +330,8 @@ const Categories = () => {
             </div>
         </div>
         <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+        
+                                
             <button
                 type="button"
                 className="btn btn-primary"

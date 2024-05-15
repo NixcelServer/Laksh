@@ -249,18 +249,18 @@ const Keywords = () => {
                                 {keywordToDelete && keywordToDelete.keyword_name}?
                             </div>
                             <div className="modal-footer">
-                                <button
+                                {/* <button
                                     type="button"
                                     className="btn btn-secondary"
                                     onClick={handleCancelDelete}
                                 >
                                     Cancel
-                                </button>
+                                </button> */}
                                 <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
                                 style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleConfirmDelete(Keywords)}
+                                onClick={() => handleConfirmDelete(keywordToDelete)}
                             >
                                 {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
                                 delete
@@ -285,13 +285,13 @@ const Keywords = () => {
     <div className="modal-content">
         <div className="modal-header">
             <h5 className="modal-title" id="exampleModalCenterTitle">Add New keyword</h5>
-            <button type="button" className="close" onClick={() => setShowAddKeywordModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+            <button type="button" className="close" onClick={() => setShowAddKeywordModal(false)} aria-label="Close" ref={closeButtonRef} style={{ border: 'none', outline: 'none' }}>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div className="modal-body">
             <div className="form-group"style={{textAlign:'left'}}>
-                <label htmlFor="keywordName">keyword Name</label>
+                <label htmlFor="keywordName">Keyword Name</label>
                 <input
                     type="text"
                     className="form-control"

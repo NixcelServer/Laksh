@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useRef} from 'react';
 import feather from 'feather-icons';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,11 +12,17 @@ const AdminTemplateSubcategories = () => {
     const [subcategory, setSubcategory] = useState('');
     const [subCategoryToDelete, setSubCategoryToDelete] = useState(null);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showAddsubCategoryModal, setShowAddsubCategoryModal] = useState(false);
+    const [subCategoryName, setNewsubCategoryName] = useState("");
+
+
     const { encCatId } = useParams();
     console.log("in assign  subcat",encCatId);
     
 
     const categories = useSelector(state => state.masterData.categories);
+    const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
+
 
     const subCategories = useSelector(state => state.masterData.subCategories);
 
@@ -39,6 +45,12 @@ const AdminTemplateSubcategories = () => {
   const handleCancelDelete = () => {
     setShowDeleteConfirmation(false);
   };
+
+  const handleOK = () => {
+    setShowCannotDeleteConfirmation(false);
+};
+
+
 
   const handleConfirmDelete = async() => {
     const subCategory = subCategoryToDelete;
@@ -65,6 +77,8 @@ const AdminTemplateSubcategories = () => {
     setShowDeleteConfirmation(false);
     
   };
+
+  const closeButtonRef = useRef(null);
 
 
   const handleSubmit = async (event) => {
@@ -112,47 +126,59 @@ const AdminTemplateSubcategories = () => {
   };
   
     useEffect(() => {
+
       const script1 = document.createElement('script');
-      script1.src = 'assets/bundles/datatables/datatables.min.js';
+      script1.src = '/assets/bundles/datatables/datatables.min.js';
       script1.async = true;
       document.body.appendChild(script1);
 
       const script2 = document.createElement('script');
-      script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
+      script2.src = '/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
       script2.async = true;
       document.body.appendChild(script2);
 
       const script3 = document.createElement('script');
-      script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
+      script3.src = '/assets/bundles/jquery-ui/jquery-ui.min.js';
       script3.async = true;
       document.body.appendChild(script3);
 
       const script4 = document.createElement('script');
-      script4.src = 'assets/js/page/datatables.js';
+      script4.src = '/assets/js/page/datatables.js';
       script4.async = true;
       document.body.appendChild(script4);
 
-      // Initialize Feather icons
-     
-
       console.log("hello");
-      feather.replace();
-      dispatch(getCategories());
-      dispatch(getSubCategories());
-      // Cleanup function to remove the scripts when the component unmounts
-      return () => {
-          document.body.removeChild(script1);
-          document.body.removeChild(script2);
-          document.body.removeChild(script3);
-          document.body.removeChild(script4);
-      };
-      
-     
-  }, []);
-     
+        feather.replace();
+        dispatch(getCategories());
+        dispatch(getSubCategories());
+
         
-   // Empty dependency array means this effect runs only once after the component mounts
+    }, []); // Empty dependency array means this effect runs only once after the component mounts
     const matchingCategory = categories.find(category => category.encCatId === encCatId);
+
+    const handleSaveChanges = async(event) => {
+      event.preventDefault();
+
+      const userString = sessionStorage.getItem('user');
+      const user = JSON.parse(userString);
+      const encUserId = user.encUserId;
+      
+      const payload ={
+        categoryName,encUserId   
+      }
+
+      try {
+          await dispatch(addCategory(payload));
+          dispatch(getCategories());
+          closeButtonRef.current.click();
+          // Reinitialize Feather Icons after adding a new category
+      feather.replace();
+          
+        } catch (error) {
+          console.error("Error adding category:", error);
+        }
+  };
+
     return (
         
 <div className="main-content">
@@ -169,10 +195,11 @@ const AdminTemplateSubcategories = () => {
             {/* Start of Assign Subcategory Form */}
             <form>
                 
-                <div className="form-group"style={{ marginBottom: '-2%' }}>
-                <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px', marginLeft: '-92%' }}>Category : </label>
-      <span style={{ display: 'inline-block'}} >{matchingCategory && matchingCategory.cat_name}</span>
-      </div>
+            <div className="form-group" style={{ marginBottom: '-2%' }}>
+  <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px' }}>Category :</label>
+  <span style={{ display: 'inline-block' }}>{matchingCategory && matchingCategory.cat_name}</span>
+</div>
+
 
                     <div className="form-group">
                     <label htmlFor="subcategory"style={{ textAlign: 'left', display: 'block',marginTop:'4%' }}>Subcategory Name</label>
@@ -216,7 +243,8 @@ const AdminTemplateSubcategories = () => {
                                           <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px" }}
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+
                                 onClick={() => handleDelete(subCategory)}
                               >
                                 Delete
@@ -237,52 +265,132 @@ const AdminTemplateSubcategories = () => {
                                       
                
                 <div
-          className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
-          id="deleteConfirmationModal"
-          tabIndex="-1"
-          role="dialog"
-          aria-labelledby="deleteConfirmationModalLabel"
-          aria-hidden={!showDeleteConfirmation}
-          style={{ display: showDeleteConfirmation ? "block" : "none" }}
-        >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="deleteConfirmationModalLabel">
-                  Confirm Deletion
-                </h5>
-                <button
-                  type="button"
-                  className="close"
-                  onClick={handleCancelDelete}
-                  aria-label="Close"
+                    className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
+                    id="deleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="deleteConfirmationModalLabel"
+                    aria-hidden={!showDeleteConfirmation}
+                    style={{ display: showDeleteConfirmation ? "block" : "none" }}
                 >
-                  <span aria-hidden="true">&times;</span>
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+
+        <div className="modal-content">
+            <div className="modal-header">
+                <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" className="close" onClick={handleCancelDelete} aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
-              </div>
-              <div className="modal-body">
-                Are you sure you want to delete{" "}
-                {subCategoryToDelete && subCategoryToDelete.sub_cat_name}?
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleCancelDelete}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={handleConfirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
             </div>
-          </div>
+            <div className="modal-body">
+                Are you sure you want to delete {subCategoryToDelete && subCategoryToDelete.cat_name}?
+            </div>
+            <div className="modal-footer">
+                {/* <button type="button" className="btn btn-secondary" onClick={handleCancelDelete}>
+                    Cancel
+                </button> */}
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}
+                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}                                                >
+                    Delete
+                </button>
+            </div>
         </div>
+    </div>
+                </div>
+
+                <div
+                    className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
+                    id="cannotDeleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="cannotDeleteConfirmationModalLabel"
+                    aria-hidden={!showCannotDeleteConfirmation}
+                    style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
+                >
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
+                                    Cannot Delete
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    onClick={handleOK}
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                            Unable to delete the subCategory '{subCategoryToDelete && subCategoryToDelete.cat_name}' at the moment. It appears that this subCategory still contains subcategories.
+                                
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleOK}
+                                >
+                                    Ok
+                                </button>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    className={`modal fade ${showAddsubCategoryModal ? "show" : ""}`}
+                    id="addUnitModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="addUnitModalLabel"
+                    aria-hidden={!showAddsubCategoryModal}
+                    style={{ display: showAddsubCategoryModal ? "block" : "none" }}
+                >
+                   
+                   <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
+    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+    <div className="modal-content">
+        <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalCenterTitle">Add New subCategory</h5>
+            <button type="button" className="close" onClick={() => setShowAddsubCategoryModal(false)} aria-label="Close" ref={closeButtonRef} style={{ border: 'none', outline: 'none' }}>
+                
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div className="modal-body">
+            <div className="form-group"style={{textAlign:'left'}}>
+                <label htmlFor="subCategoryName">subCategory Name</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="subCategoryName"
+                    placeholder="Enter subCategory Name"
+                    value={subCategoryName}
+                    onChange={(e) => setNewsubCategoryName(e.target.value)}
+                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
+                />
+            </div>
+        </div>
+        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+        
+                                
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveChanges}
+                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+            >
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+
+                </div>
 
             </div>
         
@@ -290,5 +398,3 @@ const AdminTemplateSubcategories = () => {
 };
 
 export default AdminTemplateSubcategories;
-
-

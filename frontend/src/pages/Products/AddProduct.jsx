@@ -261,14 +261,14 @@ const userString = sessionStorage.getItem('user');
                                 <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
                                   <div className="card">
                                     <div className="card-header">
-                                      <h4>Add Image</h4>
+                                      <h4 style={{ color: '#9B59B6' }}>Add Image</h4>
                                     </div>
                                     {photoPreview && (
                                       <div className="file-preview">
                                         <img
                                           src={photoPreview}
                                           alt="Photo Preview"
-                                          style={{ width: "100%", height: "auto" }}
+                                          style={{ width: "100%", height: "200px" }}
                                         />
                                       </div>
                                     )}
@@ -491,13 +491,13 @@ const userString = sessionStorage.getItem('user');
               <div className="col-lg-6" style={{ padding: '20px' }}>
                 <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
                   {photoPreview && (
-                    <img src={photoPreview} alt="Product Preview" style={{ width: '100%', height: 'auto' }} />
+                    <img src={photoPreview} alt="Product Preview" style={{ width: '800%', height: '200px' }} />
                   )}
                 </div>
               </div>
               <div className="col-lg-6" style={{ padding: '10px' }}>
                 <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#9B59B6', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
                   <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {productDetails.productName || 'Sample Product'}</p>
                   <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {productDetails.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
                   <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {productDetails.category || 'Laboratory Equipment'}</p>
@@ -512,50 +512,41 @@ const userString = sessionStorage.getItem('user');
                 <button onClick={handleCancelUpdate} style={{marginRight: '5px', fontWeight: 'bold',backgroundColor:'#F9E79F'}}>Cancel</button>
               </>
             ) : (
-              <button onClick={handleUpdateProductDetails}style={{
-                backgroundColor: '#58D68D',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}  >Update</button>
+              <button
+              type="button"
+              className="btn btn-success btn-sm"
+              style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+
+              onClick={handleUpdateProductDetails}
+              
+              >
+              Update
+            </button>
             )}
 
 
 
             {/* Delete button */}
             <button
-              type="button"
-              onClick={handleDeleteProductDetails}
-              style={{
-                backgroundColor: '#ff0000',
-                border: 'none',
-                color: 'white',
-                padding: '2px 12px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontSize: '14px',
-                margin: '10px 0',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                
-              }}
-            >
-              Delete
-            </button>
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                onClick={handleDeleteProductDetails}
+                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+
+                            >
+                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                delete
+                            </button>
+
+
+                            
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        
       </div>
     </div>
   );

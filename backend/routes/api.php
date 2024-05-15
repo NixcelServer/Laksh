@@ -10,6 +10,7 @@ use App\Http\Controllers\KeywordController;
 use App\Http\Controllers\UOMController;
 use App\Http\Controllers\CompanyRegistrationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PostController;
 
 
 /*
@@ -89,6 +90,18 @@ Route::delete('/keywords/{id}',[KeywordController::class,'deleteKeywords']);
 //Register your company
 Route::post('/registeryourcompany',[CompanyRegistrationController::class,'registerCompany']);
 
+Route::get('/companydetails/{id}',[CompanyRegistrationController::class,'getCompany']);
+
+// validations for company registration
+Route::post('/check-cin-no/{id}',[CompanyRegistrationController::class,'checkCINNO']);
+Route::post('/check-company-name/{id}',[CompanyRegistrationController::class,'checkCompanyName']);
+Route::post('/check-tan-no/{id}',[CompanyRegistrationController::class,'checkTANNO']);
+Route::post('/check-iec-no/{id}',[CompanyRegistrationController::class,'checkIECNO']);
+Route::post('/check-mobile-no/{id}',[CompanyRegistrationController::class,'checkMOBNO']);
+Route::post('/check-alt-mobile-no/{id}',[CompanyRegistrationController::class,'checkALTMOBNO']);
+Route::post('/check-landline-no/{id}',[CompanyRegistrationController::class,'checkLANDLINENO']);
+Route::post('/check-alt-landline-no/{id}',[CompanyRegistrationController::class,'checkALTLANDLINENO']);
+Route::post('/check-acc-no/{id}',[CompanyRegistrationController::class,'checkACCNO']);
 //Register Products
 Route::post('/registerProduct',[ProductController::class,'registerProduct']);
 
@@ -96,6 +109,12 @@ Route::post('/registerProduct',[ProductController::class,'registerProduct']);
 Route::get('/getall',[AdminController::class,'getAllAdmin']);
 
 Route::post('/product/store',[ProductController::class,'storeProduct']);
+
+//submit requirements routes
+Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
+
+//get products 
+Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

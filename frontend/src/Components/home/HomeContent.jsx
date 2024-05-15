@@ -73,8 +73,8 @@ const HomeContent = () => {
     //add
   };
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}>
-      <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px">
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
+      <Box className="main-content" p={{ base: "10px", md: "20px" }}  mb={{ base: "-20px", md: "-40px" }}>
         <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "212px"}}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
             <div className="form-group">

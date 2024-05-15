@@ -54,38 +54,38 @@ const UOM = () => {
 
         setUOMToDelete(uom);
         setShowDeleteConfirmation(true);
-      };
+    };
 
-      const handleCancelDelete = () => {
+    const handleCancelDelete = () => {
         setShowDeleteConfirmation(false);
-      }
-    
-      const handleConfirmDelete = async() => {
+    }
+
+    const handleConfirmDelete = async () => {
         const uom = UOMToDelete;
         try {
-          const userString =  sessionStorage.getItem('user');
-          const user = JSON.parse(userString);
-          const encUserId = user.encUserId;
-      
-          // Include both encUserId and encuomId in the payload
-          const payload = {
-            encUserId
-          };
-      
-          // Perform delete operation using encuomId and encUserId
-          const response = await axios.delete(`http://127.0.0.1:8000/api/unit-of-measurements/${uom.encUomId}`, { data: payload });      
-          //console.log("uom deleted successfully:", response.data);
-          
-          // Refetch uoms after deletion
-          dispatch(getUOM());
+            const userString = sessionStorage.getItem('user');
+            const user = JSON.parse(userString);
+            const encUserId = user.encUserId;
+
+            // Include both encUserId and encKeywordId in the payload
+            const payload = {
+                encUserId
+            };
+
+            // Perform delete operation using encKeywordId and encUserId
+            const response = await axios.delete(`http://127.0.0.1:8000/api/unit-of-measurements/${uom.encUomId}`, { data: payload });
+            //console.log("Keyword deleted successfully:", response.data);
+
+            // Refetch keywords after deletion
+            dispatch(getUOM());
         } catch (error) {
-          console.error("Error deleting uom:", error);
+            console.error("Error deleting keyword:", error);
         }
         //dispatch(getCategories(updatedCategories));
         setShowDeleteConfirmation(false);
-        
-      };
-    
+
+    };
+
     const handleSaveChanges = async (event) => {
         // Define the logic for saving changes
         // Define the logic for saving changes
@@ -94,42 +94,42 @@ const UOM = () => {
         const userString = sessionStorage.getItem('user');
         // Parse the user object from the string format stored in sessionStorage
         const user = JSON.parse(userString);
-    
+
         // Retrieve the encUserId from the user object
         const encUserId = user.encUserId;
         console.log(encUserId);
-        
-        const payload ={
-          uomName,encUserId   
+
+        const payload = {
+            uomName, encUserId
         }
         console.log(payload);
 
         try {
-          
+
             console.log("in try block");
-            
+
             await dispatch(addUOM(payload));
-            console.log("uom added");
-            
-           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+            console.log("category added");
+
+            // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
             dispatch(getUOM());
             console.log("update redux");
             // console.log("Category added successfully:", response.data);
-      
-           // fetchCategories();
+
+            // fetchCategories();
             closeButtonRef.current.click();
-           
-            
-            
-          } catch (error) {
-            console.error("Error adding uom:", error);
-           // setError(error.message); // Set error state
-          }
+
+
+
+        } catch (error) {
+            console.error("Error adding category:", error);
+            // setError(error.message); // Set error state
+        }
 
 
 
     };
-    
+
     return (
         <div >
             {/* "Add New" button */}
@@ -139,11 +139,11 @@ const UOM = () => {
                         <div className="row">
                             <div className="col-12">
                                 <div className="card">
-                                    
+
                                 </div>
                             </div>
                         </div>
-                       
+
                         <div className="row">
                             <div className="col-12">
                                 <div className="card">
@@ -172,35 +172,34 @@ const UOM = () => {
                                     </div>
                                     <div className="card-body">
                                         <div className="table-responsive">
-                                            <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
+                                            <table className="table table-striped table-hover" id="save-stage" style={{ width: '100%' }}>
                                                 <thead>
                                                     <tr>
                                                         <th>Sr. No.</th>
                                                         <th>Unit of Measurement</th>
                                                         <th>Action</th>
-                                                       
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    
-                                                {uoms.map((uom, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{uom.unit_name}</td> {/* Displaying the uom name */}
-                              <td>
 
-                              <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleDelete(uom)}
-                            >
-                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
-                                delete
-                            </button></td>
+                                                    {uoms.map((uom, index) => (
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>{uom.unit_name}</td> {/* Displaying the keyword name */}
+                                                            <td>
 
-                            </tr>
-                          ))}
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger btn-sm"
+                                                                    style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                                                    onClick={() => handleDelete(uom)}
+                                                                >
+                                                                    Delete
+                                                                </button>                              </td>
+
+                                                        </tr>
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -225,7 +224,7 @@ const UOM = () => {
                     
                 >
                     
-                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-dialog  modal-dialog-centered" role="document" >
                     <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
     
                         <div className="modal-content">
@@ -272,6 +271,8 @@ const UOM = () => {
                     </div>
                 </div>
 
+
+
                 {/* Add Unit Modal */}
                 <div
                     className={`modal fade ${showAddUOMModal ? "show" : ""}`}
@@ -287,7 +288,7 @@ const UOM = () => {
     <div className="modal-content">
         <div className="modal-header">
             <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
-            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} ref={closeButtonRef} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
