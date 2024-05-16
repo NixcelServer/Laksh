@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
-const AddProduct = () => {
+const Product = () => {
   useEffect(() => {
     feather.replace();
     dispatch(getCategories());
@@ -31,9 +31,14 @@ const AddProduct = () => {
 
   // Sample data (you will get this from your reducer)
 
- 
+  const options = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' },
+    // Add more options as needed
+  ];
 
-  const navigate = useNavigate();
+
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
@@ -45,6 +50,7 @@ const AddProduct = () => {
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const navigate = useNavigate();
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
   
@@ -108,7 +114,6 @@ const AddProduct = () => {
     console.log(productDetails);
     console.log(JSON.stringify(productDetails, null, 2));
     console.log("Selected File:", productDetails.file);
-    console.log("in sele",selectedOptions)
 
   };
 
@@ -229,7 +234,7 @@ const userString = sessionStorage.getItem('user');
     
       });
       dispatch(getProducts(encCompanyId));
-      navigate('/products');
+      //navigate('/');
       setShowForm(false); // Hide the form after saving
   };
 
@@ -257,8 +262,9 @@ const userString = sessionStorage.getItem('user');
 
 
 
-  const handleUpdateProductDetails = () => {
-    setShowForm(!showForm);
+  const handleUpdateProductDetails = (product) => {
+    navigate('/product/update-product', { state: { product } });
+    
   };
 
   // Function to handle delete product details
@@ -306,10 +312,27 @@ const userString = sessionStorage.getItem('user');
     <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
-          
+          <Link to="/product/add-product">
+          <button
+            type="button"
+            style={{
+              backgroundColor: "#4CAF50",
+              border: "none",
+              color: "white",
+              padding: "1px 10px",
+              fontSize: "1.5em",
+              cursor: "pointer",
+              borderRadius: "20px",
+              fontSize: "1em" 
+            }}
+           
+          >
+            <span style={{ marginRight: "5px", fontWeight: "bold" }}>+</span> Add Product
+          </button>
+          </Link>
         </div>
 
-        
+        {showForm && (
           <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
             <div className="row">
               <div className="col-lg-12">
@@ -511,7 +534,7 @@ const userString = sessionStorage.getItem('user');
                         
                                   
                                   {/* Submit and Continue Button */}
-                                  
+                                  {showForm && (
                                     <button
                                       type="button"
                                       style={{
@@ -529,7 +552,7 @@ const userString = sessionStorage.getItem('user');
                                     >
                                       Save and Continue
                                     </button>
-                                  
+                                  )}
                                 </div>
                               </div>
                             </section>
@@ -542,10 +565,84 @@ const userString = sessionStorage.getItem('user');
               </div>
             </div>
           </section>
-        
+        )}
 
         {/* Display product details card */}
-       
+        {products && products.map((product, index) => (
+  <div className="card" key={index} style={{ 
+    padding: '20px',
+    maxWidth: '1000px', 
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
+    marginTop: '20px', // Add margin top for separation
+    position: 'relative' // Position relative for absolute positioning of delete button
+  }}>
+    <div className="row">
+      <div className="col-lg-6" style={{ padding: '20px' }}>
+        <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
+        {product.prod_img_path && (
+            <img src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt="Product Preview" style={{ width: '800%', height: '200px' }}  />
+            
+          )}
+        </div>
+      </div>
+      <div className="col-lg-6" style={{ padding: '10px' }}>
+        <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
+
+          {/* Update and Delete buttons */}
+          {updateMode ? (
+            <>
+              <button onClick={handleUpdate} style={{ marginRight: '5px', fontWeight: 'bold' }}>Update</button>
+              <button onClick={handleCancelUpdate} style={{ marginRight: '5px', fontWeight: 'bold', backgroundColor:'#F9E79F' }}>Cancel</button>
+            </>
+          ) : (
+            <button onClick={() => handleUpdateProductDetails(product)} style={{
+              backgroundColor: '#58D68D',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}>Update</button>
+          )}
+
+          {/* Delete button */}
+          <button
+            type="button"
+            onClick={() => handleDeleteProductDetails(product)}
+            style={{
+              backgroundColor: '#ff0000',
+              border: 'none',
+              color: 'white',
+              padding: '2px 12px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'inline-block',
+              fontSize: '14px',
+              margin: '10px 0',
+              cursor: 'pointer',
+              borderRadius: '4px',
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+))}
    <div
                     className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
                     id="deleteConfirmationModal"
@@ -606,4 +703,4 @@ const userString = sessionStorage.getItem('user');
   );
 };
 
-export default AddProduct;
+export default Product;

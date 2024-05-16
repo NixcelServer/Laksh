@@ -7,12 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
 
 import { getProducts } from "../../redux/Product/product.action";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
-const AddProduct = () => {
+const UpdateProduct = () => {
   useEffect(() => {
     feather.replace();
     dispatch(getCategories());
@@ -20,14 +20,12 @@ const AddProduct = () => {
     dispatch(getKeywords());
     dispatch(getUOM());
 
-    const userString = sessionStorage.getItem('user');
-    const user = JSON.parse(userString);
-    const encCompanyId = user.encCompanyId;
-    dispatch(getProducts(encCompanyId));
+    
 
   }, []);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
+  
 
   // Sample data (you will get this from your reducer)
 
@@ -45,6 +43,15 @@ const AddProduct = () => {
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const location = useLocation();
+  const { product } = location.state || {};
+
+  const keywords = useSelector(state => state.masterData.keywords);
+  const categories = useSelector(state => state.masterData.categories);
+  const subCategories = useSelector(state => state.masterData.subCategories);
+  const uoms = useSelector(state => state.masterData.uom);
+
+
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
   
@@ -60,26 +67,71 @@ const AddProduct = () => {
     minOrderQty: '',
     prodUOM: '',
     file: '',
+    prodId:'',
 });
 
+useEffect(() => {
+
+    const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+
+    if (product && keywords) {
+      // Set selectedOptions with product.encKeywords
+      const selectedOptionsWithNames = product.encKeywords.map(keywordId => {
+        const keyword = keywords.find(kw => kw.encKeywordId === keywordId);
+        return {
+          value: keywordId,
+          label: keyword ? keyword.keyword_name : '' // Check if keyword exists and get its name
+        };
+      });
+      setSelectedOptions(selectedOptionsWithNames || []);
+  
+      // Update productDetails
+      setProductDetails(prevState => ({
+        ...prevState,
+        encCompanyId: encCompanyId || '',
+        prodName: product.prod_name || '',
+        prodDescription: product.prod_description || '',
+        prodCat: product.encCatId || '',
+        prodSubCat: product.encSubCatId || '',
+        keywords: selectedOptionsWithNames || [], // Update with selectedOptionsWithNames
+        prodPrice: product.prod_price || '',
+        pricePer: '', // Assuming this field does not exist in the product object
+        minOrderQty: product.prod_min_order_qty || '',
+        prodUOM: product.encUomId || '',
+        file: product.prod_img_path || '', // Assuming file is a new upload, not present in the product object
+        prodId:product.encProdId
+      }));
+      console.log(product);
+
+      const filteredSubcategories = subCategories.filter(subCategory => subCategory.encCatId === product.encCatId);
+    console.log("filtered sub cat", filteredSubcategories);
+    setFilteredSubCategories(filteredSubcategories);
+
+    const reader = new FileReader();
+
+    if (productDetails.file) {
+        setPhotoPreview(`http://127.0.0.1:8000/storage/${productDetails.file}`);
+      } else {
+        setPhotoPreview(null);
+      }
+
+  
+    }
+  }, [product, keywords]);
+  
+
+  console.log("product Deets",productDetails);
+  console.log("selectedOptions",selectedKeywords);
 
   const [selectedCategory, setSelectedCategory] = useState('');
  
    // useEffect will run whenever dispatch changes
 
-   const categories = useSelector(state => state.masterData.categories);
-  const subCategories = useSelector(state => state.masterData.subCategories);
   
+
  
-
-  const keywords = useSelector(state => state.masterData.keywords);
-
-  const uoms = useSelector(state => state.masterData.uom);
-
-
-  const products = useSelector(state => state.productReducer.products)
-  console.log("pro",products)
-
    //filtered out the sub categories based on category selected
    const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
@@ -108,7 +160,6 @@ const AddProduct = () => {
     console.log(productDetails);
     console.log(JSON.stringify(productDetails, null, 2));
     console.log("Selected File:", productDetails.file);
-    console.log("in sele",selectedOptions)
 
   };
 
@@ -172,30 +223,7 @@ const AddProduct = () => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
 
-const handleSaveAndContinue = async(e) => {
-  e.preventDefault();
 
-  
-console.log(encCompanyId);
-
-  // Update productDetails state with the obtained encCompanyId
-setProductDetails(prevProductDetails => ({
-...prevProductDetails,
-encCompanyId: encCompanyId
-}));
-  // Logic to save changes and continue
-  console.log(productDetails);
-  //debugger;
-  const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
-      headers: {
-          'Content-Type': 'multipart/form-data'
-      }
-
-  });
-  await dispatch(getProducts(encCompanyId));
-  //navigate('/');
-  setShowForm(false); // Hide the form after saving
-};
 
 const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
@@ -207,30 +235,41 @@ const userString = sessionStorage.getItem('user');
             encCompanyId: encCompanyId
         }));
     }, [encCompanyId]);
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
-  
     console.log(encCompanyId);
     
+    const selectedKeys = selectedOptions.map(option => option.value);
       // Update productDetails state with the obtained encCompanyId
     setProductDetails(prevProductDetails => ({
     ...prevProductDetails,
-    encCompanyId: encCompanyId
+    encCompanyId: encCompanyId,
+    keywords:selectedKeys
     }));
       // Logic to save changes and continue
-      console.log(productDetails);
+      console.log("submit",productDetails);
       //debugger;
-      const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
-          headers: {
-              'Content-Type': 'multipart/form-data'
-          }
-    
-      });
-      dispatch(getProducts(encCompanyId));
-      navigate('/products');
-      setShowForm(false); // Hide the form after saving
+      axios.post("http://127.0.0.1:8000/api/product/update-product", {
+        ...productDetails,
+        keywords: selectedKeys // Ensure keywords are updated
+    }, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+        navigate('/products')
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    //   dispatch(getProducts(encCompanyId));
+    //   //navigate('/');
+    //   setShowForm(false); // Hide the form after saving
   };
 
   const handleClosePopup = () => {
@@ -349,6 +388,7 @@ const userString = sessionStorage.getItem('user');
                                             )
                                           }
                                         />
+
                                       </div>
                                     </div>
                                   </div>
@@ -369,6 +409,7 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="productName"
+                                      value={productDetails.prodName}
                                       onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
 
                                     />
@@ -399,6 +440,7 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="price"
+                                      value ={productDetails.prodPrice}
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
 
                                     />
@@ -410,6 +452,7 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="pricePer"
+                                      value = {productDetails.minOrderQty}
                                       onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
 
                                     />
@@ -431,6 +474,7 @@ const userString = sessionStorage.getItem('user');
                                       rows="3"
                                       style={{ height: "20px !important" }}
                                       name="description"
+                                      value = {productDetails.prodDescription}
                                       onChange={(e) => setProductDetails({ ...productDetails, prodDescription: e.target.value })}
 
                                     ></textarea>
@@ -441,6 +485,7 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="subcategory"
+                                      value={productDetails.prodSubCat}
                                       onChange={(e) => setProductDetails({ ...productDetails, prodSubCat: e.target.value })}
 
                                     >
@@ -458,6 +503,7 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="unit"
+                                      value = {productDetails.prodUOM}
                                       onChange={handleUomChange}
                                       
                                     >
@@ -606,4 +652,4 @@ const userString = sessionStorage.getItem('user');
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;

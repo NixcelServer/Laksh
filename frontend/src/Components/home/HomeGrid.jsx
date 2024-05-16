@@ -4,6 +4,7 @@ import React from 'react'
 import HomeGridItems from './HomeGridItems'
 
 export default function HomeGrid({ title, single, info }) {
+  const firstProductImage = info.length > 0 ? info[0] : '';
   return (
     // <Box m='10px' p='30px' boxShadow='md' rounded='md'   >
     //     <Heading p='10px' size={{base:"md",md:"lg"}} textAlign='left'  >{data1.title}</Heading>
@@ -59,7 +60,7 @@ export default function HomeGrid({ title, single, info }) {
             height: '400px',
             width: "300px",
             
-            backgroundImage: `url(${single.img})`,
+            backgroundImage: `url(http://127.0.0.1:8000/storage/${firstProductImage.prod_img_path})`,
             opacity: 0.9,
             backgroundPosition: 'center',
           }}

@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import feather from 'feather-icons'; // Import feather-icons
 import { Link, useNavigate } from 'react-router-dom';
+import { FaProductHunt } from 'react-icons/fa';
+import { MdOutlineLeaderboard } from "react-icons/md";
+
 
 const UserNavbar = () => {
     useEffect(() => {
@@ -39,10 +42,15 @@ const UserNavbar = () => {
                     <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Lead Manager</span></Link>
                     </li>
                     <li className="">
-                    <Link to="/buylead" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>BuyLeads</span></Link>
+                    <Link to="/buylead" className="">
+                    <MdOutlineLeaderboard size={20} />
+                        <span style={{ fontSize: '12px',textAlign:'left', paddingLeft: '10px'  }}>BuyLeads</span></Link>
                     </li>
                     <li className="">
-                    <Link to="/addproduct" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Products</span></Link>
+                    <Link to="/products" className="">
+                        <FaProductHunt size={20}/>
+                        <span style={{ fontSize: '12px', textAlign: 'left', paddingLeft: '10px' }}>Products</span>
+                    </Link>
                     </li>
                     <li className="">
                         <Link to="/" className=""><i data-feather="key" /><span style={{ fontSize: '12px',textAlign:'left' }}>Photos and Docs</span></Link>

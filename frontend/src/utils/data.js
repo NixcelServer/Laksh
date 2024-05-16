@@ -97,6 +97,8 @@ export const footerData = [
 ]
 
 export const data = [
+
+  
  
   {
     title: "Electron & Electrical Goods & Supplies",

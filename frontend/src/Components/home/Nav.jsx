@@ -37,9 +37,10 @@ import React, { useState,useEffect } from 'react';
 import { Link as NavLink } from 'react-router-dom';
  import {authLogout} from '../../redux/auth/auth.action'
  import { Link } from 'react-router-dom';
- import { FaUser, FaBolt, FaCog } from 'react-icons/fa';
+ import { FaUser, FaBolt, FaCog, FaUserCircle } from 'react-icons/fa';
 
 
+ import { IoInformationOutline } from 'react-icons/io5';
 
 
 
@@ -107,7 +108,7 @@ export default function Navbar() {
 
                 <Image src='' w='60px' objectFit={'cover'} onClick={()=>{navigate('/')}}  />
             </Box>
-                <Heading color={'#9B59B6 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold' }}>Laksh</Heading>
+                <Heading color={'#9B59B6 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold', marginLeft: '-60px'  }}>Laksh</Heading>
 
            
           </HStack>
@@ -137,40 +138,63 @@ export default function Navbar() {
                         </Box>
                     </Flex>
           }        
-          <Flex alignItems={'center'}>
+          <Flex alignItems={'center'} marginTop={'16px'}>
           <HStack
               as={'nav'}
-              spacing={4}
+              spacing={1}
               justifyContent='space-evenly'
               pr='15px'
               display={{ base: 'none', md: 'flex' }}>
-                <Button flexDirection={'column'} size='lg' p='10px' _hover={{ color:'teal' }} onClick={()=>{navigate('/userdashboard')}} >
-                     <Icon   as={MdSell} boxSize={5}  /> 
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }} onClick={()=>{navigate('/userdashboard')}}style={{ fontSize: '14px' }}  >
+                     <Icon   as={MdSell} boxSize={4}  /> 
                      <Text  fontWeight={'bold'}>sell</Text>
                 </Button>
-                <Button flexDirection={'column'} size='lg' p='10px'  >
-                     <Icon  as={''} boxSize={5} /> 
-                     <Text  fontWeight={'bold'} _hover={{ color:'teal' }} >Help</Text>
+                <Button flexDirection={'column'} size='lg' p='5px'  >
+                     <Icon  as={''} boxSize={4} /> 
+                     <Text  fontWeight={'bold'} _hover={{ color:'teal' }}  style={{ fontSize: '14px' , backgroundColor: 'transparent' }} >Help</Text>
                 </Button>
-                <Button flexDirection={'column'} size='lg' p='10px' _hover={{ color:'teal' }}  >
-                     <Icon   as={MdOutlineMessage} boxSize={5} /> 
-                     <Text  fontWeight={'bold'}>masaage</Text>
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }} style={{ fontSize: '14px', backgroundColor: 'transparent' }}   >
+                     <Icon   as={MdOutlineMessage} boxSize={4} /> 
+                     <Text  fontWeight={'bold'}>Message</Text>
+                </Button>
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }}  style={{ fontSize: '14px' }}  >
+                <Icon as={IoInformationOutline} boxSize={4} />
+                     <Text  fontWeight={'bold'}>About us</Text>
                 </Button>
             </HStack>
 
             <Menu>
           
 
-<MenuButton as={Link} to="#" style={{ boxShadow: 'none' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user">
-  <Image src="images/adminlogo.png" className="user-img-radious-style" alt="image" boxSize="30px" /> {/* Adjust the boxSize as needed */}
-  <Box as="span" className="d-sm-none d-lg-inline-block" />
+            <MenuButton as={Link} to="#" style={{ boxShadow: 'none', flexDirection: 'column', display: 'flex', alignItems: 'center', padding: '0px', fontSize: '14px', marginBottom: '10px', _hover: { color: 'teal' } }} className="nav-link dropdown-toggle nav-link-lg nav-link-user">
+  <Icon as={FaUserCircle} boxSize={27} className="user-img-radious-style" /> {/* Adjust size as needed */}
+  {/* <Text fontWeight={'bold'}>login</Text> */}
 </MenuButton>
 
-      <MenuList>
-        <MenuItem as={Link} to="login" icon={<FaUser />}>login</MenuItem>
-        <MenuItem as={Link} to="alogin" icon={<FaBolt />}>Admin</MenuItem>
-        <MenuItem as={Link} to="#" icon={<FaCog />}>Settings</MenuItem>
-      </MenuList>
+
+<MenuList>
+  {!isLogin && (
+    <>
+      <MenuItem as={Link} to="login" icon={<FaUser />}>
+        Login
+      </MenuItem>
+      <MenuItem as={Link} to="alogin" icon={<FaBolt />}>
+        Admin
+      </MenuItem>
+    </>
+  )}
+  {isLogin && (
+    <>
+      <MenuItem as={Link} to="#" icon={<FaCog />}>
+        Settings
+      </MenuItem>
+      <MenuItem as={Link} to="#" icon={<FaBolt />} onClick={handleLogout}>
+        Logout
+      </MenuItem>
+    </>
+  )}
+</MenuList>
+
     </Menu>
           </Flex>
         </Flex>
