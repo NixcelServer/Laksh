@@ -80,7 +80,7 @@ class PostController extends Controller
 
         return response()->json(['message' => 'Order deleted successfully'], 200);
     }   
-    
+
     public function getBuyleads($id)
     {
        // Step 1: Retrieve all tbl_cat_id values from the products
@@ -89,9 +89,9 @@ class PostController extends Controller
         ->pluck('tbl_cat_id')
         ->toArray();
 
-        if (empty($tbl_cat_ids)) {
-            return response()->json(['message' => 'No matching products found', 'tbl_cat_ids' => $tbl_cat_ids], 200);
-        }
+        // if (empty($tbl_cat_ids)) {
+        //     return response()->json(['message' => 'No matching products found', 'tbl_cat_ids' => $tbl_cat_ids], 200);
+        // }
       
         // Step 2: Use the retrieved tbl_cat_id values to get the posts
         $posts = Post::whereIn('tbl_cat_id', $tbl_cat_ids)->get();
