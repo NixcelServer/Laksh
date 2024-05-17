@@ -113,14 +113,25 @@ Route::post('/product/store',[ProductController::class,'storeProduct']);
 Route::delete('/product/{id}',[ProductController::class,'deleteProducts']);
 
 Route::post('/product/update-product',[ProductController::class,'updateProduct']);
-//submit requirements routes
-Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
+
 
 //get products 
 Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
 
 Route::get('/limited-products/{id}', [ProductController::class, 'limitedProducts']);
+
+
+//submit requirements routes
+Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
+
+Route::get('/my-orders/{id}',[PostController::class,'myOrders']);
+
+Route::get('/buyleads/{id}',[PostController::class,'getBuyleads']);
+
+Route::post('/update-order',[PostController::class,'updateOrder']);
+
+Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
 
 
 Route::middleware(['preventBackHistory'])->group(function () {

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('instagram_url')->nullable();
             $table->text('facebook_url')->nullable();
             $table->text('google_url')->nullable();
-            $table->date('add_date');
-            $table->time('add_time');
+            $table->date('add_date')->nullable();
+            $table->time('add_time')->nullable();
             $table->date('updated_date')->nullable();
             $table->time('updated_time')->nullable();
             $table->string('flag', 45)->default('show');

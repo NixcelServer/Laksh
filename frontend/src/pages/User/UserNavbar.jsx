@@ -39,7 +39,7 @@ const UserNavbar = () => {
                     <Link to="/userdashboard" className=""><i data-feather="monitor" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Dashboard</span></Link>
                     </li>
                     <li className="">
-                    <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Lead Manager</span></Link>
+                    <Link to="/companysetup" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Company Setup</span></Link>
                     </li>
                     <li className="">
                     <Link to="/buylead" className="">

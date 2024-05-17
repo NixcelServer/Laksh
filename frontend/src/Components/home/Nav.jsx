@@ -29,7 +29,7 @@ import {
 
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MdSell,MdOutlineMessage,MdHome } from 'react-icons/md'
+import { MdSell,MdOutlineMessage,MdHome, MdArchive, MdOutlineLocalMall } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
 import {Link as Navlink} from 'react-router-dom'
@@ -147,19 +147,23 @@ export default function Navbar() {
               display={{ base: 'none', md: 'flex' }}>
                 <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }} onClick={()=>{navigate('/userdashboard')}}style={{ fontSize: '14px' }}  >
                      <Icon   as={MdSell} boxSize={4}  /> 
-                     <Text  fontWeight={'bold'}>sell</Text>
+                     <Text  fontWeight={'normal'}>sell</Text>
+                </Button>
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }} onClick={()=>{navigate('/myorders')}}style={{ fontSize: '14px' }}  >
+                     <Icon   as={MdOutlineLocalMall} boxSize={4}  /> 
+                     <Text  fontWeight={'normal'}>My Orders</Text>
                 </Button>
                 <Button flexDirection={'column'} size='lg' p='5px'  >
                      <Icon  as={''} boxSize={4} /> 
-                     <Text  fontWeight={'bold'} _hover={{ color:'teal' }}  style={{ fontSize: '14px' , backgroundColor: 'transparent' }} >Help</Text>
+                     <Text  fontWeight={'normal'} _hover={{ color:'teal' }}  style={{ fontSize: '14px' , backgroundColor: 'transparent' }} >Help</Text>
                 </Button>
                 <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }} style={{ fontSize: '14px', backgroundColor: 'transparent' }}   >
                      <Icon   as={MdOutlineMessage} boxSize={4} /> 
-                     <Text  fontWeight={'bold'}>Message</Text>
+                     <Text  fontWeight={'normal'}>Message</Text>
                 </Button>
                 <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'teal' }}  style={{ fontSize: '14px' }}  >
                 <Icon as={IoInformationOutline} boxSize={4} />
-                     <Text  fontWeight={'bold'}>About us</Text>
+                     <Text  fontWeight={'normal'}>About us</Text>
                 </Button>
             </HStack>
 
