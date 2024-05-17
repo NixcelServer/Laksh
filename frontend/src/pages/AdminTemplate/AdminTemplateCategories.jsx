@@ -14,6 +14,7 @@ const Categories = () => {
     const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
     const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -42,8 +43,13 @@ const Categories = () => {
 
         // Initialize Feather icons
         feather.replace();
-        dispatch(getCategories());
+        setTimeout(() => {
+            // Assuming data is fetched successfully
+            dispatch(getCategories());
         dispatch(getSubCategories());
+            setLoading(false);
+          }, 1000);
+       
         // Cleanup function to remove the scripts when the component unmounts
         return () => {
             document.body.removeChild(script1);
@@ -116,6 +122,7 @@ const Categories = () => {
             await dispatch(addCategory(payload));
             dispatch(getCategories());
             closeButtonRef.current.click();
+            // setNewCategoryName = "";
             // Reinitialize Feather Icons after adding a new category
         feather.replace();
             
@@ -123,6 +130,32 @@ const Categories = () => {
             console.error("Error adding category:", error);
           }
     };
+
+    const categoryRows = categories.map((category, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{category.cat_name}</td>
+          <td>
+            <button
+              type="button"
+              className="btn btn-danger btn-sm"
+              style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+              onClick={() => handleDelete(category)}
+            >
+              delete
+            </button>
+            <button
+              type="button"
+              className="btn btn-success btn-sm"
+              style={{ margintop: "100px"}}
+              onClick={() => handleAssign(category)}
+            >
+              Assign
+            </button>
+          </td>
+        </tr>
+      ));
+
    
     
     return (
@@ -166,49 +199,20 @@ const Categories = () => {
                                     </div>
                                     <div className="card-body">
                                         <div className="table-responsive">
-                                            <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
+                                        {loading ? (
+        <p>Loading...</p> // Display a loading indicator while data is being fetched
+      ) : ( <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
                                                 <thead>
                                                     <tr>
                                                         <th>Sr. No.</th>
                                                         <th>Category</th>
-                                                        <th>Action</th>
-                                                        
+                                                        <th>Action</th> 
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                {categories.map((category, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-
-                            <td>{category.cat_name}</td>
-
-                            <td>
-                            <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleDelete(category)}
-                            >
-                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
-                                delete
-                            </button>
-
-                            
-                              <button
-                                type="button"
-                                className="btn btn-success btn-sm"
-                                style={{ margintop: "100px"}}
-                                onClick={() => handleAssign(category)}
-                                
-                                >
-                                Assign
-                              </button>
-                              
-                            </td>
-                          </tr>
-                        ))}
+                                                {categoryRows}
                                                 </tbody>
-                                            </table>
+                                            </table>)}
                                         </div>
                                     </div>
                                 </div>
@@ -234,7 +238,8 @@ const Categories = () => {
                 <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
                 <button type="button" className="close" onClick={handleCancelDelete} aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
+                </button>                            
+                mbb
             </div>
             <div className="modal-body">
                 Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?

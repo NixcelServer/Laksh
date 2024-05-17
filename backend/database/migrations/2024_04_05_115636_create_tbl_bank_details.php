@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('ifsc', 11);
             $table->string('branch_name', 100);
             $table->string('bank_name', 100);
-            $table->date('add_date');
-            $table->time('add_time');
+            $table->date('add_date')->nullable();
+            $table->time('add_time')->nullable();
             $table->date('updated_date')->nullable();
             $table->time('updated_time')->nullable();
             $table->string('flag', 45)->default('show');

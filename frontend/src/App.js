@@ -55,7 +55,10 @@ function App() {
     
 
      
-      location.pathname === "/addproduct" ||
+      location.pathname === "/products" ||
+      location.pathname === "/product/add-product" ||
+      location.pathname === "/product/update-product" ||
+
 
      
       location.pathname === "/sell"? (

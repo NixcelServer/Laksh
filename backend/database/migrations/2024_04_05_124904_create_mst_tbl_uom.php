@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('unit_name', 255)->unique();
             $table->unsignedBigInteger('add_by')->nullable();
             $table->foreign('add_by')->references('tbl_user_id')->on('mst_tbl_users');
-            $table->date('add_date');
-            $table->time('add_time');
+            $table->date('add_date')->nullable();
+            $table->time('add_time')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->foreign('deleted_by')->references('tbl_user_id')->on('mst_tbl_users');
             $table->date('deleted_date')->nullable();

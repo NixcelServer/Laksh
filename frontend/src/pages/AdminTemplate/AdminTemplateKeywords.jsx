@@ -249,13 +249,13 @@ const Keywords = () => {
                                 {keywordToDelete && keywordToDelete.keyword_name}?
                             </div>
                             <div className="modal-footer">
-                                <button
+                                {/* <button
                                     type="button"
                                     className="btn btn-secondary"
                                     onClick={handleCancelDelete}
                                 >
                                     Cancel
-                                </button>
+                                </button> */}
                                 <button
                                 type="button"
                                 className="btn btn-danger btn-sm"
@@ -291,7 +291,7 @@ const Keywords = () => {
         </div>
         <div className="modal-body">
             <div className="form-group"style={{textAlign:'left'}}>
-                <label htmlFor="keywordName">keyword Name</label>
+                <label htmlFor="keywordName">Keyword Name</label>
                 <input
                     type="text"
                     className="form-control"

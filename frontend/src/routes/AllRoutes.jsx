@@ -29,7 +29,9 @@ import AdminTemplateCategories from "../pages/AdminTemplate/AdminTemplateCategor
 import AdminTemplateNavbar from "../pages/AdminTemplate/AdminTemplateNavbar";
 import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords";
 import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
+import Product from "../pages/Products/Product";
 import AddProduct from "../pages/Products/AddProduct";
+
 import SellerLeftMenu from "../pages/Seller/SellerLeftMenu";
 import CompanySetup from "../pages/Company/CompanySetup";
 import UserDashboard from "../pages/User/UserDashboard";
@@ -39,6 +41,7 @@ import Example from "../pages/Products/Example";
 import BuyLead from "../pages/BuyLead";
 import MyOrder from "../pages/User/MyOrders";
 import Eg from "../pages/Products/Eg";
+import UpdateProduct from "../pages/Products/UpdateProduct";
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
@@ -120,6 +123,7 @@ export default function AllRoutes() {
 
 
 <Route
+          
           path="/subcategories/:encCatId"
           element={
             <>
@@ -180,15 +184,35 @@ export default function AllRoutes() {
 
 
 <Route
-          path="/addproduct"
+          path="/products"
           element={
             <>
             <UserNavbar/>
-              <AddProduct/>
+              <Product/>
+              
             </>
           }
         />
 
+<Route
+          path="/product/add-product"
+          element={
+            <>
+            <UserNavbar/>
+              <AddProduct/>
+              
+            </>
+          }
+        />
+
+<Route path="/product/update-product" 
+element={
+  <>
+  <UpdateProduct/>
+<UserNavbar />
+</>
+}
+ />
 
 <Route
           path="/buylead"

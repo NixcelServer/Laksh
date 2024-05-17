@@ -6,3 +6,7 @@
 export const SET_PRODUCT_DETAILS = 'SET_PRODUCT_DETAILS';
 
 export const GET_PRODUCTS = 'GET_PRODUCTS'
+
+export const GET_ALL_PRODUCTS = 'GET_ALL_PRODUCTS'
+
+export const SELECTED_PRODUCTS = "selected/products"

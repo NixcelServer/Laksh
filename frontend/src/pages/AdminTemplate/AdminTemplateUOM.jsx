@@ -192,7 +192,7 @@ const UOM = () => {
                                                                 <button
                                                                     type="button"
                                                                     className="btn btn-danger btn-sm"
-                                                                    style={{ marginRight: "8px" }}
+                                                                    style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
                                                                     onClick={() => handleDelete(uom)}
                                                                 >
                                                                     Delete
@@ -224,7 +224,7 @@ const UOM = () => {
                     
                 >
                     
-                    <div className="modal-dialog  modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }} >
+                    <div className="modal-dialog  modal-dialog-centered" role="document" >
                     <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
     
                         <div className="modal-content">
@@ -270,6 +270,8 @@ const UOM = () => {
                         </div>
                     </div>
                 </div>
+
+
 
                 {/* Add Unit Modal */}
                 <div
