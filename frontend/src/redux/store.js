@@ -12,6 +12,7 @@ import { reducer as adminReducer } from "./Admin/admin.reducer";
 import { bulbReducer } from "./BulbAdmin/bulbadmin.reducer";
 import { machineReducer } from "./MachineAdmin/machineadmin.reducer";
 import {productReducer}from "./Product/product.reducer";
+import { orderReducer } from "./Order/order.reducer";
 
 const root_reducer = combineReducers({
 	authReducer,
@@ -19,7 +20,8 @@ const root_reducer = combineReducers({
   masterData: adminReducer,
   bulb: bulbReducer,
   machine: machineReducer,
-  productReducer
+  productReducer,
+  orderReducer
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

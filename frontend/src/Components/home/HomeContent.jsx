@@ -18,6 +18,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getCategories, getSubCategories, getUOM } from "../../redux/Admin/admin.action";
 import { useDispatch,useSelector } from "react-redux";
+import { getOrders } from "../../redux/Order/order.action";
+
 
 const SubmitRequirement = () => {
   const dispatch = useDispatch(); // Initialize useDispatch
@@ -34,19 +36,20 @@ const SubmitRequirement = () => {
   const [productDescription, setProductDescription] = useState('');
   const [pricePerPiece, setPricePerPiece] = useState('');
   const [enccomapnyId, setEnccomapnyId] = useState('');
+  const[productQuantity,setProductQuantity]=useState('');
   //const [isOpen, setIsOpen] = useState(false);
-
+  
+  
     useEffect(()=>{
       feather.replace();
       dispatch(getCategories());
       dispatch(getSubCategories()); 
       dispatch(getUOM());
-      //const companyId = sessionStorage.getItem('enccomapnyId'); // Retrieve companyId from sessionStorage
-    //setEnccomapnyId(companyId);
+
     },
   []);
   
-
+  //const orders = useSelector(state => state.orders);
 
   // Carousel settings
   const carouselSettings = {
@@ -60,6 +63,7 @@ const SubmitRequirement = () => {
     arrows: false, // Hide navigation arrows
   };
 
+ 
   // State for modal
   const [isOpen, setIsOpen] = useState(false);
 
@@ -67,39 +71,26 @@ const SubmitRequirement = () => {
   const onOpen = () => setIsOpen(true);
 
   // Function to handle modal close
-  const onClose = () => setIsOpen(false);
+  const onClose = () => {
+    setIsOpen(false);
+    // Reset form data
+    setRequirements('');
+    setProductName('');
+    setSelectedCategory('');
+    setSelectedSubcategory('');
+    setSelectedUnit('');
+    setProductPrice('');
+    setProductDescription('');
+    setProductQuantity('');
+    setEnccomapnyId('');
+  }
 
-  // State for keywords dropdown
-  // const [showKeywords, setShowKeywords] = useState(false);
-  // const [selectedKeywords, setSelectedKeywords] = useState([]);
+
+  
   const [showForm, setShowForm] = useState(false);
 
 
-  // Function to handle dropdown click
-  // const handleDropdownClick = () => {
-  //   setShowKeywords(!showKeywords);
-  // };
-
-  // Function to handle checkbox change
-  // const handleCheckboxChange = (event) => {
-  //   const { value } = event.target;
-  //   if (selectedKeywords.includes(value)) {
-  //     setSelectedKeywords(
-  //       selectedKeywords.filter((keyword) => keyword !== value)
-  //     );
-  //   } else {
-  //     setSelectedKeywords([...selectedKeywords, value]);
-  //   }
-  // };
-
-  // Function to handle keyword option click
-  // const handleKeywordOptionClick = (keyword) => {
-  //   if (selectedKeywords.includes(keyword)) {
-  //     setSelectedKeywords(selectedKeywords.filter((k) => k !== keyword));
-  //   } else {
-  //     setSelectedKeywords([...selectedKeywords, keyword]);
-  //   }
-  // };
+  
   const handleRequirementsChange = (event) => {
     const { value } = event.target; 
     setRequirements(value);
@@ -118,12 +109,13 @@ const SubmitRequirement = () => {
       encSubCatId: selectedSubcategory,
       encUomId: selectedUnit,
       price: productPrice,
-      productDescription: productDescription,
+      productDes: productDescription,
       encCompanyId: encCompanyId, // Include encCompanyId in formData
+      productQty: productQuantity,
     };
     //dispatch(submitRequirement(formData));
-  
-      console.log(formData);
+  console.log("form data",formData);
+      
     const response = await axios.post('http://127.0.0.1:8000/api/submit-requirement', formData);
 
     console.log('Response:', response);
@@ -285,7 +277,7 @@ const SubmitRequirement = () => {
                                     ))}
                                     </select>
                                   </div>
-                                  <div className="form-group">
+                                  {/* <div className="form-group">
                                     <label>Price :</label>
                                     <input
                                       type="number"
@@ -295,7 +287,7 @@ const SubmitRequirement = () => {
                                       value={productPrice}
                                        onChange={(e) => setProductPrice(e.target.value)}
                                     />
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                             </section>
@@ -306,17 +298,17 @@ const SubmitRequirement = () => {
                             <section className="section">
                               <div className="section-body">
                                 <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group">
-                                    <label>Product Description:</label>
-                                    <textarea
-                                      className="form-control"
-                                      rows="1"
-                                      style={{ height: "5px !important" }}
-                                      name="description"
-                                      value={productDescription}
-                                      onChange={(e) => setProductDescription(e.target.value)}
-                                    ></textarea>
-                                  </div>
+                                <div className="form-group">
+                                <label>Product Description:</label>
+                                <textarea
+                                  className="form-control"
+                                  rows="3"
+                                  style={{ height: "70px" }}
+                                  name="productDescription"
+                                  value={productDescription}
+                                  onChange={(e) => setProductDescription(e.target.value)}
+                                ></textarea>
+                              </div>
                                   <div className="form-group">
                                     <label>Subcategory:</label>
                                     <select
@@ -333,14 +325,14 @@ const SubmitRequirement = () => {
                                     </select>
                                   </div>
                                   <div className="form-group">
-                                    <label>Price Per Piece :</label>
+                                    <label>Product Quantity :</label>
                                     <input
                                       type="number"
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="pricePer"
-                                      value={pricePerPiece}
-                                      onChange={(e) => setPricePerPiece(e.target.value)}
+                                      name="Prod_qty"
+                                      value={productQuantity}
+                                      onChange={(e) => setProductQuantity(e.target.value)}
                                     />
                                   </div>
                                  
@@ -387,7 +379,9 @@ const SubmitRequirement = () => {
           borderRadius: "5px",
           marginRight: "4px",
         }}
-        onClick={handleSubmit}
+        onClick={() => {
+          handleSubmit();
+          onClose()}}
       >
         Submit
       </button>
