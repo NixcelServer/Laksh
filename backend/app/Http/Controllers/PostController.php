@@ -29,9 +29,6 @@ class PostController extends Controller
         $post->save();
 
         return response()->json(['message' => 'Requirement posted successfully'], 200);
-
-
-
     }
 
     public static function myOrders($id)
@@ -77,7 +74,6 @@ class PostController extends Controller
         $order->flag = 'deleted';
         $order->save();
         
-
         return response()->json(['message' => 'Order deleted successfully'], 200);
     }   
 

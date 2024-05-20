@@ -188,21 +188,9 @@ useEffect(() => {
 
   }
 
-  const handleCheckboxChange = () =>{}
-
-  const handleContextMenu = () => {}
-
-  const handleKeywordOptionClick = () => {
-  }
-
-  const toggleFormVisibility = () => {
-    setShowForm(!showForm);
-  };
-
-  const handleSaveChanges = () => {
-    // Logic to save changes
-    console.log('Changes saved!');
-  };
+ 
+  
+ 
 
   const handleFileChange = (e, setPreview) => {
     const file = e.target.files[0]; // Get the selected file
@@ -513,45 +501,46 @@ const userString = sessionStorage.getItem('user');
                                     ))}
                                     </select>
                                   </div>
-<div className="form-group">
-  <label>Keywords:</label>
-  <div style={{ position: "relative" }}>
-    <Select
-      options={formattedOptions}
-      isMulti
-      onChange={handleChange}
-      value={selectedOptions}
-      menuPlacement="auto" // Ensure the dropdown opens based on available space
-      menuShouldScrollIntoView={true}
-      menuPosition="fixed" // Fix the position of the dropdown to avoid it being cut off by overflow
-      menuPortalTarget={document.body} // Render the dropdown in the body to avoid overflow issues
-      styles={{ // Custom styles for the dropdown menu
-        menu: provided => ({
-          ...provided,
-          maxHeight: "200px", // Set the fixed height of the dropdown menu container
-          overflowY: "auto", // Enable vertical scrolling
-          "&::-webkit-scrollbar": {
-            display: "none", // Hide scrollbar for Chrome, Safari, and Opera
-          },
-          scrollbarWidth: "none", // Hide scrollbar for Firefox
-        }),
-        menuList: provided => ({
-          ...provided,
-          "&::-webkit-scrollbar": {
-            display: "none", // Hide any additional scrollbars in WebKit browsers
-          },
-          scrollbarWidth: "none", // Hide any additional scrollbars in Firefox
-        }),
-      }}
-    />
-    <div>
-      {/* Render selected values */}
-      {selectedOptions.map(option => (
-        <div key={option.value}>{option.keyword_name}</div>
-      ))}
-    </div>
-  </div>
-</div>
+                                  
+                                <div className="form-group">
+                                  <label>Keywords:</label>
+                                  <div style={{ position: "relative" }}>
+                                    <Select
+                                      options={formattedOptions}
+                                      isMulti
+                                      onChange={handleChange}
+                                      value={selectedOptions}
+                                      menuPlacement="auto" // Ensure the dropdown opens based on available space
+                                      menuShouldScrollIntoView={true}
+                                      menuPosition="fixed" // Fix the position of the dropdown to avoid it being cut off by overflow
+                                      menuPortalTarget={document.body} // Render the dropdown in the body to avoid overflow issues
+                                      styles={{ // Custom styles for the dropdown menu
+                                        menu: provided => ({
+                                          ...provided,
+                                          maxHeight: "200px", // Set the fixed height of the dropdown menu container
+                                          overflowY: "auto", // Enable vertical scrolling
+                                          "&::-webkit-scrollbar": {
+                                            display: "none", // Hide scrollbar for Chrome, Safari, and Opera
+                                          },
+                                          scrollbarWidth: "none", // Hide scrollbar for Firefox
+                                        }),
+                                        menuList: provided => ({
+                                          ...provided,
+                                          "&::-webkit-scrollbar": {
+                                            display: "none", // Hide any additional scrollbars in WebKit browsers
+                                          },
+                                          scrollbarWidth: "none", // Hide any additional scrollbars in Firefox
+                                        }),
+                                      }}
+                                    />
+                                    <div>
+                                      {/* Render selected values */}
+                                      {selectedOptions.map(option => (
+                                        <div key={option.value}>{option.keyword_name}</div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
 
 
                         

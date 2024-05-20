@@ -21,7 +21,6 @@ import { getCategories, getSubCategories, getUOM } from "../../redux/Admin/admin
 //import { useDispatch,useSelector } from "react-redux";
 
 
-
 const MyOrder = () => {
 
     const categories = useSelector(state => state.masterData.categories);
@@ -36,6 +35,9 @@ const MyOrder = () => {
   const [productPrice, setProductPrice] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const[productQuantity,setProductQuantity]=useState('');
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
+
+
 
      const dispatch = useDispatch();
      const orders  = useSelector(state => state.orderReducer.orders);
@@ -109,6 +111,16 @@ const MyOrder = () => {
       prod_qty:productQuantity,
       //encCompanyId: encCompanyId, // Include encCompanyId in formData
     });
+
+    const handleCategoryChange = (e) => {
+      const selectedCategory = e.target.value;
+      setOrderDetails({...orderDetails, encCatId:selectedCategory})
+      setSelectedCategory(selectedCategory);
+      // Filter subcategories based on the selected category
+      const filteredSubcategories = subcategories.filter(subCategory => subCategory.encCatId === selectedCategory);
+      console.log("filtered sub cat", filteredSubcategories);
+      setFilteredSubCategories(filteredSubcategories);
+  };
 
     const handleUpdateOrderDetails = (order) => {
       console.log('Order details:', order);
@@ -242,7 +254,7 @@ const MyOrder = () => {
                                       name="category"
                                       value={orderDetails.
                                         encCatId} // Set the value of the select input to selectedCategory
-                                      onChange={(e) => setOrderDetails({...orderDetails, encCatId: e.target.value})}
+                                        onChange={handleCategoryChange}
                                     >
                                       <option value="">Select Category</option>
                                       {categories.map(category => (
@@ -307,7 +319,7 @@ const MyOrder = () => {
                                       onChange={(e) => setOrderDetails({...orderDetails, encSubCatId: e.target.value})}
                                     >
                                       <option value="">Select Subcategory</option>
-                                      {subcategories.map(subCategory => (
+                                      {filteredSubCategories.map(subCategory => (
                                       <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
                                     ))}
                                     </select>
