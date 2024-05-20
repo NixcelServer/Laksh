@@ -30,6 +30,7 @@ const SubmitRequirement = () => {
   const [requirements, setRequirements] = useState('');
   const [productName, setProductName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
   const [productPrice, setProductPrice] = useState('');
@@ -89,7 +90,15 @@ const SubmitRequirement = () => {
   
   const [showForm, setShowForm] = useState(false);
 
-
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    console.log("selected category",selectedCategory)
+    setSelectedCategory(selectedCategory);
+    // Filter subcategories based on the selected category
+    const filteredSubcategories = subcategories.filter(subCategory => subCategory.encCatId === selectedCategory);
+    console.log("filtered sub cat", filteredSubcategories);
+    setFilteredSubCategories(filteredSubcategories);
+};
   
   const handleRequirementsChange = (event) => {
     const { value } = event.target; 
@@ -254,7 +263,7 @@ const SubmitRequirement = () => {
                                       style={{ height: "40px" }}
                                       name="category"
                                       value={selectedCategory} // Set the value of the select input to selectedCategory
-                                      onChange={(e) => setSelectedCategory(e.target.value)}
+                                      onChange={handleCategoryChange}
                                     >
                                       <option value="">Select Category</option>
                                       {categories.map(category => (
@@ -319,7 +328,7 @@ const SubmitRequirement = () => {
                                       onChange={(e) => setSelectedSubcategory(e.target.value)}
                                     >
                                       <option value="">Select Subcategory</option>
-                                      {subcategories.map(subCategory => (
+                                      {filteredSubCategories.map(subCategory => (
                                       <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
                                     ))}
                                     </select>
