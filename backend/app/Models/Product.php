@@ -15,7 +15,7 @@ class Product extends Model
 
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'tbl_company_id');
     }
 
     public function uom()

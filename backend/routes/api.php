@@ -40,6 +40,9 @@ Route::get('/', function () {
 //admin login 
 Route::post('/login',[AuthController::class,'login']);
 
+//admin dashboard contents
+Route::get('/dashcontents',[AdminController::class,'adminDashboardContents']);
+
 //user registrtion
 Route::post('/register',[AuthController::class,'register']);
 
@@ -61,6 +64,9 @@ Route::delete('/unit-of-measurements/{id}',[UOMController::class,'deleteUOM']);
 
 //create category
 Route::post('/categories',[CategoryController::class,'createCategory']);
+
+//update category
+Route::post('/categories/update',[CategoryController::class,'updateCategory']);
 
 //view categories
 Route::get('/categories',[CategoryController::class,'viewCategories']);

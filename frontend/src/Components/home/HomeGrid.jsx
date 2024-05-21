@@ -60,9 +60,10 @@ export default function HomeGrid({ title, single, info }) {
             height: '400px',
             width: "300px",
             
-            backgroundImage: `url(http://127.0.0.1:8000/storage/${firstProductImage.prod_img_path})`,
+            backgroundImage: `url(http://127.0.0.1:8000/storage/${encodeURIComponent(single.img)})`,
             opacity: 0.9,
             backgroundPosition: 'center',
+            backgroundSize: 'cover',
           }}
         >
           <Text fontWeight={'bold'}>{single.title}</Text>

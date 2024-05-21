@@ -129,8 +129,12 @@ const SubmitRequirement = () => {
 
     console.log('Response:', response);
 
-    if (response.success) {
+    console.log('Response:', response);
+
+    if (response.status === 200) {
       console.log('Form submitted successfully');
+      // Assuming success message is returned from the server
+      console.log('Success message:', response.data.message);
     } else {
       console.error('Form submission failed');
     }

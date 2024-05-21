@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Company;
 use App\Helpers\EncDecHelper;
+use App\Helpers\EmailHelper;
+
 use Illuminate\Support\Facades\Date;
 
 class PostController extends Controller
@@ -27,6 +29,25 @@ class PostController extends Controller
         $post->add_date = Date::now()->toDateString();
         $post->add_time = Date::now()->toTimeString();
         $post->save();
+
+        $companyDetails = Company::where('tbl_company_id',$post->tbl_company_id)->first();
+
+        // Assuming you have saved the product already as $post
+        $categoryId = $post->tbl_cat_id;
+
+
+        // Fetch companies that have products in the same category
+        $companies = Company::whereHas('products', function ($query) use ($categoryId) {
+            $query->where('tbl_cat_id', $categoryId)
+                ->where('flag', 'show');
+        })->get();
+
+       // Collect the emails from the related users
+        $emails = $companies->pluck('user.u_email')->toArray();
+    
+
+        EmailHelper::sendEmail($emails,$companyDetails,$post);
+
 
         return response()->json(['message' => 'Requirement posted successfully'], 200);
     }

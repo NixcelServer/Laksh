@@ -1,7 +1,7 @@
 
 
  import * as types from "./admin.action.type"
- import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI, getSubCategoriesAPI, addSubCategoryAPI } from "./admin.api"
+ import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI, getSubCategoriesAPI, addSubCategoryAPI, updateCategoryAPI } from "./admin.api"
 // import { deleteAdminDataAPI, deleteProductAPI, getAdminsDataAPI, getPlywoodAPI, getUsersDataAPI, postAdminDataAPI, postProductAPI, updateAdminDataAPI, updateProductAPI } from "./admin.api"
 
 // export const getPlywoodProducts =(color,Page,limit,order,price)=>async (dispatch)=>{
@@ -148,6 +148,17 @@ export const addCategory = (payload) => async(dispatch) => {
     try{
         
         const res = await addCategoryAPI(payload);
+      //  dispatch({ type: types.GET_CATEGORIES, payload:res});
+    } catch(err) {
+        console.log(err);
+        // dispatch({ type: types.ERROR, payload: err.response.data.error });
+    }
+};
+
+export const updateCategory = (payload) => async(dispatch) => {
+    try{
+        
+        const res = await updateCategoryAPI(payload);
       //  dispatch({ type: types.GET_CATEGORIES, payload:res});
     } catch(err) {
         console.log(err);

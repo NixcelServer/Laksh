@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Keyword;
+use App\Models\ProductKeyword;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Date;
 
@@ -52,6 +53,7 @@ class KeywordController extends Controller
         foreach($keywords as $keyword)
         {
             $keyword->encKeywordId = EncDecHelper::encDecId($keyword->tbl_keyword_id,'encrypt');
+            $keyword->keywordCount = ProductKeyword::where('tbl_keyword_id',$keyword->tbl_keyword_id)->where('flag','show')->count();
 
             // Unset the non-encrypted ID
             unset($keyword->tbl_keyword_id,$keyword->add_by);
