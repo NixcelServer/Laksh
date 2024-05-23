@@ -24,7 +24,7 @@ export default function HomeSections() {
           <HomeGrid 
             title={category.cat_name}
             single={{
-              img: "/images/image2.png", // Category image
+              img: category.cat_img_path, // Category image
               title: "Category Highlight", // Example static title
               sub1: "Detail 1", // Example static detail
               sub2: "Detail 2", // Example static detail

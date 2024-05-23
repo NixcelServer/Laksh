@@ -330,7 +330,7 @@ const userString = sessionStorage.getItem('user');
   }
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-25px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           
@@ -348,10 +348,10 @@ const userString = sessionStorage.getItem('user');
                           <div className="card-content">
                             <section className="section">
                               <div className="section-body">
-                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" ,marginTop:"40px"}}>
                                   <div className="card">
                                     <div className="card-header">
-                                      <h4>Add Image</h4>
+                                      <h4>update Image </h4>
                                     </div>
                                     {photoPreview && (
                                       <div className="file-preview">

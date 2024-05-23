@@ -10,11 +10,25 @@ export const getCategoriesAPI = async() => {
 }
 
 export const addCategoryAPI = async(payload) => {
-    const res = await axios.post("http://127.0.0.1:8000/api/categories", payload);
-    
+    const res = await axios.post('http://127.0.0.1:8000/api/categories', payload, {
+      headers: {
+          'Content-Type': 'multipart/form-data'
+      }
+  });
     //const categories = res.data;
     //   dispatch(getCategories(categories));
       return res.data;
+}
+
+export const updateCategoryAPI = async(payload) => {
+  const res = await axios.post('http://127.0.0.1:8000/api/categories/update', payload, {
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+});
+  //const categories = res.data;
+  //   dispatch(getCategories(categories));
+    return res.data;
 }
 
 export const getSubCategoriesAPI = async() => {

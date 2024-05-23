@@ -10,50 +10,67 @@ const UOM = () => {
     const [UOMToDelete, setUOMToDelete] = useState(null);
     const [showAddUOMModal, setShowAddUOMModal] = useState(false);
     const dispatch = useDispatch();
+    const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const uoms = useSelector(state => state.masterData.uom);
 
 
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
-        const script1 = document.createElement('script');
-        script1.src = 'assets/bundles/datatables/datatables.min.js';
-        script1.async = true;
-        document.body.appendChild(script1);
 
-        const script2 = document.createElement('script');
-        script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-        script2.async = true;
-        document.body.appendChild(script2);
+        const loadScripts = async () => {
 
-        const script3 = document.createElement('script');
-        script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
-        script3.async = true;
-        document.body.appendChild(script3);
+            await dispatch(getUOM());
+            const script1 = document.createElement('script');
+            script1.src = 'assets/bundles/datatables/datatables.min.js';
+            script1.async = true;
+            document.body.appendChild(script1);
 
-        const script4 = document.createElement('script');
-        script4.src = 'assets/js/page/datatables.js';
-        script4.async = true;
-        document.body.appendChild(script4);
+            const script2 = document.createElement('script');
+            script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
+            script2.async = true;
+            document.body.appendChild(script2);
 
-        // Initialize Feather icons
-        feather.replace();
-        dispatch(getUOM());
-        // Cleanup function to remove the scripts when the component unmounts
-        return () => {
-            document.body.removeChild(script1);
-            document.body.removeChild(script2);
-            document.body.removeChild(script3);
-            document.body.removeChild(script4);
-        };
-        
-       
+            const script3 = document.createElement('script');
+            script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
+            script3.async = true;
+            document.body.appendChild(script3);
+
+            const script4 = document.createElement('script');
+            script4.src = 'assets/js/page/datatables.js';
+            script4.async = true;
+            document.body.appendChild(script4);
+
+            // Initialize Feather icons
+            feather.replace();
+
+            // Cleanup function to remove the scripts when the component unmounts
+            return () => {
+                document.body.removeChild(script1);
+                document.body.removeChild(script2);
+                document.body.removeChild(script3);
+                document.body.removeChild(script4);
+            };
+        }
+
+        loadScripts();
+
     }, []); // Empty dependency array means this effect runs only once after the component mounts
 
     const handleDelete = async (uom) => {
+        console.log(uom);
+        if (uom.uomCount > 0) {
+            setUOMToDelete(uom);
+            setShowCannotDeleteConfirmation(true);
+        }
+        else {
+            setUOMToDelete(uom);
+            setShowDeleteConfirmation(true);
+        }
+    };
 
-        setUOMToDelete(uom);
-        setShowDeleteConfirmation(true);
+    const handleOK = () => {
+        setShowCannotDeleteConfirmation(false);
     };
 
     const handleCancelDelete = () => {
@@ -204,8 +221,51 @@ const UOM = () => {
                     </div>
                 </section>
 
+                {/* Cannot Delete confirmation modal */}
+                <div
+                className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
+                id="cannotDeleteConfirmationModal"
+                tabIndex="-1"
+                role="dialog"
+                aria-labelledby="cannotDeleteConfirmationModalLabel"
+                aria-hidden={!showCannotDeleteConfirmation}
+                style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
+            >
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
+                                Cannot Delete
+                            </h5>
+                            <button
+                                type="button"
+                                className="close"
+                                onClick={handleOK}
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Unable to delete the Unit of Measurement '{UOMToDelete && UOMToDelete.uom_name}' at the moment. It appears that this Unit of Measurement has been assigned.
+
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={handleOK}
+                            >
+                                Ok
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
                 {/* Delete confirmation modal */}
-                
+
                 <div
                     className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
                     id="deleteConfirmationModal"
@@ -213,14 +273,15 @@ const UOM = () => {
                     role="dialog"
                     aria-labelledby="deleteConfirmationModalLabel"
                     aria-hidden={!showDeleteConfirmation}
-                    style={{ display: showDeleteConfirmation ? "block" : "none" ,
+                    style={{
+                        display: showDeleteConfirmation ? "block" : "none",
                     }}
-                    
+
                 >
-                    
+
                     <div className="modal-dialog  modal-dialog-centered" role="document" >
-                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
-    
+                        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="deleteConfirmationModalLabel">
@@ -252,14 +313,14 @@ const UOM = () => {
                                     Cancel
                                 </button> */}
                                 <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
-                                onClick={() => handleConfirmDelete(UOM)}
-                            >
-                                {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
-                                delete
-                            </button>
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                    onClick={() => handleConfirmDelete(UOM)}
+                                >
+                                    {/* <i data-feather="trash" style={{ alignContent: 'center' }}></i> */}
+                                    delete
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -277,41 +338,41 @@ const UOM = () => {
                     aria-hidden={!showAddUOMModal}
                     style={{ display: showAddUOMModal ? "block" : "none" }}
                 >
-        <div className="modal-dialog modal-dialog-centered" role="document" style={{maxWidth:'70vh', maxHeight: '20vh' }}>
-    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
-    <div className="modal-content">
-        <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
-            <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} ref={closeButtonRef} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div className="modal-body">
-            <div className="form-group"style={{textAlign:'left'}}>
-                <label htmlFor="uomName">UOM </label>
-                <input
-                    type="text"
-                    className="form-control"
-                    id="uomName"
-                    placeholder="Enter UOM"
-                    value={uomName}
-                    onChange={(e) => setNewUOMName(e.target.value)}
-                    style={{ fontSize: '12px' , height: '30px' }} // Adjust the font size as needed
-                />
-            </div>
-        </div>
-        <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
-            <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSaveChanges}
-                style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
-            >
-                Submit
-            </button>
-        </div>
-    </div>
-</div>
+                    <div className="modal-dialog modal-dialog-centered" role="document" style={{ maxWidth: '70vh', maxHeight: '20vh' }}>
+                        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalCenterTitle">Add New uom</h5>
+                                <button type="button" className="close" onClick={() => setShowAddUOMModal(false)} ref={closeButtonRef} aria-label="Close" style={{ border: 'none', outline: 'none' }}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group" style={{ textAlign: 'left' }}>
+                                    <label htmlFor="uomName">UOM </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="uomName"
+                                        placeholder="Enter UOM"
+                                        value={uomName}
+                                        onChange={(e) => setNewUOMName(e.target.value)}
+                                        style={{ fontSize: '12px', height: '30px' }} // Adjust the font size as needed
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={handleSaveChanges}
+                                    style={{ height: '30px', width: '60px', fontSize: '12px', padding: '0' }}
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

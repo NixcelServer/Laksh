@@ -309,7 +309,7 @@ const userString = sessionStorage.getItem('user');
   }
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "0px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-25px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <Link to="/product/add-product">
@@ -333,7 +333,7 @@ const userString = sessionStorage.getItem('user');
         </div>
 
         {showForm && (
-          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" ,marginTop:"20px"}}>
+          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
             <div className="row">
               <div className="col-lg-12">
                 <div className="card" style={{ width: "100%", marginBottom: "20px", background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
@@ -587,14 +587,14 @@ const userString = sessionStorage.getItem('user');
       </div>
       <div className="col-lg-6" style={{ padding: '10px' }}>
         <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>{product.prod_name || 'Sample Product'}
+                                     </h3>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Description:</span> {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Category:</span> {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>SubCategory:</span> {subCategoryNameFromId(product.encSubCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Keywords:</span> {keywordsNameFromId(product.encKeywords)}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Price:</span>  {product.prod_price || '$50'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Unit Of Measurement:</span> {uomNameFromId(product.encUomId)}</p>
 
           {/* Update and Delete buttons */}
           {updateMode ? (

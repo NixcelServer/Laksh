@@ -153,21 +153,27 @@ const AddProduct = () => {
     console.log('Changes saved!');
   };
 
-  const handleFileChange = (e, setPreview) => {
-    const file = e.target.files[0]; // Get the selected file
-    setProductDetails({ ...productDetails, file });
+  const handleFileChange = (event, setPhotoPreview) => {
+  const files = event.target.files;
+  const maxFiles = 4; // Maximum number of files allowed
+
+  // Check if the number of selected files exceeds the maximum
+  if (files.length > maxFiles) {
+    alert(`You can only upload a maximum of ${maxFiles} images.`);
+    event.target.value = null; // Reset the input field to clear selected files
+    return;
+  }
+
+  // Update the photo preview state
+  if (files && files.length > 0) {
     const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setPreview(reader.result);
+    reader.onload = (e) => {
+      setPhotoPreview(e.target.result);
     };
+    reader.readAsDataURL(files[0]); // Assuming you only want to preview the first selected file
+  }
+};
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
 //   const handleFileChange = (e) => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
@@ -303,7 +309,7 @@ const userString = sessionStorage.getItem('user');
   }
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-25px" ,marginBottom:"60%px"}}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           
@@ -342,6 +348,7 @@ const userString = sessionStorage.getItem('user');
                                           id="photo"
                                           name="photo"
                                           accept="image/*"
+                                          multiple  // Add this attribute to allow multiple file selection
                                           onChange={(e) =>
                                             handleFileChange(
                                               e,
@@ -367,7 +374,7 @@ const userString = sessionStorage.getItem('user');
                                     <input
                                       type="text"
                                       className="form-control"
-                                      style={{ height: "40px" }}
+                                      style={{ height: "30px", width: "70%", fontSize: "12px", padding: "2px" }} // Reduced height and width
                                       name="productName"
                                       onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
 
@@ -392,29 +399,55 @@ const userString = sessionStorage.getItem('user');
                                 
 
                                
-                                  <div className="form-group">
-                                    <label>Price :</label>
-                                    <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ height: "40px" }}
-                                      name="price"
-                                      onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
+                                  <div className="form-group" style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+    <div style={{ flex: 1 }}>
+    <label style={{ fontSize: "12px", fontWeight: "bold",color:"#2E4053",fontFamily:"sans-serif" }}>Price:</label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+                type="number"
+                className="form-control"
+                style={{ height: "30px", width: "calc(60%)", fontSize: "12px", padding: "2px" }} // Reduced height and width
+                name="price"
+                onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
+            />
+            <span style={{ marginLeft: "5px",marginRight:"5px" }}>per/-</span>
+            <input
+                type="number"
+                className="form-control"
+                style={{ height: "30px", width: "70%", fontSize: "12px", padding: "2px" }} // Reduced height and width
+                name="pricePer"
+                onChange={(e) => setProductDetails({ ...productDetails, pricePer: e.target.value })}
+            />
+        </div>
+    </div>
+    
+</div>
 
-                                    />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Minimum Order Quantity:</label>
+<div className="form-group" style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+    <div style={{ flex: 1 }}>
+             <label style={{fontSize: "12px", fontWeight: "bold",color:"#2E4053",fontFamily:"" }}>Minimum Order Quantity:</label>
+             <div style={{ display: "flex", alignItems: "center" }}>
+
                                     <input
                                       type="number"
                                       className="form-control"
-                                      style={{ height: "40px" }}
+                                      style={{ height: "30px", width: "calc(60%)", fontSize: "12px", padding: "2px" }} // Reduced height and width
                                       name="pricePer"
                                       onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
 
                                     />
+            <span style={{ marginLeft: "5px",marginRight:"5px" }}>Unit/-</span>
+                                                <input
+                type="number"
+                className="form-control"
+                style={{ height: "30px", width: "70%", fontSize: "12px", padding: "2px" }} // Reduced height and width
+                name="pricePer"
+                // onChange={(e) => setProductDetails({ ...productDetails, pricePer: e.target.value })}
+            />
                                   </div>
                                 </div>
+                              </div>
+                              </div>
                               </div>
                             </section>
                           </div>
@@ -453,19 +486,7 @@ const userString = sessionStorage.getItem('user');
                                   
 
                                     <div className="form-group">
-                                    <label>Price per:</label>
-                                    <select
-                                      className="form-control"
-                                      style={{ height: "40px" }}
-                                      name="unit"
-                                      onChange={handleUomChange}
-                                      
-                                    >
-                                       <option value="">Select Unit of Measurements</option>
-                                      {uoms.map(uom => (
-                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
-                                    ))}
-                                    </select>
+                                    
                                   </div>
 <div className="form-group">
   <label>Keywords:</label>
@@ -512,23 +533,25 @@ const userString = sessionStorage.getItem('user');
                                   
                                   {/* Submit and Continue Button */}
                                   
-                                    <button
-                                      type="button"
-                                      style={{
-                                        bottom: "20px",
-                                        right: "70px",
-                                        backgroundColor: "#4CAF50",
-                                        border: "none",
-                                        color: "white",
-                                        padding: "8px 5px",
-                                        fontSize: "1em",
-                                        cursor: "pointer",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={handleSubmit}
-                                    >
-                                      Save and Continue
-                                    </button>
+                                  <button
+  type="button"
+  style={{
+    // Ensuring the button stays fixed at the specified position
+    bottom: "20px", // Adjusting the distance from the bottom
+    right: "20px", // Adjusting the distance from the right
+    backgroundColor: "#4CAF50",
+    border: "none",
+    color: "white",
+    padding: "8px 15px",
+    fontSize: "1em",
+    cursor: "pointer",
+    borderRadius: "5px",
+  }}
+  onClick={handleSubmit}
+>
+  Save and Continue
+</button>
+
                                   
                                 </div>
                               </div>

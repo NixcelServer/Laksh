@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Product;
+
 use App\Models\UnitOfMeasurement;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
@@ -47,6 +49,8 @@ class UOMController extends Controller
         {
             // Encrypt the UOM ID using the EncDecHelper class
             $uom->encUomId = EncDecHelper::encDecId($uom->tbl_uom_id,'encrypt');
+
+            $uom->uomCount = Product::where('tbl_uom_id',$uom->tbl_uom_id)->where('flag','show')->count();
 
             // Unset the non-encrypted ID
             unset($uom->tbl_uom_id,$uom->add_by);

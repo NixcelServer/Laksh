@@ -15,7 +15,7 @@ const handlePly=(el)=>{
 
   return (
     <Box>
-            <Flex justifyContent={'space-around'} p='10px' >
+            {/* <Flex justifyContent={'space-around'} p='10px' >
                 <Stack as="Button"  direction={{base:"column",md:"row"}} alignItems='center' >
                     <Icon color={'blue.300'}  as={GiToolbox} boxSize={{base:5,md:10}}  /> 
                     <Text  fontWeight={'bold'}>Machines</Text>
@@ -33,7 +33,7 @@ const handlePly=(el)=>{
                     <Text  fontWeight={'bold'}>Plywoods</Text>
                 </Stack>
                 
-            </Flex>
+            </Flex> */}
 
     </Box>
   )

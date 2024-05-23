@@ -15,6 +15,7 @@ return new class extends Migration
            
             $table->id('tbl_cat_id');
             $table->string('cat_name', 255);
+            $table->string('cat_img_path');
             $table->unsignedBigInteger('add_by');
             $table->foreign('add_by')->references('tbl_user_id')->on('mst_tbl_users');
             $table->date('add_date')->nullable();

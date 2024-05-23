@@ -80,8 +80,9 @@ class ProductController extends Controller
     {
         
          $decCatId = EncDecHelper::encDecId($id,'decrypt');
-         $products = Product::where('tbl_cat_id', $decCatId)->where('flag','show')
-         ->latest('add_date')
+         $products = Product::where('tbl_cat_id', $decCatId)
+         ->where('flag', 'show')
+         ->inRandomOrder()
          ->take(9)
          ->get();
 

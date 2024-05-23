@@ -9,6 +9,7 @@ const Keywords = () => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [keywordToDelete, setKeywordToDelete] = useState(null);
     const [showAddKeywordModal, setShowAddKeywordModal] = useState(false);
+    const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const dispatch = useDispatch();
     const keywords = useSelector(state => state.masterData.keywords);
     
@@ -17,45 +18,59 @@ const Keywords = () => {
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
-        const script1 = document.createElement('script');
-        script1.src = 'assets/bundles/datatables/datatables.min.js';
-        script1.async = true;
-        document.body.appendChild(script1);
+        const loadScripts = async () => {
+            // Wait for getKeywords to complete
+            await dispatch(getKeywords());
 
-        const script2 = document.createElement('script');
-        script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-        script2.async = true;
-        document.body.appendChild(script2);
+            const script1 = document.createElement('script');
+            script1.src = '/assets/bundles/datatables/datatables.min.js';
+            script1.async = true;
+            document.body.appendChild(script1);
 
-        const script3 = document.createElement('script');
-        script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
-        script3.async = true;
-        document.body.appendChild(script3);
+            const script2 = document.createElement('script');
+            script2.src = '/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
+            script2.async = true;
+            document.body.appendChild(script2);
 
-        const script4 = document.createElement('script');
-        script4.src = 'assets/js/page/datatables.js';
-        script4.async = true;
-        document.body.appendChild(script4);
+            const script3 = document.createElement('script');
+            script3.src = '/assets/bundles/jquery-ui/jquery-ui.min.js';
+            script3.async = true;
+            document.body.appendChild(script3);
 
-        // Initialize Feather icons
-        feather.replace();
-        dispatch(getKeywords());
-        // Cleanup function to remove the scripts when the component unmounts
-        return () => {
-            document.body.removeChild(script1);
-            document.body.removeChild(script2);
-            document.body.removeChild(script3);
-            document.body.removeChild(script4);
+            const script4 = document.createElement('script');
+            script4.src = '/assets/js/page/datatables.js';
+            script4.async = true;
+            document.body.appendChild(script4);
+
+            // Initialize Feather icons
+            feather.replace();
+
+            // Cleanup function to remove the scripts when the component unmounts
+            return () => {
+                document.body.removeChild(script1);
+                document.body.removeChild(script2);
+                document.body.removeChild(script3);
+                document.body.removeChild(script4);
+            };
         };
-        
-       
-       
-    }, []); // Empty dependency array means this effect runs only once after the component mounts
+
+        loadScripts();
+    }, [dispatch]);// Empty dependency array means this effect runs only once after the component mounts
 
     const handleDelete = async(keyword) => {
+        if(keyword.keywordCount > 0){
+            setKeywordToDelete(keyword);
+            setShowCannotDeleteConfirmation(true);
+        }else{
         // Define the logic for canceling delete action
         setKeywordToDelete(keyword);
         setShowDeleteConfirmation(true);
+        }
+    };
+
+
+    const handleOK = () => {
+        setShowCannotDeleteConfirmation(false);
     };
 
     const handleCancelDelete = () => {
@@ -211,6 +226,49 @@ const Keywords = () => {
                         
                     </div>
                 </section>
+
+                {/* Cannot Delete confirmation modal */}
+                <div
+                className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
+                id="cannotDeleteConfirmationModal"
+                tabIndex="-1"
+                role="dialog"
+                aria-labelledby="cannotDeleteConfirmationModalLabel"
+                aria-hidden={!showCannotDeleteConfirmation}
+                style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
+            >
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
+                                Cannot Delete
+                            </h5>
+                            <button
+                                type="button"
+                                className="close"
+                                onClick={handleOK}
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Unable to delete the Keyword '{keywordToDelete && keywordToDelete.keyword_name}' at the moment. It appears that this Keyword is assigned to a product.
+
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={handleOK}
+                            >
+                                Ok
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
 
                 {/* Delete confirmation modal */}
                 <div
