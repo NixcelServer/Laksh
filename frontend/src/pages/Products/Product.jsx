@@ -309,7 +309,7 @@ const userString = sessionStorage.getItem('user');
   }
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "0px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <Link to="/product/add-product">
@@ -333,7 +333,7 @@ const userString = sessionStorage.getItem('user');
         </div>
 
         {showForm && (
-          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
+          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" ,marginTop:"20px"}}>
             <div className="row">
               <div className="col-lg-12">
                 <div className="card" style={{ width: "100%", marginBottom: "20px", background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
