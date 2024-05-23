@@ -88,7 +88,7 @@ export default function HomeTop() {
                         </VStack>
                     </Box>
                 </Flex>:<Flex  >
-                <Box display={{ base: 'none', md: 'flex' }}>
+                {/* <Box display={{ base: 'none', md: 'flex' }}>
                 <Menu>
                     <MenuButton as={Button} bg='whiteAlpha.700' rightIcon={<ChevronDownIcon />}>
                     All India
@@ -101,20 +101,8 @@ export default function HomeTop() {
                     <MenuItem>Mumbai</MenuItem>
                     </MenuList>
                 </Menu>
-                </Box>
-                <Box>
-                <InputGroup>
-                    <Input
-                    type="text"
-                    _placeholder={{ opacity: 1, color: 'white' }}
-                    placeholder="Enter Product / service"
-                    borderColor={"teal"}
-                    />
-                    <Button colorScheme={"teal"} ml="5px" mr="5px">
-                    <Search2Icon />
-                    </Button>
-                </InputGroup>
-                </Box>
+                </Box> */}
+               
             </Flex>
         }
        

@@ -3,6 +3,7 @@ import feather from 'feather-icons'; // Import feather-icons
 import { Link, useNavigate } from 'react-router-dom';
 import { FaProductHunt } from 'react-icons/fa';
 import { MdOutlineLeaderboard } from "react-icons/md";
+import { RiAdvertisementLine } from "react-icons/ri";
 
 
 const UserNavbar = () => {
@@ -54,6 +55,11 @@ const UserNavbar = () => {
                     </li>
                     <li className="">
                         <Link to="/" className=""><i data-feather="key" /><span style={{ fontSize: '12px',textAlign:'left' }}>Photos and Docs</span></Link>
+                    </li>
+                    <li className="">
+                    <Link to="/userad" className="">
+                    <RiAdvertisementLine size={20} />
+                        <span style={{ fontSize: '12px',textAlign:'left', paddingLeft: '10px'  }}>Advertisement</span></Link>
                     </li>
                     <li className="">
                     <Link to="/" className=""><i data-feather="grid" /><span style={{ fontSize: '12px',textAlign:'left'  }}>Settings</span></Link>

@@ -42,6 +42,11 @@ import BuyLead from "../pages/BuyLead";
 import MyOrder from "../pages/User/MyOrders";
 import Eg from "../pages/Products/Eg";
 import UpdateProduct from "../pages/Products/UpdateProduct";
+import AdvertisementForm from "../pages/User/UserAdvertisement";
+import Buyleads from "../pages/BuyLead";
+import UserAd from "../pages/User/UserAdvertisement";
+import AdminAd from "../pages/AdminTemplate/AdminAdvertisement";
+
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
@@ -241,6 +246,26 @@ element={
             <>
             <UserNavbar/>
               <MyOrder/>
+            </>
+          }
+        />
+
+<Route
+          path="/userad"
+          element={
+            <>
+            <UserNavbar/>
+              <UserAd/>
+            </>
+          }
+        />
+
+<Route
+          path="/adminad"
+          element={
+            <>
+            <AdminTemplateNavbar/>
+              <AdminAd/>
             </>
           }
         />

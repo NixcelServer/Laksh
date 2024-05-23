@@ -211,7 +211,7 @@ const AdminTemplateSubcategories = () => {
                 {/* Additional form fields can be added here as needed */}
                 <div style={{ textAlign: 'left' }}>
     <button type="submit" className="btn btn-primary" onClick={handleSubmit} 
-    style={{ float: 'left', height:'25px',padding:'0' }}>Assign Subcategory</button>
+    style={{ float: 'left', height:'30px',padding:'3' }}>Assign Subcategory</button>
 </div>
             </form>
             {/* End of Assign Subcategory Form */}

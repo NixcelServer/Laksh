@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import feather from "feather-icons";
 import axios from "axios";
@@ -5,7 +6,9 @@ import { FcUpload } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import { RiAdvertisementLine } from "react-icons/ri";
 
-const Example = () => {
+
+const UserAd = () => {
+
   const [file, setFile] = useState(null);
  
  
@@ -91,12 +94,10 @@ const Example = () => {
     setChargesPerDay(newCharges);
     setTotalAmount(duration * newCharges);
   };
-  // ----------------------------------------------------------------------------------------------
+    return (
+      <div>
 
-  return (
-    <div>
-
-      <div className="main-content">
+      <div className="main-content" style={{marginTop:'-30px'}}>
         <section
           className="section"
           style={{
@@ -131,11 +132,13 @@ const Example = () => {
     textTransform: "uppercase",
     letterSpacing: "1px",
     color: "#A569BD",
-    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
   }}
 >
-  <RiAdvertisementLine style={{ marginRight: "8px", color:"#A569BD" }} />
-  Advertisement
+  {/* <RiAdvertisementLine style={{ marginRight: "8px", color:"#A569BD" }} /> */}
+  Welcome to Chemi-Fact Industry
+  
+
 </h4>
           </header>
 
@@ -146,7 +149,7 @@ const Example = () => {
   style={{
     fontWeight: "bold",
     color: "#48C9B0",
-    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
   }}
 >
   Creating values that brightens lives through chem-facts
@@ -412,9 +415,7 @@ const Example = () => {
   </div>
       </div>
     </div>
-  );
+    );
 };
 
-export default Example;
-
-  
+export default UserAd;

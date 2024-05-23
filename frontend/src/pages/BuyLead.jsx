@@ -67,8 +67,6 @@ const Buyleads = (buyLead) => {
 
         </div>
 
-     
-
         {buyleads && buyleads.map((buylead,index)=>( 
           <section className="section" style={{ marginTop:"20px",background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
           <div className="row">

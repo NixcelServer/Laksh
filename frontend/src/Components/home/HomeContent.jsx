@@ -139,7 +139,7 @@ const SubmitRequirement = () => {
   }
 };
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden">
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
     <Box className="main-content" p={{ base: "10px", md: "20px" }} height = 'auto' mb="0px"  >
       <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "213px", }}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
@@ -232,7 +232,7 @@ const SubmitRequirement = () => {
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
   <ModalOverlay />
-  <ModalContent style={{ maxWidth: "500px", maxHeight: "500px", borderRadius: "40px"  }}>
+  <ModalContent style={{ maxWidth: "500px", maxHeight: "550px", borderRadius: "40px"  }}>
   <ModalHeader textAlign="center" fontWeight="bold" fontSize="xl" color="black#9f98e9"   borderRadius="20px 20px 0 0"  backgroundColor="#b4e998" borderBottomWidth="1px" pb="2">
   Submit Requirement
 </ModalHeader>    <ModalCloseButton  _focus={{ border: "none" }} _hover={{ bg: "none" }}/>
@@ -256,7 +256,7 @@ const SubmitRequirement = () => {
                                       onChange={(e) => setProductName(e.target.value)}
                                     />
                                   </div>
-                                  <div className="form-group">
+                                  <div className="form-group" style={{ marginTop: "50px" }} >
                                     <label>Category:</label>
                                     <select
                                       className="form-control"
@@ -272,20 +272,28 @@ const SubmitRequirement = () => {
                                     </select>
                                   </div>
                                   <div className="form-group">
-                                    <label>Unit of Measurement:</label>
-                                    <select
+                                    <label>Product Quantity :</label>
+                                    <input
+                                      type="number"
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="unit"
-                                      value={selectedUnit} // Set the value of the select input to selectedUnit
-                                      onChange={(e) => setSelectedUnit(e.target.value)} // Update selectedUnit when an option is selected
-                                    >
-                                      <option value="">Select Unit</option>
-                                      {uoms.map(unit => (
-                                      <option key={unit.encUomId} value={unit.encUomId}>{unit.unit_name}</option>
-                                    ))}
-                                    </select>
+                                      name="Prod_qty"
+                                      value={productQuantity}
+                                      onChange={(e) => setProductQuantity(e.target.value)}
+                                    />
                                   </div>
+                                  <div className="form-group">
+                                    <label>Product Name:</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="productName"
+                                      value={productName}
+                                      onChange={(e) => setProductName(e.target.value)}
+                                    />
+                                  </div>
+                                  
                                   {/* <div className="form-group">
                                     <label>Price :</label>
                                     <input
@@ -308,7 +316,7 @@ const SubmitRequirement = () => {
                               <div className="section-body">
                                 <div className="product-details" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
                                 <div className="form-group">
-                                <label>Product Description:</label>
+                                <label>Requirement Details:</label>
                                 <textarea
                                   className="form-control"
                                   rows="3"
@@ -334,37 +342,33 @@ const SubmitRequirement = () => {
                                     </select>
                                   </div>
                                   <div className="form-group">
-                                    <label>Product Quantity :</label>
-                                    <input
-                                      type="number"
+                                    <label>Unit of Measurement:</label>
+                                    <select
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="Prod_qty"
-                                      value={productQuantity}
-                                      onChange={(e) => setProductQuantity(e.target.value)}
-                                    />
-                                  </div>
-                                 
-                                  {/* Submit and Continue Button */}
-                                  {showForm && (
-                                    <button
-                                      type="button"
-                                      style={{
-                                        bottom: "20px",
-                                        right: "70px",
-                                        backgroundColor: "#4CAF50",
-                                        border: "none",
-                                        color: "white",
-                                        padding: "8px 5px",
-                                        fontSize: "1em",
-                                        cursor: "pointer",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={handleSubmit}
+                                      name="unit"
+                                      value={selectedUnit} // Set the value of the select input to selectedUnit
+                                      onChange={(e) => setSelectedUnit(e.target.value)} // Update selectedUnit when an option is selected
                                     >
-                                      Save and Continue
-                                    </button>
-                                  )}
+                                      <option value="">Select Unit</option>
+                                      {uoms.map(unit => (
+                                      <option key={unit.encUomId} value={unit.encUomId}>{unit.unit_name}</option>
+                                    ))}
+                                    </select>
+                                  </div>
+                                  <div className="form-group">
+                                <label>Specifications if any:</label>
+                                <textarea
+                                  className="form-control"
+                                  rows="3"
+                                  style={{ height: "70px" }}
+                                  name="productDescription"
+                                  value={productDescription}
+                                  onChange={(e) => setProductDescription(e.target.value)}
+                                ></textarea>
+                              </div>
+                                  
+                                
                                 </div>
                               </div>
                             </section>
@@ -377,8 +381,7 @@ const SubmitRequirement = () => {
       <button
         type="button"
         style={{
-          bottom: "20px",
-          right: "80px",
+        
           backgroundColor: "#4CAF50",
           border: "none",
           color: "white",
@@ -387,6 +390,7 @@ const SubmitRequirement = () => {
           cursor: "pointer",
           borderRadius: "5px",
           marginRight: "4px",
+          marginBottom:"20px",
         }}
         onClick={() => {
           handleSubmit();

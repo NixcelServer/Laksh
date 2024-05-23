@@ -41,16 +41,16 @@ export default function Footer() {
       >
         <Heading size={"md"}>We are here to help you!</Heading>
         <HStack alignItems={"center"}>
-          <Text>Go Mobile:</Text>
-          <Box>
+          {/* <Text>Go Mobile:</Text> */}
+          {/* <Box>
             <Icon as={AiFillAndroid} boxSize={7} />
             <Icon as={AiFillApple} boxSize={7} />
-          </Box>
+          </Box> */}
           <Text>Follow us on:</Text>
           <Box>
             <Icon color={"blue"} as={AiFillFacebook} boxSize={7} />
             <Icon color={"blue.400"} as={AiFillLinkedin} boxSize={7} />
-            <Icon color={"skyblue"} as={AiFillTwitterSquare} boxSize={7} />
+            {/* <Icon color={"skyblue"} as={AiFillTwitterSquare} boxSize={7} /> */}
           </Box>
         </HStack>
       </Stack>
