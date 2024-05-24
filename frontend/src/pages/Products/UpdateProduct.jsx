@@ -390,7 +390,8 @@ const userString = sessionStorage.getItem('user');
                             <section className="section">
                               <div className="section-body">
                                 <div className="product-details" style={{ textAlign:"left", padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="form-group" style={{marginBottom:'50px'}}>
+                                  <div className="form-group" 
+                                  style={{marginBottom:'50px'}}>
                                     <label>Product Name:</label>
                                     <input
                                       type="text"
