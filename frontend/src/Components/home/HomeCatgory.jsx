@@ -12,7 +12,7 @@ export default function HomeCatgory() {
 const handlePly=(el)=>{
     navigate(el)
 }
-
+ 
   return (
     <Box>
             {/* <Flex justifyContent={'space-around'} p='10px' >

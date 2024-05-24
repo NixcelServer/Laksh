@@ -41,7 +41,7 @@ import { Link as NavLink } from 'react-router-dom';
 
 
  import { IoInformationOutline, IoHelp } from 'react-icons/io5';
- 
+ import { CiUser } from "react-icons/ci";
 
 
 
@@ -239,6 +239,9 @@ export default function Navbar() {
   )}
   {isLogin && (
     <>
+    <MenuItem as={Link} to="#" icon={<FaUserCircle />}>
+        User1
+      </MenuItem>
       <MenuItem as={Link} to="#" icon={<FaCog />}>
         Settings
       </MenuItem>

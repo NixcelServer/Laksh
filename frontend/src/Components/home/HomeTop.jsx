@@ -50,21 +50,21 @@ export default function HomeTop() {
             <img
               src="images/adv1.png"
               alt="First slide"
-              style={{ objectFit: "cover", maxHeight: "200px" }}
+              style={{ objectFit: "cover", maxHeight: "300px" }}
             />
           </div>
           <div>
             <img
               src="images/adv2.png"
               alt="Second slide"
-              style={{ objectFit: "cover", maxHeight: "200px" }}
+              style={{ objectFit: "cover", maxHeight: "300px" }}
             />
           </div>
           <div>
             <img
               src="images/adv3.png"
               alt="Third slide"
-              style={{ objectFit: "cover", maxHeight: "200px" }}
+              style={{ objectFit: "cover", maxHeight: "300px" }}
             />
           </div>
         </Carousel>
