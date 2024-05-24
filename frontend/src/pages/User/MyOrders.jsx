@@ -1,4 +1,5 @@
 import React, { useEffect,useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import feather from 'feather-icons';
 import axios from 'axios';
 import {
@@ -171,6 +172,7 @@ const MyOrder = () => {
         /* Main Content */
         <div className="main-content" style={{ marginTop: '-40px' }}>
              {orders && orders.map((order, index) => (
+             {orders && orders.map((order, index) => (
     <section className="section">
         <div className="section-body">
             <div className="row">
@@ -181,10 +183,14 @@ const MyOrder = () => {
                        
                     <h4>Orders</h4>
                              <div className="card-header-action">
+                    <h4>Orders</h4>
+                             <div className="card-header-action">
                            
                             <div className="btn-group">
                                     <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px' ,backgroundColor:'#9B59B6 '}}>Share Feedback</a>
                                     <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px',backgroundColor:'#9B59B6 ' }}>Repost Requrirement</a>
+                                    <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px',backgroundColor:'#9B59B6 ' }}onClick={() => handleCloseRequirement(order.encPostId)}>Close Requrirement</a>
+                                    <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px',backgroundColor:'#9B59B6 ' }} onClick={()=> handleUpdateOrderDetails(order)}>Enrich Your Requrirement</a>
                                     <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px',backgroundColor:'#9B59B6 ' }}onClick={() => handleCloseRequirement(order.encPostId)}>Close Requrirement</a>
                                     <a href="#" className="btn btn-primary" style={{ fontSize: '12px', padding: '3px 10px',backgroundColor:'#9B59B6 ' }} onClick={()=> handleUpdateOrderDetails(order)}>Enrich Your Requrirement</a>
                                 </div>
@@ -201,7 +207,20 @@ const MyOrder = () => {
                     <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurment: {getNameById('uom', order.encUomId)}</p>
                     <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Quantity: { order.prod_qty}</p>
                 </div>
+                        <div class="card-body"> 
+             <div className="row gx-1">
+                 <div className="col-lg-6" style={{  paddingRight: '0%'  }}>
+                    <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px', marginTop: '-2%' }}>Product Name: {order.prod_name }</p>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px',}}>Description: {order. prod_des}</p>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {getNameById('category', order.encCatId)}</p>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Sub Category: {getNameById('subcategory', order.encSubCatId)}</p>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurment: {getNameById('uom', order.encUomId)}</p>
+                    <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Quantity: { order.prod_qty}</p>
+                </div>
             </div>
+                 </div>
+                </div>
                  </div>
                 </div>
 
@@ -289,6 +308,9 @@ const MyOrder = () => {
                                     />
                                   </div> */}
                                 </div>
+                              </div>
+                            </section>
+                          </div>
                               </div>
                             </section>
                           </div>
@@ -394,6 +416,8 @@ const MyOrder = () => {
 </div>
 
     );
+
+    
 
     
 };

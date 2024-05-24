@@ -26,9 +26,54 @@ const CompanySetup = () => {
 
   const nextStep = async (e) => {
     e.preventDefault();    
+    e.preventDefault();    
     // Check if there are any errors displayed on the form
     const hasErrors = Object.values(error).some(errorMessage => errorMessage !== '');
   
+    // If there are errors, prevent advancing and display an error message
+    if (hasErrors) {
+      toast({
+        title: 'Error',
+        description: 'Please fix the errors on the form before proceeding.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return; // Prevent advancing to the next step
+    }
+    
+    const inputErrors = [
+      companyNameError,cinNoError,tanNoError,iecNoError,iecNoError,
+      mobNoError,altmobNoError,landlineNoError,altlandlineNoError,
+      accNoError,pincodeError,pannoError,gstnoError,ifscError
+      // Add other input errors here if needed
+    ];
+  
+    // If there are errors on input fields, prevent advancing and display an error message
+    if (inputErrors.some(errorMessage => errorMessage !== '')) {
+      toast({
+        title: 'Error',
+        description: 'Please fix the errors in the input fields before proceeding.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return; // Prevent advancing to the next step
+    }
+
+    // Check if all required fields are filled for the current step
+    const requiredFields = getRequiredFieldsForStep(step);
+    const missingFields = requiredFields.filter(field => !formData[field]);
+  
+    // If there are missing required fields, prevent advancing and display an error message
+    if (missingFields.length > 0) {
+      toast({
+        title: 'Error',
+        description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     // If there are errors, prevent advancing and display an error message
     if (hasErrors) {
       toast({
@@ -463,6 +508,7 @@ const checkGSTNo = (e) => {
   const gstRegex = /^\d{2}[A-Z]{5}\d{4}[A-Z]\d{1}[0-9A-Z]\d{1}$/;
   if (!value) {
     // If the input is empty, setPincodeError to indicate that Pincode is required
+    setGstNoError('GST No required');
     setGstNoError('GST No required');
   } else
   // Check if the input value matches the GST Number pattern
@@ -1207,7 +1253,7 @@ const checkIFSC = (e) => {
 
   );
 
-
+  }
 };
 
 export default CompanySetup;

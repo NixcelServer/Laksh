@@ -143,8 +143,10 @@ Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 
-
-
+Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
+Route::get('/my-orders/{id}',[PostController::class,'myOrders']);
+Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
+Route::post('/update-order',[PostController::class,'updateOrder']);
 });
 
 

@@ -13,6 +13,7 @@ import { bulbReducer } from "./BulbAdmin/bulbadmin.reducer";
 import { machineReducer } from "./MachineAdmin/machineadmin.reducer";
 import {productReducer}from "./Product/product.reducer";
 import { orderReducer } from "./Order/order.reducer";
+import { orderReducer } from "./Order/order.reducer";
 
 const root_reducer = combineReducers({
 	authReducer,
