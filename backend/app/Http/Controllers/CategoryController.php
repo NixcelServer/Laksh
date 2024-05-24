@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Models\Product;
 
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
@@ -29,13 +30,31 @@ class CategoryController extends Controller
         $category = new Category;
         $category->cat_name = $request->categoryName;
         $category->add_by = EncDecHelper::encDecId($request->encUserId,'decrypt');
-        //$category->add_by = '2';
+        $directory =  '/categories' ; 
+        $category->cat_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+        
         $category->add_date = Date::now()->toDateString();
         $category->add_time = Date::now()->toTimeString();
         $category->save();
 
         return response()->json(['message' => 'Category created successfully'], 200);
     }
+
+    public function updateCategory(Request $request)
+    {
+           
+        $category = Category::where('tbl_cat_id',EncDecHelper::encDecId($request->encCatId,'decrypt'))->first();
+        
+        $directory =  '/categories' ; 
+        $category->cat_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+        
+        // $category->update_date = Date::now()->toDateString();
+        // $category->update_time = Date::now()->toTimeString();
+        $category->save();
+
+        return response()->json(['message' => 'Category created successfully'], 200);
+    }
+    
 
     public function viewCategories()
     {
@@ -47,6 +66,7 @@ class CategoryController extends Controller
         {
             // Encrypt the Category ID using the EncDecHelper class
             $category->encCatId = EncDecHelper::encDecId($category->tbl_cat_id,'encrypt');
+            $category->countOfSubCat = SubCategory::where('tbl_cat_id',$category->tbl_cat_id)->where('flag','show')->count();
 
             // Unset the non-encrypted ID
             unset($category->tbl_cat_id,$category->add_by);
@@ -117,6 +137,9 @@ class CategoryController extends Controller
 
             //encrypt the category id
             $subCat->encCatId = EncDecHelper::encDecId($subCat->tbl_cat_id,'encrypt');
+
+            //count the no. of products
+            $subCat->prodCount = Product::where('tbl_sub_cat_id',$subCat->tbl_sub_cat_id)->where('flag','show')->count();
 
             // Unset the non-encrypted ID
             unset($subCat->tbl_cat_id,$subCat->tbl_sub_cat_id,$subCat->add_by);

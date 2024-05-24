@@ -47,7 +47,7 @@ export default function HomeTop() {
       >
         {
             isLogin?<Flex columnGap={'20px'} p='20px' >
-                    <Box bg='whiteAlpha.700'display={{ base: 'none', md: 'flex' }}  >
+                    {/* <Box bg='whiteAlpha.700'display={{ base: 'none', md: 'flex' }}  >
                         <VStack p='10px' rowGap={'10px'} >
                             <Heading>Tell us what you Need</Heading>
                             <Box>
@@ -86,9 +86,9 @@ export default function HomeTop() {
                             </Box>
                              
                         </VStack>
-                    </Box>
+                    </Box> */}
                 </Flex>:<Flex  >
-                <Box display={{ base: 'none', md: 'flex' }}>
+                {/* <Box display={{ base: 'none', md: 'flex' }}>
                 <Menu>
                     <MenuButton as={Button} bg='whiteAlpha.700' rightIcon={<ChevronDownIcon />}>
                     All India
@@ -101,8 +101,8 @@ export default function HomeTop() {
                     <MenuItem>Mumbai</MenuItem>
                     </MenuList>
                 </Menu>
-                </Box>
-                <Box>
+                </Box> */}
+                {/* <Box>
                 <InputGroup>
                     <Input
                     type="text"
@@ -114,7 +114,7 @@ export default function HomeTop() {
                     <Search2Icon />
                     </Button>
                 </InputGroup>
-                </Box>
+                </Box> */}
             </Flex>
         }
        

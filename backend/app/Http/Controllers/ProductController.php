@@ -80,8 +80,9 @@ class ProductController extends Controller
     {
         
          $decCatId = EncDecHelper::encDecId($id,'decrypt');
-         $products = Product::where('tbl_cat_id', $decCatId)->where('flag','show')
-         ->latest('add_date')
+         $products = Product::where('tbl_cat_id', $decCatId)
+         ->where('flag', 'show')
+         ->inRandomOrder()
          ->take(9)
          ->get();
 
@@ -158,5 +159,15 @@ class ProductController extends Controller
         }
 
         return response()->json($prod);
+    }
+
+    public function checkProductName(Request $request,$id)
+    {
+       
+        $decCompanyId = EncDecHelper::encDecId($id,'decrypt');
+        
+        $ProductNameExists = Product::where('prod_name',$request->prod_name) ->where('tbl_company_id', $decCompanyId)->where('flag','show')->exists();
+        // return response($ProductNameExists);
+        return response()->json($ProductNameExists);
     }
 }

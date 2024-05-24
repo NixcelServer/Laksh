@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('c_alt_mobile_no', 10)->nullable();
             $table->string('c_landline_no', 10)->nullable();
             $table->string('c_alt_landline_no', 10)->nullable();
+            $table->string('c_logo_path',255)->nullable();
             $table->date('add_date')->nullable();
             $table->time('add_time')->nullable();
             $table->date('updated_date')->nullable();

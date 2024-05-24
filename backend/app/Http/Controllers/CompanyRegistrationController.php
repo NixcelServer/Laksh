@@ -22,7 +22,6 @@ class CompanyRegistrationController extends Controller
         $decUserId = EncDecHelper::encDecId($request->encUserId,'decrypt');
         
         $company = Company::where('tbl_user_id',$decUserId)->first();
-        
         $company->c_name = $request->c_name;
         $company->c_cin_no = $request->c_cin_no;
         $company->c_tan_no = $request->c_tan_no;
@@ -33,9 +32,14 @@ class CompanyRegistrationController extends Controller
         $company->c_alt_mobile_no = $request->c_alt_mobile_no;
         $company->c_landline_no = $request->c_landline_no;
         $company->c_alt_landline_no = $request->c_alt_landline_no;
+        if ($request->hasFile('file')) {
+        $directory = $company->tbl_company_id . '/company-logo' ; 
+        $company->c_logo_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+        }
         $company->add_date = Date::now()->toDateString();
         $company->add_time = Date::now()->toTimeString();
         $company->flag = 'show';
+       
         $company->save();
 
         //insert entry into tbl_company_address
@@ -87,6 +91,7 @@ class CompanyRegistrationController extends Controller
         $csi->website_url = $request->website_url;
         $csi->instagram_url = $request->instagram_url;
         $csi->facebook_url = $request->facebook_url;
+        
         $csi->add_date = Date::now()->toDateString();
         $csi->add_time = Date::now()->toTimeString();
        // 

@@ -15,7 +15,7 @@ class Company extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'tbl_user_id', 'tbl_user_id');
     }
 
     public function panNo()
@@ -46,6 +46,11 @@ class Company extends Model
     public function product()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'tbl_company_id');
     }
 
     public function post()

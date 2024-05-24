@@ -47,6 +47,7 @@ const AddProduct = () => {
   const [productToDelete, setProductToDelete] = useState(null);
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
+  const [errors, setErrors] = useState({}); // State for validation errors
   
   const [productDetails, setProductDetails] = useState({
     encCompanyId: '',
@@ -210,7 +211,9 @@ const userString = sessionStorage.getItem('user');
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
+    if (!validateForm()) {
+      return;
+    }
   
     console.log(encCompanyId);
     
@@ -302,6 +305,33 @@ const userString = sessionStorage.getItem('user');
     setShowDeleteConfirmation(false);
   }
 
+  const [isProductNameAvailable, setIsProductNameAvailable] = useState(true);
+  const checkProductName = async (productName) => {
+    try {
+      const response = await axios.post(`http://127.0.0.1:8000/api/check-product-name/${encCompanyId}`, {
+        prod_name: productName
+      });
+      setIsProductNameAvailable(!response.data);
+    } catch (error) {
+      console.error("Error checking product name:", error);
+    }
+  };
+
+  const handleProductNameChange = (e) => {
+    const productName = e.target.value;
+    setProductDetails({ ...productDetails, prodName: productName });
+    checkProductName(productName);
+  };
+  
+  const validateForm = () => {
+    const newErrors = {};
+    if (!productDetails.prodName) newErrors.prodName = "Product name is required";
+    if (!isProductNameAvailable) newErrors.prodName = "Product name already exists";
+
+     setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   return (
     <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
@@ -369,9 +399,14 @@ const userString = sessionStorage.getItem('user');
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="productName"
-                                      onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
-
+                                      // onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
+                                      value={productDetails.prodName}
+                                      onChange={handleProductNameChange}
                                     />
+                                    {!isProductNameAvailable && (
+                                      <p style={{ color: "red" }}>Product name already exists</p>
+                                    )}
+                                    
                                   </div>
                                   <div className="form-group" >
                                     <label>Category:</label>
@@ -453,7 +488,7 @@ const userString = sessionStorage.getItem('user');
                                   
 
                                     <div className="form-group">
-                                    <label>Price per:</label>
+                                    <label>UOM :</label>
                                     <select
                                       className="form-control"
                                       style={{ height: "40px" }}

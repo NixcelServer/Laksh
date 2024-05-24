@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function company()
     {
-        return $this->hasOne(Company::class);
+        return $this->hasOne(Company::class, 'tbl_user_id', 'tbl_user_id');
     }
     
     public function userAddress()

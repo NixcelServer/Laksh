@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('tbl_gst_id');
             $table->unsignedBigInteger('tbl_company_id');
             $table->foreign('tbl_company_id')->references('tbl_company_id')->on('mst_tbl_companies')->onDelete('cascade');
-            $table->string('gst_no', 15)->unique();
+            $table->string('gst_no', 15)->nullable();
             $table->string('gst_status', 25)->default('Not Verified');
             $table->date('verified_date')->nullable();
             $table->time('verified_time')->nullable();
