@@ -11,6 +11,7 @@ use App\Models\Keyword;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\Company;
+use App\Models\LandingPageImage;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
 
@@ -46,4 +47,48 @@ class AdminController extends Controller
         ]);
 
     }
+
+    public function addLandingPageImgs(Request $request)
+    {
+        $decUserId = EncDecHelper::encDecId($request->encUserId,'decrypt');
+        $img = new LandingPageImage;
+        $directory = '/Admin' . '/Landing Page' ; 
+        $img->lp_img_path = $request->file('image')->storeAs($directory, $request->file('image')->getClientOriginalName());
+        $img->add_by = $decUserId;
+        $img->add_date = Date::now()->toDateString();
+        $img->add_time = Date::now()->toTimeString();
+        $img->save(); 
+
+        return response()->json(['message' => 'Advertisement image added successfully'], 200);
+    }
+
+    public function getLpImages(Request $request)
+    {
+        $decUserId = EncDecHelper::encDecId($request->encUserId, 'decrypt');
+       
+        $images = LandingPageImage::where('flag','show')->get();
+
+        foreach($images as $image){
+            $image->encLpImgId = EncDecHelper::encDecId($image->tbl_lp_img_id, 'encrypt');
+            unset($image->tbl_lp_img_id);
+        }
+
+        return response()->json(['images' => $images], 200);
+    }
+
+    public function selectedImg(Request $request)
+    {
+        $encImageIds = $request->input('selectedImageIds'); // Retrieve the array of encrypted image IDs from the request
+
+        foreach ($encImageIds as $encImageId) {
+            $decImageId = EncDecHelper::encDecId($encImageId, 'decrypt'); // Decrypt the image ID
+
+           // Find the record by the decrypted ID and update the flag to 'show'
+            LandingPageImage::where('tbl_lp_img_id', $decImageId)
+                            ->update(['display' => 'yes']);
+        }
+
+    return response()->json(['message' => 'Selected images updated successfully'], 200);
+    }
+
 }

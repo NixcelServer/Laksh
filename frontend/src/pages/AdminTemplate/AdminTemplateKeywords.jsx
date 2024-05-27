@@ -154,13 +154,7 @@ const Keywords = () => {
             <div className="main-content">
                 <section className="section">
                     <div className="section-body">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="card">
-                                    
-                                </div>
-                            </div>
-                        </div>
+                        
                        
                         <div className="row">
                             <div className="col-12">
@@ -173,7 +167,7 @@ const Keywords = () => {
                                                     top: 10,
                                                     right: 10,
                                                     padding: '1px 20px',
-                                                    backgroundColor: 'dodgerblue',
+                                                    backgroundColor: '#527c90',
                                                     color: 'white',
                                                     border: 'none',
                                                     borderRadius: '5px',

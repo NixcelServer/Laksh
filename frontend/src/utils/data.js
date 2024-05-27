@@ -13,54 +13,21 @@
 // Contact Us
 
 // Suppliers Tool Kit
-// Sell on IndiaMART
+// Sell on Chemick
 // Latest BuyLead
 // Learning Centre
-// Ship With IndiaMART
+// Ship With Chemick
 
 // Buyers Tool Kit
 // Post Your Requirement
 // Products You Buy
 // Search Products & Suppliers
-// Pay With IndiaMART
+// Pay With Chemick
 
 // Accounting Solutions
 // Accounting Software
 // Tally on Mobile
 // GST e-Invoice
-import React from 'react';
-
-const RequirementForm = () => {
-  return (
-    <div className="main-content">
-      <section className="section">
-        <div className="section-body">
-          <div className="row">
-            <div className="col-12 col-md-6 col-lg-6">
-              <div className="card">
-                <div className="card-header">
-                  <h4>Submit Requirement Form</h4>
-                </div>
-                <div className="card-body">
-                  <div className="form-group">
-                    <label>Text</label>
-                    <input type="text" className="form-control" />
-                  </div>
-                </div>
-                <div className="card-footer text-right">
-                  <button className="btn btn-primary mr-1" type="submit">Submit Requirement</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default RequirementForm;
-
 // Rest of your existing code...
 
 export const footerData = [
@@ -78,7 +45,7 @@ export const footerData = [
   },
   {
     title:'Suppliers Tool Kit',
-    des1:'Sell on IndiaMART',
+    des1:'Sell on Chemick',
     des2:'Latest BuyLead',
     des3:'Learning Centre'
   },

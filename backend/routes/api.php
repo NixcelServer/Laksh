@@ -43,6 +43,15 @@ Route::post('/login',[AuthController::class,'login']);
 //admin dashboard contents
 Route::get('/dashcontents',[AdminController::class,'adminDashboardContents']);
 
+//adding landing page images
+Route::post('/add-landing-pg-img',[AdminController::class,'addLandingPageImgs']);
+
+//get the images uploaded by admin
+Route::get('/get-lp-imgs', [AdminController::class, 'getLpImages']);
+
+Route::post('selected-lp-images',[UserController::class,'selectedImg']);
+
+
 //user registrtion
 Route::post('/register',[AuthController::class,'register']);
 
@@ -139,6 +148,18 @@ Route::post('/update-order',[PostController::class,'updateOrder']);
 
 Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
 
+
+
+Route::post('/add-adv-img',[UserController::class,'addAdvImages']);
+
+// Route for fetching uploaded advertisement images
+Route::get('get-adv-img', [UserController::class, 'getAdvImages']);
+
+Route::get('/display-adv-images',[UserController::class,'advertismentImgs']);
+
+Route::post('selected-u-images-adv',[UserController::class,'selectedImg']);
+
+Route::delete("/adv-imgs/delete/{id}", [UserController::class, "deleteImg"]);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

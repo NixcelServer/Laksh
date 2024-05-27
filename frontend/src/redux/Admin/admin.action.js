@@ -240,3 +240,11 @@ export const addUOM = (payload) => async(dispatch) => {
     }
 };
 
+export const setImages = (payload) => async(dispatch) => {
+    try{
+        dispatch({ type:types.SET_ADV_IMG,payload:payload});
+    }catch(err){
+        console.log(err);
+    }
+}
+

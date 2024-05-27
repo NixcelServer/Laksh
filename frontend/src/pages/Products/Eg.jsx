@@ -1,626 +1,271 @@
-import React, { useEffect } from 'react';
-import feather from 'feather-icons';
-import { useDispatch, useSelector } from "react-redux";
-import { addCategory, getCategories, getSubCategories } from '../../redux/Admin/admin.action';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from "react";
+import feather from "feather-icons";
+import axios from "axios";
+import { FcUpload } from "react-icons/fc";
 
-const Eg = () => {
-    useEffect(() => {
-        const script1 = document.createElement('script');
-        script1.src = 'assets/bundles/datatables/datatables.min.js';
-        script1.async = true;
-        document.body.appendChild(script1);
+const Example = () => {
+  const [file, setFile] = useState(null);
+  const [duration, setDuration] = useState(15);
+  const [chargesPerDay, setChargesPerDay] = useState(10);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const fileInputRef = useRef(null);
 
-        const script2 = document.createElement('script');
-        script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-        script2.async = true;
-        document.body.appendChild(script2);
+  const [files, setFiles] = useState([]);
 
-        const script3 = document.createElement('script');
-        script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
-        script3.async = true;
-        document.body.appendChild(script3);
 
-        const script4 = document.createElement('script');
-        script4.src = 'assets/js/page/datatables.js';
-        script4.async = true;
-        document.body.appendChild(script4);
 
-        // Initialize Feather icons
-        feather.replace();
+  const handleFileChange = (event) => {
+      const newFiles = Array.from(event.target.files);
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
 
-        // Cleanup function to remove the scripts when the component unmounts
-        return () => {
-            document.body.removeChild(script1);
-            document.body.removeChild(script2);
-            document.body.removeChild(script3);
-            document.body.removeChild(script4);
-        };
-    }, []);
-    return (
-        <div>
-  <div className="main-content">
-    <section className="section">
-      <div className="section-body">
-        <div className="row">
-          <div className="col-12">
-            <div className="card">
-              <div className="card-header">
-                <h4>Basic DataTables</h4>
-              </div>
+ 
+
+ 
+
+  const handleDurationChange = (e) => {
+    setDuration(e.target.value);
+  };
+
+  const handleChargesPerDayChange = (e) => {
+    setChargesPerDay(e.target.value);
+  };
+
+  const calculateTotalAmount = () => {
+    return duration * chargesPerDay;
+  };
+
+  useEffect(() => {
+    feather.replace();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("duration", duration);
+    formData.append("chargesPerDay", chargesPerDay);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/advertisements",
+        formData
+      );
+      console.log("Advertisement submitted:", response.data);
+      // Handle successful submission
+    } catch (error) {
+      console.error("Error submitting advertisement:", error);
+    }
+  };
+
+  const handleUploadImageClick = () => {
+    // Trigger click event on the file input
+    fileInputRef.current.click();
+  };
+
+  return (
+    <div>
+      <div className="main-content">
+        <section
+          className="section"
+          style={{
+            marginTop: "20px",
+            background: "#fff",
+            borderRadius: "10px",
+            boxShadow: "none",
+            border: "none",
+            padding: "20px",
+            display: "flex", // Ensure flex layout
+            flexDirection: "column", // Column layout
+            alignItems: "center" // Center content horizontally
+          }}
+        >
+          <header
+            style={{
+              marginBottom: "20px",
+              color: "black", // Change the color to blue
+              backgroundColor: "#DFAAF4",
+              padding: "10px",
+              textAlign: "center",
+              width: "100%" // Ensure header takes full width
+            }}
+          >
+            <h4
+              style={{
+                fontWeight: "bold",
+                fontSize: "24px", // Increase the font size
+                textTransform: "uppercase", // Convert to uppercase
+                letterSpacing: "1px" // Add some letter spacing
+              }}
+            >
+              ...
+            </h4>
+          </header>
+          <div
+            className="row"
+            style={{
+              display: "flex", // Ensure flex layout
+              justifyContent: "center", // Center content horizontally
+              width: "100%" // Ensure row takes full width
+            }}
+          >
+            <div
+              className="col-lg-6 col-md-12"
+              style={{ flex: "0 0 auto" }} // Allow column to shrink
+            >
+              {/* This column will take up half the width */}
             </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <div className="card">
-              <div className="card-header">
-                <h4>Table With State Save</h4>
-              </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
-                      </tr>
-                      <tr>
-                        <td>Garrett Winters</td>
-                        <td>Accountant</td>
-                        <td>Tokyo</td>
-                        <td>63</td>
-                        <td>2011/07/25</td>
-                        <td>$170,750</td>
-                      </tr>
-                      <tr>
-                        <td>Ashton Cox</td>
-                        <td>Junior Technical Author</td>
-                        <td>San Francisco</td>
-                        <td>66</td>
-                        <td>2009/01/12</td>
-                        <td>$86,000</td>
-                      </tr>
-                      <tr>
-                        <td>Cedric Kelly</td>
-                        <td>Senior Javascript Developer</td>
-                        <td>Edinburgh</td>
-                        <td>22</td>
-                        <td>2012/03/29</td>
-                        <td>$433,060</td>
-                      </tr>
-                      <tr>
-                        <td>Airi Satou</td>
-                        <td>Accountant</td>
-                        <td>Tokyo</td>
-                        <td>33</td>
-                        <td>2008/11/28</td>
-                        <td>$162,700</td>
-                      </tr>
-                      <tr>
-                        <td>Brielle Williamson</td>
-                        <td>Integration Specialist</td>
-                        <td>New York</td>
-                        <td>61</td>
-                        <td>2012/12/02</td>
-                        <td>$372,000</td>
-                      </tr>
-                      <tr>
-                        <td>Herrod Chandler</td>
-                        <td>Sales Assistant</td>
-                        <td>San Francisco</td>
-                        <td>59</td>
-                        <td>2012/08/06</td>
-                        <td>$137,500</td>
-                      </tr>
-                      <tr>
-                        <td>Rhona Davidson</td>
-                        <td>Integration Specialist</td>
-                        <td>Tokyo</td>
-                        <td>55</td>
-                        <td>2010/10/14</td>
-                        <td>$327,900</td>
-                      </tr>
-                      <tr>
-                        <td>Colleen Hurst</td>
-                        <td>Javascript Developer</td>
-                        <td>San Francisco</td>
-                        <td>39</td>
-                        <td>2009/09/15</td>
-                        <td>$205,500</td>
-                      </tr>
-                      <tr>
-                        <td>Sonya Frost</td>
-                        <td>Software Engineer</td>
-                        <td>Edinburgh</td>
-                        <td>23</td>
-                        <td>2008/12/13</td>
-                        <td>$103,600</td>
-                      </tr>
-                      <tr>
-                        <td>Jena Gaines</td>
-                        <td>Office Manager</td>
-                        <td>London</td>
-                        <td>30</td>
-                        <td>2008/12/19</td>
-                        <td>$90,560</td>
-                      </tr>
-                      <tr>
-                        <td>Quinn Flynn</td>
-                        <td>Support Lead</td>
-                        <td>Edinburgh</td>
-                        <td>22</td>
-                        <td>2013/03/03</td>
-                        <td>$342,000</td>
-                      </tr>
-                      <tr>
-                        <td>Charde Marshall</td>
-                        <td>Regional Director</td>
-                        <td>San Francisco</td>
-                        <td>36</td>
-                        <td>2008/10/16</td>
-                        <td>$470,600</td>
-                      </tr>
-                      <tr>
-                        <td>Haley Kennedy</td>
-                        <td>Senior Marketing Designer</td>
-                        <td>London</td>
-                        <td>43</td>
-                        <td>2012/12/18</td>
-                        <td>$313,500</td>
-                      </tr>
-                      <tr>
-                        <td>Tatyana Fitzpatrick</td>
-                        <td>Regional Director</td>
-                        <td>London</td>
-                        <td>19</td>
-                        <td>2010/03/17</td>
-                        <td>$385,750</td>
-                      </tr>
-                      <tr>
-                        <td>Michael Silva</td>
-                        <td>Marketing Designer</td>
-                        <td>London</td>
-                        <td>66</td>
-                        <td>2012/11/27</td>
-                        <td>$198,500</td>
-                      </tr>
-                      <tr>
-                        <td>Paul Byrd</td>
-                        <td>Chief Financial Officer (CFO)</td>
-                        <td>New York</td>
-                        <td>64</td>
-                        <td>2010/06/09</td>
-                        <td>$725,000</td>
-                      </tr>
-                      <tr>
-                        <td>Gloria Little</td>
-                        <td>Systems Administrator</td>
-                        <td>New York</td>
-                        <td>59</td>
-                        <td>2009/04/10</td>
-                        <td>$237,500</td>
-                      </tr>
-                      <tr>
-                        <td>Bradley Greer</td>
-                        <td>Software Engineer</td>
-                        <td>London</td>
-                        <td>41</td>
-                        <td>2012/10/13</td>
-                        <td>$132,000</td>
-                      </tr>
-                      <tr>
-                        <td>Dai Rios</td>
-                        <td>Personnel Lead</td>
-                        <td>Edinburgh</td>
-                        <td>35</td>
-                        <td>2012/09/26</td>
-                        <td>$217,500</td>
-                      </tr>
-                      <tr>
-                        <td>Jenette Caldwell</td>
-                        <td>Development Lead</td>
-                        <td>New York</td>
-                        <td>30</td>
-                        <td>2011/09/03</td>
-                        <td>$345,000</td>
-                      </tr>
-                      <tr>
-                        <td>Yuri Berry</td>
-                        <td>Chief Marketing Officer (CMO)</td>
-                        <td>New York</td>
-                        <td>40</td>
-                        <td>2009/06/25</td>
-                        <td>$675,000</td>
-                      </tr>
-                      <tr>
-                        <td>Caesar Vance</td>
-                        <td>Pre-Sales Support</td>
-                        <td>New York</td>
-                        <td>21</td>
-                        <td>2011/12/12</td>
-                        <td>$106,450</td>
-                      </tr>
-                      <tr>
-                        <td>Doris Wilder</td>
-                        <td>Sales Assistant</td>
-                        <td>Sidney</td>
-                        <td>23</td>
-                        <td>2010/09/20</td>
-                        <td>$85,600</td>
-                      </tr>
-                      <tr>
-                        <td>Angelica Ramos</td>
-                        <td>Chief Executive Officer (CEO)</td>
-                        <td>London</td>
-                        <td>47</td>
-                        <td>2009/10/09</td>
-                        <td>$1,200,000</td>
-                      </tr>
-                      <tr>
-                        <td>Gavin Joyce</td>
-                        <td>Developer</td>
-                        <td>Edinburgh</td>
-                        <td>42</td>
-                        <td>2010/12/22</td>
-                        <td>$92,575</td>
-                      </tr>
-                      <tr>
-                        <td>Jennifer Chang</td>
-                        <td>Regional Director</td>
-                        <td>Singapore</td>
-                        <td>28</td>
-                        <td>2010/11/14</td>
-                        <td>$357,650</td>
-                      </tr>
-                      <tr>
-                        <td>Brenden Wagner</td>
-                        <td>Software Engineer</td>
-                        <td>San Francisco</td>
-                        <td>28</td>
-                        <td>2011/06/07</td>
-                        <td>$206,850</td>
-                      </tr>
-                      <tr>
-                        <td>Fiona Green</td>
-                        <td>Chief Operating Officer (COO)</td>
-                        <td>San Francisco</td>
-                        <td>48</td>
-                        <td>2010/03/11</td>
-                        <td>$850,000</td>
-                      </tr>
-                      <tr>
-                        <td>Shou Itou</td>
-                        <td>Regional Marketing</td>
-                        <td>Tokyo</td>
-                        <td>20</td>
-                        <td>2011/08/14</td>
-                        <td>$163,000</td>
-                      </tr>
-                      <tr>
-                        <td>Michelle House</td>
-                        <td>Integration Specialist</td>
-                        <td>Sidney</td>
-                        <td>37</td>
-                        <td>2011/06/02</td>
-                        <td>$95,400</td>
-                      </tr>
-                      <tr>
-                        <td>Suki Burks</td>
-                        <td>Developer</td>
-                        <td>London</td>
-                        <td>53</td>
-                        <td>2009/10/22</td>
-                        <td>$114,500</td>
-                      </tr>
-                      <tr>
-                        <td>Prescott Bartlett</td>
-                        <td>Technical Author</td>
-                        <td>London</td>
-                        <td>27</td>
-                        <td>2011/05/07</td>
-                        <td>$145,000</td>
-                      </tr>
-                      <tr>
-                        <td>Gavin Cortez</td>
-                        <td>Team Leader</td>
-                        <td>San Francisco</td>
-                        <td>22</td>
-                        <td>2008/10/26</td>
-                        <td>$235,500</td>
-                      </tr>
-                      <tr>
-                        <td>Martena Mccray</td>
-                        <td>Post-Sales support</td>
-                        <td>Edinburgh</td>
-                        <td>46</td>
-                        <td>2011/03/09</td>
-                        <td>$324,050</td>
-                      </tr>
-                      <tr>
-                        <td>Unity Butler</td>
-                        <td>Marketing Designer</td>
-                        <td>San Francisco</td>
-                        <td>47</td>
-                        <td>2009/12/09</td>
-                        <td>$85,675</td>
-                      </tr>
-                      <tr>
-                        <td>Howard Hatfield</td>
-                        <td>Office Manager</td>
-                        <td>San Francisco</td>
-                        <td>51</td>
-                        <td>2008/12/16</td>
-                        <td>$164,500</td>
-                      </tr>
-                      <tr>
-                        <td>Hope Fuentes</td>
-                        <td>Secretary</td>
-                        <td>San Francisco</td>
-                        <td>41</td>
-                        <td>2010/02/12</td>
-                        <td>$109,850</td>
-                      </tr>
-                      <tr>
-                        <td>Vivian Harrell</td>
-                        <td>Financial Controller</td>
-                        <td>San Francisco</td>
-                        <td>62</td>
-                        <td>2009/02/14</td>
-                        <td>$452,500</td>
-                      </tr>
-                      <tr>
-                        <td>Timothy Mooney</td>
-                        <td>Office Manager</td>
-                        <td>London</td>
-                        <td>37</td>
-                        <td>2008/12/11</td>
-                        <td>$136,200</td>
-                      </tr>
-                      <tr>
-                        <td>Jackson Bradshaw</td>
-                        <td>Director</td>
-                        <td>New York</td>
-                        <td>65</td>
-                        <td>2008/09/26</td>
-                        <td>$645,750</td>
-                      </tr>
-                      <tr>
-                        <td>Olivia Liang</td>
-                        <td>Support Engineer</td>
-                        <td>Singapore</td>
-                        <td>64</td>
-                        <td>2011/02/03</td>
-                        <td>$234,500</td>
-                      </tr>
-                      <tr>
-                        <td>Bruno Nash</td>
-                        <td>Software Engineer</td>
-                        <td>London</td>
-                        <td>38</td>
-                        <td>2011/05/03</td>
-                        <td>$163,500</td>
-                      </tr>
-                      <tr>
-                        <td>Sakura Yamamoto</td>
-                        <td>Support Engineer</td>
-                        <td>Tokyo</td>
-                        <td>37</td>
-                        <td>2009/08/19</td>
-                        <td>$139,575</td>
-                      </tr>
-                      <tr>
-                        <td>Thor Walton</td>
-                        <td>Developer</td>
-                        <td>New York</td>
-                        <td>61</td>
-                        <td>2013/08/11</td>
-                        <td>$98,540</td>
-                      </tr>
-                      <tr>
-                        <td>Finn Camacho</td>
-                        <td>Support Engineer</td>
-                        <td>San Francisco</td>
-                        <td>47</td>
-                        <td>2009/07/07</td>
-                        <td>$87,500</td>
-                      </tr>
-                      <tr>
-                        <td>Serge Baldwin</td>
-                        <td>Data Coordinator</td>
-                        <td>Singapore</td>
-                        <td>64</td>
-                        <td>2012/04/09</td>
-                        <td>$138,575</td>
-                      </tr>
-                      <tr>
-                        <td>Zenaida Frank</td>
-                        <td>Software Engineer</td>
-                        <td>New York</td>
-                        <td>63</td>
-                        <td>2010/01/04</td>
-                        <td>$125,250</td>
-                      </tr>
-                      <tr>
-                        <td>Zorita Serrano</td>
-                        <td>Software Engineer</td>
-                        <td>San Francisco</td>
-                        <td>56</td>
-                        <td>2012/06/01</td>
-                        <td>$115,000</td>
-                      </tr>
-                      <tr>
-                        <td>Jennifer Acosta</td>
-                        <td>Junior Javascript Developer</td>
-                        <td>Edinburgh</td>
-                        <td>43</td>
-                        <td>2013/02/01</td>
-                        <td>$75,650</td>
-                      </tr>
-                      <tr>
-                        <td>Cara Stevens</td>
-                        <td>Sales Assistant</td>
-                        <td>New York</td>
-                        <td>46</td>
-                        <td>2011/12/06</td>
-                        <td>$145,600</td>
-                      </tr>
-                      <tr>
-                        <td>Hermione Butler</td>
-                        <td>Regional Director</td>
-                        <td>London</td>
-                        <td>47</td>
-                        <td>2011/03/21</td>
-                        <td>$356,250</td>
-                      </tr>
-                      <tr>
-                        <td>Lael Greer</td>
-                        <td>Systems Administrator</td>
-                        <td>London</td>
-                        <td>21</td>
-                        <td>2009/02/27</td>
-                        <td>$103,500</td>
-                      </tr>
-                      <tr>
-                        <td>Jonas Alexander</td>
-                        <td>Developer</td>
-                        <td>San Francisco</td>
-                        <td>30</td>
-                        <td>2010/07/14</td>
-                        <td>$86,500</td>
-                      </tr>
-                      <tr>
-                        <td>Shad Decker</td>
-                        <td>Regional Director</td>
-                        <td>Edinburgh</td>
-                        <td>51</td>
-                        <td>2008/11/13</td>
-                        <td>$183,000</td>
-                      </tr>
-                      <tr>
-                        <td>Michael Bruce</td>
-                        <td>Javascript Developer</td>
-                        <td>Singapore</td>
-                        <td>29</td>
-                        <td>2011/06/27</td>
-                        <td>$183,000</td>
-                      </tr>
-                      <tr>
-                        <td>Donna Snider</td>
-                        <td>Customer Support</td>
-                        <td>New York</td>
-                        <td>27</td>
-                        <td>2011/01/25</td>
-                        <td>$112,000</td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <div
+              className="col-lg-6 col-md-12"
+              style={{
+                flex: "0 0 auto", // Allow column to shrink
+                maxWidth: "1200px" // Limit the width of the column
+              }}
+            >
+              {/* Move the card to this column */}
+              <div
+                className="card"
+                style={{
+                  width: "100%", // Ensure card takes full width
+                  height: "200px" // Set height of card
+                }}
+              >
+                <div className="card-body">
+                  <div className="form-group">
+                    <label className="form-label">
+                      Advertisement carousel
+                    </label>
+                    <div className="row gutters-sm">
+                      <div className="col-6 col-sm-4"></div>
+                      <div className="col-6 col-sm-4"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                style={{ display: "none" }} // Hide the input visually
+                onChange={handleFileChange}
+              />
+
+            
+
+             
             </div>
-          </div>
+
+        
+             
+
+            <div className="col-lg-6 col-md-12" style={{ flex: "0 0 auto", maxWidth: "1200px" }}>
+            {/* Move the card to this column */}
+            <div className="card" style={{ width: "100%", marginBottom: "20px" }}>
+                <div className="card-header">
+                    <h4>Image Check</h4>
+                </div>
+                <div className="card-body">
+                    <div className="form-group">
+                        <label className="form-label">Uploaded Images</label>
+                        <div className="row gutters-sm">
+                            {/* Display uploaded images here */}
+                            {files.map((file, index) => (
+                                <div key={index} className="col-6 col-sm-4 mb-2" style={{ marginBottom: "0.5rem" }}>
+                                    <label className="imagecheck">
+                                        <img 
+                                            src={URL.createObjectURL(file)} 
+                                            alt={`Uploaded ${index + 1}`} 
+                                            className="imagecheck-image" 
+                                            style={{
+                                                width: "200px",
+                                                height: "200px",
+                                                objectFit: "cover",
+                                                
+                                              }}
+                
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input
+                ref={fileInputRef}
+                type="file"
+                style={{ display: "none" }}
+                accept="image/*"
+                onChange={handleFileChange}
+                multiple
+            />
+
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleUploadImageClick}
+                title="Upload Image"
+            >
+                Upload Image
+            </button>
         </div>
-      </div>
-    </section>
-    <div className="settingSidebar">
-      <a href="javascript:void(0)" className="settingPanelToggle"> <i className="fa fa-spin fa-cog" />
-      </a>
-      <div className="settingSidebar-body ps-container ps-theme-default">
-        <div className=" fade show active">
-          <div className="setting-panel-header">Setting Panel
-          </div>
-          <div className="p-15 border-bottom">
-            <h6 className="font-medium m-b-10">Select Layout</h6>
-            <div className="selectgroup layout-color w-50">
-              <label className="selectgroup-item">
-                <input type="radio" name="value" defaultValue={1} className="selectgroup-input-radio select-layout" defaultChecked />
-                <span className="selectgroup-button">Light</span>
-              </label>
-              <label className="selectgroup-item">
-                <input type="radio" name="value" defaultValue={2} className="selectgroup-input-radio select-layout" />
-                <span className="selectgroup-button">Dark</span>
-              </label>
-            </div>
-          </div>
-          <div className="p-15 border-bottom">
-            <h6 className="font-medium m-b-10">Sidebar Color</h6>
-            <div className="selectgroup selectgroup-pills sidebar-color">
-              <label className="selectgroup-item">
-                <input type="radio" name="icon-input" defaultValue={1} className="selectgroup-input select-sidebar" />
-                <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Light Sidebar"><i className="fas fa-sun" /></span>
-              </label>
-              <label className="selectgroup-item">
-                <input type="radio" name="icon-input" defaultValue={2} className="selectgroup-input select-sidebar" defaultChecked />
-                <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Dark Sidebar"><i className="fas fa-moon" /></span>
-              </label>
-            </div>
-          </div>
-          <div className="p-15 border-bottom">
-            <h6 className="font-medium m-b-10">Color Theme</h6>
-            <div className="theme-setting-options">
-              <ul className="choose-theme list-unstyled mb-0">
-                <li title="white" className="active">
-                  <div className="white" />
-                </li>
-                <li title="cyan">
-                  <div className="cyan" />
-                </li>
-                <li title="black">
-                  <div className="black" />
-                </li>
-                <li title="purple">
-                  <div className="purple" />
-                </li>
-                <li title="orange">
-                  <div className="orange" />
-                </li>
-                <li title="green">
-                  <div className="green" />
-                </li>
-                <li title="red">
-                  <div className="red" />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="p-15 border-bottom">
-            <div className="theme-setting-options">
-              <label className="m-b-0">
-                <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="mini_sidebar_setting" />
-                <span className="custom-switch-indicator" />
-                <span className="control-label p-l-10">Mini Sidebar</span>
-              </label>
-            </div>
-          </div>
-          <div className="p-15 border-bottom">
-            <div className="theme-setting-options">
-              <label className="m-b-0">
-                <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="sticky_header_setting" />
-                <span className="custom-switch-indicator" />
-                <span className="control-label p-l-10">Sticky Header</span>
-              </label>
-            </div>
-          </div>
-          <div className="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele">
-            <a href="#" className="btn btn-icon icon-left btn-primary btn-restore-theme">
-              <i className="fas fa-undo" /> Restore Default
-            </a>
-          </div>
+
+        <div className="card">
+  <div className="card-header">
+    <h4>Image Check</h4>
+  </div>
+  <div className="card-body">
+    <div className="form-group">
+      <label className="form-label">Image Check</label>
+      <div className="row gutters-sm">
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={1} className="imagecheck-input" />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img01.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
+        </div>
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={2} className="imagecheck-input" defaultChecked />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img02.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
+        </div>
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={3} className="imagecheck-input" />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img03.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
+        </div>
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={4} className="imagecheck-input" defaultChecked />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img04.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
+        </div>
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={5} className="imagecheck-input" />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img05.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
+        </div>
+        <div className="col-6 col-sm-4">
+          <label className="imagecheck mb-4">
+            <input name="imagecheck" type="checkbox" defaultValue={6} className="imagecheck-input" />
+            <span className="imagecheck-figure">
+              <img src="assets/img/blog/img06.png" alt="}" className="imagecheck-image" />
+            </span>
+          </label>
         </div>
       </div>
     </div>
@@ -628,8 +273,11 @@ const Eg = () => {
 </div>
 
 
-    );
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 };
 
-export default Eg;
-
+export default Example;
