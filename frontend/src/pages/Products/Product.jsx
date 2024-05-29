@@ -38,7 +38,7 @@ const Product = () => {
     // Add more options as needed
   ];
 
-
+  const [pricingStatus, setPricingStatus] = useState('yes');
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
@@ -414,7 +414,7 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                 
 
-                               
+                                  {/* {pricingStatus === 'yes' && ( */}
                                   <div className="form-group">
                                     <label>Price :</label>
                                     <input
@@ -423,9 +423,10 @@ const userString = sessionStorage.getItem('user');
                                       style={{ height: "40px" }}
                                       name="price"
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
-
+                                      
                                     />
                                   </div>
+                                  {/* )}  */}
                                   <div className="form-group">
                                     <label>Minimum Order Quantity:</label>
                                     <input
@@ -593,7 +594,9 @@ const userString = sessionStorage.getItem('user');
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
+          {product.display_price === 'yes' && (
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
+        )}
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
 
           {/* Update and Delete buttons */}

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductKeyword;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Date;
+use App\Models\ProductImages;
 
 
 class ProductController extends Controller
@@ -20,8 +21,7 @@ class ProductController extends Controller
         $prod->tbl_company_id = $decCompanyId;
         $prod->prod_name = $request->prodName;
         $prod->prod_description = $request->prodDescription;
-        $directory = $decCompanyId . '/products' ; 
-        $prod->prod_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+       
         $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat,'decrypt');
         $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat,'decrypt');
         $prod->prod_price = $request->prodPrice;
@@ -30,9 +30,36 @@ class ProductController extends Controller
         
         $prod->add_date = Date::now()->toDateString();
         $prod->add_time = Date::now()->toTimeString();
-        
-        
+
+       // Save the pricing status
+       $prod->display_price = $request->input('display_price', 'yes');
+
         $prod->save();
+        
+        $directory = $decCompanyId . '/products';
+
+            // Assuming $request->file('files') returns an array of files
+            $files = $request->file('files');
+
+            foreach ($files as $file) {
+                // Get the original filename
+                $fileName = $file->getClientOriginalName();
+
+                // Store the file in the specified directory with the original file name
+                $filePath = $file->storeAs($directory, $fileName);
+
+                // Create a new record in tbl_prod_img table for each file
+                $prodimg = new ProductImages();
+                $prodimg->tbl_prod_id = $prod->tbl_prod_id;
+                $prodimg->tbl_company_id = $decCompanyId;
+                $prodimg->prod_img_path = $filePath;
+                $prodimg->add_date = Date::now()->toDateString();
+                $prodimg->add_time = Date::now()->toTimeString();
+                $prodimg->save();
+            }
+
+
+        
 
         foreach ($request->keywords as $encKeywordId) {
             // Decrypt the keyword ID
@@ -158,5 +185,15 @@ class ProductController extends Controller
         }
 
         return response()->json($prod);
+    }
+
+    public function checkProductName(Request $request,$id)
+    {
+       
+        $decCompanyId = EncDecHelper::encDecId($id,'decrypt');
+        
+        $ProductNameExists = Product::where('prod_name',$request->prod_name) ->where('tbl_company_id', $decCompanyId)->where('flag','show')->exists();
+        // return response($ProductNameExists);
+        return response()->json($ProductNameExists);
     }
 }

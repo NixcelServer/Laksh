@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react'; // Import useToast from Chakra UI
 import { useNavigate } from 'react-router-dom';
-
+import countrydata from '../../CountryState.json';
 const CompanySetup = () => {
   const [formData, setFormData] = useState({});
   const [isNameValid, setIsNameValid] = useState(true);
@@ -90,11 +90,11 @@ const CompanySetup = () => {
   const getRequiredFieldsForStep = (step) => {
     switch (step) {
       case 1:
-        return ['c_name', 'c_cin_no', 'c_tan_no', 'c_iec'];
+        return ['c_name', 'gst_no', 'pan_no'];
       case 2:
         return ['pincode', 'city', 'state', 'country', 'area', 'locality'];
       case 3:
-        return ['acc_no', 'acc_name', 'ifsc', 'branch_name', 'bank_name', 'gst_no', 'pan_no'];
+        return ['acc_no', 'acc_name', 'ifsc', 'branch_name', 'bank_name'];
       case 4:
         return ['website_url']; // No required fields for step 4
       default:
@@ -121,7 +121,7 @@ const CompanySetup = () => {
   const[pannoError,setPanNoError]=useState('');
   const[gstnoError,setGstNoError]=useState('');
   const[ifscError,setIFSCError]=useState('');
-  
+  const [logoPath, setLogoPath] = useState('');
   
   const checkCName = async (e) => {
     const { name, value } = e.target;
@@ -527,7 +527,9 @@ const checkIFSC = (e) => {
     
   
       // Send the POST request to the backend API
-      const response = await axios.post('http://localhost:8000/api/registeryourcompany', formDataWithEncUserId);
+      const response = await axios.post('http://localhost:8000/api/registeryourcompany', formDataWithEncUserId,{
+        headers: {'Content-Type': 'multipart/form-data'}
+      });
     
       // Log the response data
       console.log('Response:', response.data);
@@ -570,11 +572,15 @@ const checkIFSC = (e) => {
        if (response.status === 200) {
          const companyDetails = response.data;
          console.log(response.data);
+
          // Assuming the received company details match the form field names,
          // set the form data with the fetched company details
          setFormData((prevData) => ({
            ...prevData,
-           ...companyDetails
+           ...companyDetails,
+           file: companyDetails. c_logo_path
+           
+           
          }));
 
          console.log(formData);
@@ -600,453 +606,585 @@ const checkIFSC = (e) => {
 
   };
 
+  
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    
+    setFormData({ ...formData, file })
+    //localStorage.setItem('selectedFile', JSON.stringify(file));
+  };
+
+  const [country, setCountry] = useState([]);
+  const[countryid, setCountryid]=useState('');
+  const[state, setState]=useState([]);
+  const[stateid, setStateid]= useState('');
+
+ 
+   const handlecounty=(e)=>{
+     const getcountryId= e.target.value;
+     const getStatedata= countrydata.find(country=>country.country_name===getcountryId).states;
+     setState(getStatedata);
+     setCountryid(getcountryId);
+     
+     setFormData({ ...formData, country: getcountryId });
+   //console.log(getcountryId);
+  
+   }
+   
+ 
+   const handlestate = (e)=>{
+     const stateid= e.target.value;
+     //console.log(stateid);
+     setStateid(stateid);
+     setFormData({ ...formData, state: stateid }); 
+   }
+
+
   useEffect(() => {
     //console.log("in use effect");
       fetchCompanyDetails();
       console.log("Form data updated:", formData);
    }, []);
 
-  return (
-    <ChakraProvider theme={theme}>
-    <div style={{ overflow: "hidden" }}>
-      <Flex
-        minHeight="100vh"
-        width="full"
-        align="center"
-        justifyContent="center"
-        bg="gray.100"
-        marginLeft="122px"
-      >
-        <Box p={12} maxWidth="1200px" width="80%" borderWidth={1} borderRadius={8} boxShadow="lg">
-          <Box textAlign="center">
-            <Heading fontSize={["xl", "2xl"]} mb={4}>Company Registration Form</Heading>
-          </Box>
-          <Box my={4} textAlign="left">
-            <form onSubmit={onSubmit}>
-              {step === 1 && (
-                <div>
-                  <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
-                      <Heading as="h2" size="md">
-                        Company Basic Details
-                      </Heading>
-                    </Box>
-                  <div style={{ marginBottom: "1rem" }}>
-                  <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                  <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                    <FormLabel>Company Name</FormLabel>
-                    <Input
-                      type="text"
-                      placeholder="Enter company name"
-                      name="c_name"
-                      value={formData.c_name}
-                      onChange={checkCName}
-                    />
-                     {companyNameError && <p style={{ color: 'red' }}>{companyNameError}</p>}
-                  </FormControl>
-                    <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
-                      <FormLabel>CIN Number</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Enter CIN number"
-                        name="c_cin_no"
-                        value={formData.c_cin_no}
-                        onChange={checkCINNo}
-                      />
-                      {cinNoError && <p style={{ color: 'red' }}>{cinNoError}</p>}
-                    </FormControl>
-                  </Flex>
-                  </div>
-                  <div style={{ marginBottom: "1rem" }}>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>TAN Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter TAN number"
-                          name="c_tan_no"
-                          value={formData.c_tan_no}
-                          onChange={checkTANNo}
-                        />
-                       {tanNoError && <p style={{ color: 'red' }}>{tanNoError}</p>} 
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>IEC</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter IEC"
-                          name="c_iec"
-                          value={formData.c_iec}
-                          onChange={checkIECNo}
-                        />
-                        {iecNoError && <p style={{ color: 'red' }}>{iecNoError}</p>}
-                      </FormControl>
-                    </Flex>
-                  </div>
-                  <div style={{ marginBottom: "1rem" }}>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Annual Turnover</FormLabel>
-                        <Select type="text" placeholder="Enter annual turnover"
-                       name="annualTurnover" // Add name attribute
-                       value={formData.c_annual_to} // Bind value to state
-                       //onChange={handleChange}
-                       >
-                        {annualTurnoverOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                       </Select>
-                      </FormControl>
-                      <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>Number of Employees</FormLabel>
-                        <Select type="text" placeholder="Enter number of employees"
-                      name="no_of_emps" // Add name attribute
-                      value={formData.no_of_emps} // Bind value to state
-                      //onChange={handleChange}
-                      >
-                        {numberOfEmployeesOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Flex>
-                  </div>
-                  <div style={{ marginBottom: "1rem" }}>
-                    <Flex justifyContent={["center","flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Mobile Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter mobile number"
-                          name="c_mobile_no"
-                          value={formData.c_mobile_no}
-                          onChange={checkMOBNo}
-                        />
-                        {mobNoError && <p style={{ color: 'red' }}>{mobNoError}</p>}
-                      </FormControl>
-                      <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>Alternate Mobile Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter alternate mobile number"
-                          name="c_alt_mobile_no"
-                          value={formData.c_alt_mobile_no}
-                          onChange={checkALTMOBNo}
-                        />
-                        {altmobNoError && <p style={{ color: 'red' }}>{altmobNoError}</p>}
-                      </FormControl>
-                    </Flex>
-                  </div>
-                  <div style={{ marginBottom: "1rem" }}>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Landline Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter landline number"
-                          name="c_landline_no"
-                          value={formData.c_landline_no}
-                         onChange={checkLANDLINENo}
-                        />
-                        {landlineNoError && <p style={{ color: 'red' }}>{landlineNoError}</p>}
-                      </FormControl>
-                      <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>Alternate Landline Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter alternate landline number"
-                          name="c_alt_landline_no"
-                          value={formData.c_alt_landline_no}
-                          onChange={checkALTLANDLINENo}
-                        />
-                        {altlandlineNoError && <p style={{ color: 'red' }}>{altlandlineNoError}</p>}
-                      </FormControl>
-                    </Flex>
-                  </div>
+   
+
+   return (
+    // <!-- Main Content -->
+    <div class="main-content"  style={{ marginTop: -115}}>
+      <section class="section">
+        <div class="section-body">
+          <div class="row">
+            <div class="col-12 col-md-12 col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                    <ChakraProvider theme={theme}>
+                      <div style={{ overflow: "hidden" }}>
+                      {/* <Flex
+                      minHeight="100vh"
+                      width="full"
+                      align="center"
+                      justifyContent="center"
+                      bg="gray.100"
+                      marginLeft="122px"
+                    > */}
+                      {/* <Box p={12} maxWidth="1200px" width="80%" borderWidth={1} borderRadius={8} boxShadow="lg"> */}
+                  <Box textAlign="center">
+                    <Heading fontSize={["xl", "2xl"]} mb={4}>Company Registration Form</Heading>
+                  </Box>
+                  {/* <Box my={4} textAlign="left"> */}
+                    <form onSubmit={onSubmit}>
+                      {step === 1 && (
+                        <div>
+                          <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
+                              <Heading as="h2" size="md">
+                                Company Basic Details
+                              </Heading>
+                            </Box>
+                          <div style={{ marginBottom: "1rem" }}>
+                          <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                          <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                            <FormLabel>Company Name</FormLabel>
+                            <Input
+                              type="text"
+                              placeholder="Enter company name"
+                              name="c_name"
+                              value={formData.c_name}
+                              onChange={checkCName}
+                            />
+                            {companyNameError && <p style={{ color: 'red' }}>{companyNameError}</p>}
+                          </FormControl>
+                            <FormControl  width={["100%", "36%"]} mr={["0", "10%"]}>
+                              <FormLabel>CIN Number</FormLabel>
+                              <Input
+                                type="text"
+                                placeholder="Enter CIN number"
+                                name="c_cin_no"
+                                value={formData.c_cin_no}
+                                onChange={checkCINNo}
+                              />
+                              {cinNoError && <p style={{ color: 'red' }}>{cinNoError}</p>}
+                            </FormControl>
+                          </Flex>
+                          </div>
+                          <div style={{ marginBottom: "1rem" }}>
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl  width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>TAN Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter TAN number"
+                                  name="c_tan_no"
+                                  value={formData.c_tan_no}
+                                  onChange={checkTANNo}
+                                />
+                              {tanNoError && <p style={{ color: 'red' }}>{tanNoError}</p>} 
+                              </FormControl>
+                              <FormControl  width={["100%", "36%"]} mr={["0", "10%"]}>
+                                <FormLabel>IEC</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter IEC"
+                                  name="c_iec"
+                                  value={formData.c_iec}
+                                  onChange={checkIECNo}
+                                />
+                                {iecNoError && <p style={{ color: 'red' }}>{iecNoError}</p>}
+                              </FormControl>
+                            </Flex>
+                          </div>
+                          <div style={{ marginBottom: "1rem" }}>
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>Annual Turnover</FormLabel>
+                                <Select type="text" placeholder="Enter annual turnover"
+                              name="annualTurnover" // Add name attribute
+                              value={formData.c_annual_to} // Bind value to state
+                              //onChange={handleChange}
+                              >
+                                {annualTurnoverOptions.map((option) => (
+                                  <option key={option.value} value={option.value}>
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </Select>
+                              </FormControl>
+                              <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
+                                <FormLabel>Number of Employees</FormLabel>
+                                <Select type="text" placeholder="Enter number of employees"
+                              name="no_of_emps" // Add name attribute
+                              value={formData.no_of_emps} // Bind value to state
+                              //onChange={handleChange}
+                              >
+                                {numberOfEmployeesOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                      {option.label}
+                                    </option>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                            </Flex>
+                          </div>
+                          <div style={{ marginBottom: "1rem" }}>
+                                            <Flex justifyContent={["center","flex-end"]} flexDirection={["column", "row"]}>
+                                            <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                            <FormLabel>PAN Number</FormLabel>
+                                                <Input
+                                                  type="text"
+                                                  placeholder="Enter PAN number"
+                                                  name="pan_no"
+                                                  value={formData.pan_no}
+                                                  onChange={checkPanNo}
+                                                  />
+                                                  {pannoError && <p style={{ color: 'red' }}>{pannoError}</p>}
+                                                  
+                                                </FormControl>
+                                                <FormControl isRequired  width={["100%", "36%"]} mr={["0", "10%"]}>
+                                              <FormLabel>GST Number</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter GST number"
+                                                    name="gst_no"
+                                                    value={formData.gst_no}
+                                                    onChange={checkGSTNo}
+                                                  />
+                                                  {gstnoError && <p style={{ color: 'red' }}>{gstnoError}</p>}
+                                            </FormControl>
+                                              </Flex>
+                                            </div>
+                          <div style={{ marginBottom: "1rem" }}>
+                            <Flex justifyContent={["center","flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>Mobile Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter mobile number"
+                                  name="c_mobile_no"
+                                  value={formData.c_mobile_no}
+                                  onChange={checkMOBNo}
+                                />
+                                {mobNoError && <p style={{ color: 'red' }}>{mobNoError}</p>}
+                              </FormControl>
+                              <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
+                                <FormLabel>Alternate Mobile Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter alternate mobile number"
+                                  name="c_alt_mobile_no"
+                                  value={formData.c_alt_mobile_no}
+                                  onChange={checkALTMOBNo}
+                                />
+                                {altmobNoError && <p style={{ color: 'red' }}>{altmobNoError}</p>}
+                              </FormControl>
+                            </Flex>
+                          </div>
+                          <div style={{ marginBottom: "1rem" }}>
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>Landline Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter landline number"
+                                  name="c_landline_no"
+                                  value={formData.c_landline_no}
+                                onChange={checkLANDLINENo}
+                                />
+                                {landlineNoError && <p style={{ color: 'red' }}>{landlineNoError}</p>}
+                              </FormControl>
+                              <FormControl width={["100%", "36%"]} mr={["0", "10%"]}>
+                                <FormLabel>Alternate Landline Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter alternate landline number"
+                                  name="c_alt_landline_no"
+                                  value={formData.c_alt_landline_no}
+                                  onChange={checkALTLANDLINENo}
+                                />
+                                {altlandlineNoError && <p style={{ color: 'red' }}>{altlandlineNoError}</p>}
+                              </FormControl>
+                            </Flex>
+                            <FormControl width={["100%", "36%"]} mb={[4, 0]} mr={["0", "10%"]}>
+                                              <FormLabel>Company Logo</FormLabel>
+                                              {/* Check if formData.file exists */}
+                                              {formData.file ? (
+                                                // If formData.file exists, display the current logo file name
+                                                <>
+                                                  <p> {formData.c_logo_path }</p>
+                                                  {/* Provide an option to change the logo by uploading a new file */}
+                                                  <Input
+                                                    type="file"
+                                                    placeholder="Upload New Company Logo"
+                                                    name="company_logo"
+                                                    onChange={handleFileChange}
+                                                  />
+                                                </>
+                                              ) : (
+                                                // If formData.file does not exist, display the input field for uploading a new logo
+                                                <>
+                                                <Input
+                                                  type="file"
+                                                  placeholder="Upload Company Logo"
+                                                  name="company_logo"
+                                                  onChange={handleFileChange}
+                                                />
+                                                </>
+                                              )
+                                              }
+                                            </FormControl>
+                          </div>
+                        </div>
+                      )}
+                  {step === 2 && (
+                          <>
+                            <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
+                              <Heading as="h2" size="md">
+                                Company Address Details
+                              </Heading>
+                            </Box>
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                                <FormLabel>Country</FormLabel>
+                                                <select name="country" className="form-control p-2"  onChange={(e)=>handlecounty(e)} value={formData.country} >
+                                                  <option >--Select Country--</option>
+                                                  {countrydata.map((country) => (
+                                                    <option key={country.country_name} value={country.country_name}>{country.country_name}</option>
+                                                  ))}
+                                                </select>
+                                                </FormControl>
+
+                                                <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
+                                                  <FormLabel>State</FormLabel>
+                                                  {/* <Input
+                                                    type="text"
+                                                    placeholder="Enter state"
+                                                    name="state"
+                                                    value={formData.state}
+                                                  onChange={handleChange}
+                                                  /> */}
+                                                  <select name="state" className="form-control p-2" onChange={(e)=>handlestate(e)} value={formData.state}>
+                                                  <option value="">--Select State--</option>
+                                                  {
+                                                    state.map((state, index)=>(
+                                                      <option value={state.state_name} key={state.state_name}>{ state.state_name }</option>
+                                                    ))
+                                                  }
+                                                </select>
+                                                </FormControl>
+                                                
+                                              </Flex>
+                                              <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                                                <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                                  <FormLabel>City</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter city"
+                                                    name="city"
+                                                    value={formData.city}
+                                                  onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                                <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
+                                                <FormLabel>Pincode</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter pincode"
+                                                    name="pincode"
+                                                    value={formData.pincode}
+                                                    onChange={checkPincode}
+                                                  />
+                                                {pincodeError && <p style={{ color: 'red' }}>{pincodeError}</p>}
+                                                
+                                                </FormControl>
+                                              </Flex>
+                                              <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                                                <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                                  <FormLabel>House No./Block No.</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter sector number"
+                                                    name="house_no"
+                                                    value={formData.house_no}
+                                                    onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                                <FormControl isRequired width={["100%", "36%"]}mr={["0", "10%"]}>
+                                                  <FormLabel>Area</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter area"
+                                                    name="area"
+                                                    value={formData.area}
+                                                    onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                              </Flex>
+                                              <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                                                <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                                  <FormLabel>Locality</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter locality"
+                                                    name="locality"
+                                                    value={formData.locality}
+                                                    onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                                <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
+                                                  <FormLabel>Landmark</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter landmark"
+                                                    name="landmark"
+                                                    value={formData.landmark}
+                                                    onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                              </Flex>
+                          </>
+                        )}
+
+                        {step === 3 && (
+                          <>
+                            <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
+                              <Heading as="h2" size="md">
+                                Financial Details
+                              </Heading>
+                            </Box>
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>Account Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter account number"
+                                  name="acc_no"
+                                  value={formData.acc_no}
+                                  onChange={checkACCNo}
+                                />
+                                {accNoError && <p style={{ color: 'red' }}>{accNoError}</p>}
+                              </FormControl>
+                              <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
+                                <FormLabel>Account Name</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter account name"
+                                  name="acc_name"
+                                  value={formData.acc_name}
+                                  onChange={handleChange}
+                                />
+                              </FormControl>
+                            </Flex>
+
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                                <FormLabel>IFSC</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter IFSC"
+                                  name="ifsc"
+                                  value={formData.ifsc}
+                                  onChange={checkIFSC}
+                                />
+                                {ifscError && <p style={{ color: 'red' }}>{ifscError}</p>}
+                              </FormControl>
+                              <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
+                                <FormLabel>Branch Name</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter branch name"
+                                  name="branch_name"
+                                  value={formData.branch_name}
+                                  onChange={handleChange}
+                                />
+                              </FormControl>
+                            </Flex>
+
+                            <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
+                                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "65%"]}>
+                                                  <FormLabel>Bank Name</FormLabel>
+                                                  <Input
+                                                    type="text"
+                                                    placeholder="Enter bank name"
+                                                    name="bank_name"
+                                                    value={formData.bank_name}
+                                                    onChange={handleChange}
+                                                  />
+                                                </FormControl>
+                                              
+                                              </Flex>
+                              {/* <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
+                                <FormLabel>GST Number</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter GST number"
+                                  name="gst_no"
+                                  value={formData.gst_no}
+                                  onChange={checkGSTNo}
+                                />
+                                {gstnoError && <p style={{ color: 'red' }}>{gstnoError}</p>}
+                              </FormControl> */}
+                            {/* </Flex> */}
+
+                            {/* <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]} mt={4}>
+                          <FormControl isRequired width={["100%", "36%"]} mb={[4, 0]} mr={["0", "65%"]}>
+                            <FormLabel>PAN Number</FormLabel>
+                            <Input
+                              type="text"
+                              placeholder="Enter PAN number"
+                              name="pan_no"
+                              value={formData.pan_no}
+                              onChange={checkPanNo}
+                            />
+                            {pannoError && <p style={{ color: 'red' }}>{pannoError}</p>}
+                          </FormControl>
+                        </Flex> */}
+                          </>
+                        )}
+
+                        {step === 4 && (
+                          <>
+                            <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
+                              <Heading as="h2" size="md">
+                                Company Social Platforms
+                              </Heading>
+                            </Box>
+                            <Flex justifyContent={["center", "space-between"]} flexDirection={["column", "row"]} mt={4}>
+                              <FormControl isRequired width={["100%", "36%"]} mb={[4, 0]}>
+                                <FormLabel>Website URL</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter website URL"
+                                  name="website_url"
+                                  value={formData.website_url}
+                                  onChange={handleChange}
+                                />
+                              </FormControl>
+                              <FormControl  width={["100%", "36%"]} mb={[4, 0]}  mr={["0", "10%"]}>
+                                <FormLabel>Instagram URL</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter Instagram URL"
+                                  name="instagram_url"
+                                  value={formData.instagram_url}
+                                  onChange={handleChange}
+                                />
+                              </FormControl>
+                            </Flex>
+                            <Flex justifyContent={["center", "space-between"]} flexDirection={["column", "row"]} mt={4}>
+                              <FormControl  width={["100%", "36%"]} mb={[4, 0]}>
+                                <FormLabel>Facebook URL</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder="Enter Facebook URL"
+                                  name="facebook_url"
+                                  value={formData.facebook_url}
+                                  onChange={handleChange}
+                                />
+                              </FormControl>
+                            </Flex>
+                          </>
+                        )}
+
+
+                      {/* Other steps */}
+                      {step > 1 && (
+                        <Button
+                          mt={4}
+                          mr={4}
+                          onClick={prevStep}
+                          colorScheme="teal"
+                          float={['left', 'right']}
+                        >
+                          Previous
+                        </Button>
+                      )}
+                      {/* {step > 1 && (
+                                      <Button
+                                        mt={4}
+                                        ml={900}
+                                        onClick={prevStep}
+                                        colorScheme="teal"
+                                      >
+                                        Previous
+                                      </Button>
+                                    )} */}
+                      {step < 4 ? (
+                        <Button
+                          mt={4}
+                          mr={4}
+                          mb={4}
+                          onClick={(e) => nextStep(e)}
+                          colorScheme="teal"
+                          float={['right', 'right']}
+                        >
+                          Next
+                        </Button>
+                      ) : (
+                        <Button
+                          mt={4}
+                          mr={4}
+                          mb={4}
+                          type="submit"
+                          colorScheme="teal"
+                          float={['right', 'right']}
+                        >
+                          Register
+                        </Button>
+                      )}
+                    </form>
+                  {/* </Box> */}
+                {/* </Box> */}
+              {/* </Flex> */}
+            </div>
+            </ChakraProvider>
                 </div>
-              )}
-              {step === 2 && (
-                  <>
-                    <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
-                      <Heading as="h2" size="md">
-                        Company Address Details
-                      </Heading>
-                    </Box>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Pincode</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter pincode"
-                          name="pincode"
-                          value={formData.pincode}
-                          onChange={checkPincode}
-                        />
-                       {pincodeError && <p style={{ color: 'red' }}>{pincodeError}</p>}
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>City</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter city"
-                          name="city"
-                          value={formData.city}
-                         onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>State</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter state"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>Country</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter country"
-                          name="country"
-                          value={formData.country}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>House No./Block No.</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter sector number"
-                          name="house_no"
-                          value={formData.house_no}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]}mr={["0", "10%"]}>
-                        <FormLabel>Area</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter area"
-                          name="area"
-                          value={formData.area}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Locality</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter locality"
-                          name="locality"
-                          value={formData.locality}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
-                        <FormLabel>Landmark</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter landmark"
-                          name="landmark"
-                          value={formData.landmark}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                  </>
-                )}
-
-                {step === 3 && (
-                  <>
-                    <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
-                      <Heading as="h2" size="md">
-                        Financial Details
-                      </Heading>
-                    </Box>
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Account Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter account number"
-                          name="acc_no"
-                          value={formData.acc_no}
-                          onChange={checkACCNo}
-                        />
-                        {accNoError && <p style={{ color: 'red' }}>{accNoError}</p>}
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
-                        <FormLabel>Account Name</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter account name"
-                          name="acc_name"
-                          value={formData.acc_name}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>IFSC</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter IFSC"
-                          name="ifsc"
-                          value={formData.ifsc}
-                          onChange={checkIFSC}
-                        />
-                        {ifscError && <p style={{ color: 'red' }}>{ifscError}</p>}
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
-                        <FormLabel>Branch Name</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter branch name"
-                          name="branch_name"
-                          value={formData.branch_name}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                      <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
-                        <FormLabel>Bank Name</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter bank name"
-                          name="bank_name"
-                          value={formData.bank_name}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                      <FormControl isRequired width={["100%", "36%"]}  mr={["0", "10%"]}>
-                        <FormLabel>GST Number</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter GST number"
-                          name="gst_no"
-                          value={formData.gst_no}
-                          onChange={checkGSTNo}
-                        />
-                        {gstnoError && <p style={{ color: 'red' }}>{gstnoError}</p>}
-                      </FormControl>
-                    </Flex>
-
-                    <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]} mt={4}>
-                  <FormControl isRequired width={["100%", "36%"]} mb={[4, 0]} mr={["0", "65%"]}>
-                    <FormLabel>PAN Number</FormLabel>
-                    <Input
-                      type="text"
-                      placeholder="Enter PAN number"
-                      name="pan_no"
-                      value={formData.pan_no}
-                      onChange={checkPanNo}
-                    />
-                    {pannoError && <p style={{ color: 'red' }}>{pannoError}</p>}
-                  </FormControl>
-                </Flex>
-                  </>
-                )}
-
-                {step === 4 && (
-                  <>
-                    <Box bg="teal.200" p={2} borderRadius={8} mb={4}>
-                      <Heading as="h2" size="md">
-                        Company Social Platforms
-                      </Heading>
-                    </Box>
-                    <Flex justifyContent={["center", "space-between"]} flexDirection={["column", "row"]} mt={4}>
-                      <FormControl isRequired width={["100%", "36%"]} mb={[4, 0]}>
-                        <FormLabel>Website URL</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter website URL"
-                          name="website_url"
-                          value={formData.website_url}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                      <FormControl  width={["100%", "36%"]} mb={[4, 0]}  mr={["0", "10%"]}>
-                        <FormLabel>Instagram URL</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter Instagram URL"
-                          name="instagram_url"
-                          value={formData.instagram_url}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                    <Flex justifyContent={["center", "space-between"]} flexDirection={["column", "row"]} mt={4}>
-                      <FormControl  width={["100%", "36%"]} mb={[4, 0]}>
-                        <FormLabel>Facebook URL</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter Facebook URL"
-                          name="facebook_url"
-                          value={formData.facebook_url}
-                          onChange={handleChange}
-                        />
-                      </FormControl>
-                    </Flex>
-                  </>
-                )}
-
-
-              {/* Other steps */}
-              {step > 1 && (
-                <Button
-                  mt={4}
-                  mr={4}
-                  onClick={prevStep}
-                  colorScheme="teal"
-                  float={['left', 'right']}
-                >
-                  Previous
-                </Button>
-              )}
-              {step < 4 ? (
-                <Button
-                  mt={4}
-                  mr={4}
-                  onClick={(e) => nextStep(e)}
-                  colorScheme="teal"
-                  float={['right', 'right']}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  mt={4}
-                  mr={4}
-                  type="submit"
-                  colorScheme="teal"
-                  float={['right', 'right']}
-                >
-                  Register
-                </Button>
-              )}
-            </form>
-          </Box>
-        </Box>
-      </Flex>
-    </div>
-    </ChakraProvider>
-  );
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      </div>
+  
+   );
 
 
 };
