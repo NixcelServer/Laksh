@@ -49,7 +49,20 @@ Route::post('/add-landing-pg-img',[AdminController::class,'addLandingPageImgs'])
 //get the images uploaded by admin
 Route::get('/get-lp-imgs', [AdminController::class, 'getLpImages']);
 
-Route::post('selected-lp-images',[UserController::class,'selectedImg']);
+//delete landing page image
+Route::delete('/landing-pg-imgs/delete/{encLpImgId}/{encUserId}', [AdminController::class, 'deleteLpImage']);
+
+
+//get the pending adv images
+Route::get('/get-pending-adv-imgs',[AdminController::class,'getPendingAdv']);
+
+Route::get('/approve-advertisement/{id}',[AdminController::class,'approveAdv']);
+
+Route::get('/reject-advertisement/{id}',[AdminController::class,'rejectAdv']);
+
+
+
+Route::post('selected-lp-images',[AdminController::class,'selectedImg']);
 
 
 //user registrtion
@@ -164,6 +177,10 @@ Route::get('/display-adv-images',[UserController::class,'advertismentImgs']);
 Route::post('selected-u-images-adv',[UserController::class,'selectedImg']);
 
 Route::delete("/adv-imgs/delete/{id}", [UserController::class, "deleteImg"]);
+
+Route::post('/update-subs-status',[UserController::class,"updateSubStatus"]);
+
+Route::get('/set-lp-imgs',[UserController::class,'setLpImgs']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserAdvertisement;
+use App\Models\AdvSubscription;
+use App\Models\LandingPageImage;
+use App\Models\Company;
+use App\Helpers\EmailHelper;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Storage;
@@ -23,6 +27,10 @@ class UserController extends Controller
         $img->add_date = Date::now()->toDateString();
         $img->add_time = Date::now()->toTimeString();
         $img->save(); 
+
+        $comapnyDetails = Company::where('tbl_company_id',$decCompanyId)->first();
+
+        EmailHelper::sendEmail($emails=null,$comapnyDetails,$post=null);
 
         return response()->json(['message' => 'Advertisement image added successfully'], 200);
     }
@@ -58,7 +66,7 @@ class UserController extends Controller
 
     public function advertismentImgs()
     {
-        $images = UserAdvertisement::where('display','yes')->where('flag','show')->get();
+        $images = UserAdvertisement::where('adv_status','approved')->where('flag','show')->get();
         
         foreach($images as $image)
         {
@@ -79,4 +87,53 @@ class UserController extends Controller
         $image->save();
         return response()->json($id,200);
     }
+
+    public function updateSubStatus(Request $request)
+{
+    // Get the selected plan from the request
+    $selectedPlan = $request->input('selectedPlan');
+
+    // Retrieve the subscription record
+    $subs = AdvSubscription::where('tbl_user_id', EncDecHelper::encDecId($request->encUserId, 'decrypt'))->first();
+    $subs->is_subscribed = true;
+
+    if ($subs && $selectedPlan) {
+        // Set subscription start date and time
+        $subs->subs_start_date = now()->toDateString();
+        $subs->subs_start_time = now()->toTimeString();
+
+        // Calculate subscription end date and time based on the selected plan
+        switch ($selectedPlan) {
+            case 'Monthly':
+                $subs->subs_end_date = now()->addDays(30)->toDateString();
+                break;
+            case 'Quarterly':
+                $subs->subs_end_date = now()->addDays(120)->toDateString();
+                break;
+            case 'Annually':
+                $subs->subs_end_date = now()->addDays(365)->toDateString();
+                break;
+            default:
+                // Handle unknown plan types if needed
+                break;
+        }
+
+        // Set subscription end time to current time
+        $subs->subs_end_time = now()->toTimeString();
+
+        // Save the changes to the subscription
+        $subs->save();
+    }
+
+    // Return the updated subscription as JSON response
+    return response()->json($subs);
+}
+
+public static function setLpImgs()
+{
+ 
+    $imgs = LandingPageImage::where('display','yes')->where('flag','show')->get();
+    return response()->json($imgs,200);
+}
+
 }

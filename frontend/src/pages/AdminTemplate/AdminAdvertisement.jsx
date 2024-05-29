@@ -115,7 +115,8 @@ const AdminAd = () => {
 
 
   const handleSubmit = async (e) => {
-    console.log(selectedImageIds);
+    console.log("hey there",selectedImageIds);
+   
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/selected-lp-images', {
@@ -165,13 +166,18 @@ const AdminAd = () => {
   };
 
   const handleConfirmDelete = async () => {
+
+    const userString = sessionStorage.getItem('user');
+      const user = JSON.parse(userString);
+      const encUserId = user.encUserId;
+
     console.log("deleted");
     const image = imgToDelete;
     console.log(image);
     try {
 
 
-      const response = await axios.delete(`http://127.0.0.1:8000/api/adv-imgs/delete/${image.encAdvImgId}`,);
+      const response = await axios.delete(`http://127.0.0.1:8000/api/landing-pg-imgs/delete/${image.encLpImgId}/${encUserId}`);
       console.log("response", response)
       setShowDeleteConfirmation(false);
       setShowCannotDeleteConfirmation(false);
@@ -429,7 +435,7 @@ const AdminAd = () => {
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title text-center" id="formModal"> Advertisement Details</h5>
+                {/* <h5 className="modal-title text-center" id="formModal"> Landing Page Images</h5> */}
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span>
                 </button>
@@ -438,70 +444,17 @@ const AdminAd = () => {
 
                 <form className>
                   <div className="form-group">
-                    <h4>Selected Images</h4>
+                    <h4>Selected Images will be displayed on landing page</h4>
                     <p>Number of selected images: {selectedImageIds.length}</p>
-                    <label>Duration (days)</label>
-                    <div className="input-group">
-                      <div className="input-group-prepend">
-                        <div className="input-group-text">
-                          <i className="fas fa-calendar-alt" />
-                        </div>
-                      </div>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Duration"
-                        name="duration"
-                        value={duration}
-                        onChange={handleDurationChange}
-                      />
-                    </div>
+                   
+                   
                   </div>
 
-                  <div className="form-group">
-                    <label>Charges per Day</label>
-                    <div className="input-group">
-                      <div className="input-group-prepend">
-                        <div className="input-group-text">
-                          <i className="fas fa-dollar-sign" />
-                        </div>
-                      </div>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="Charges per Day"
-                        name="charges"
-                        value={chargesPerDay}
-                        onChange={handleChargesChange}
-                      />
-                    </div>
-                  </div>
+               
 
-                  <div className="form-group">
-                    <label>Total Amount</label>
-                    <div className="input-group">
-                      <div className="input-group-prepend">
-                        <div className="input-group-text">
-                          <i className="fas fa-money-bill-wave" />
-                        </div>
-                      </div>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Total Amount"
-                        value={totalAmount.toFixed(2)}
-                        readOnly
-                      />
-                    </div>
-                  </div>
 
-                  <div className="form-group mb-0">
-                    <div className="custom-control custom-checkbox">
-                      <input type="checkbox" name="remember" className="custom-control-input" id="remember-me" />
-                      <label className="custom-control-label" htmlFor="remember-me">Remember Me</label>
-                    </div>
-                  </div>
-                  <button type="button" className="btn btn-primary m-t-15 waves-effect" onClick={handleSubmit}>Submit</button>
+                 
+                  <button type="button" className="btn btn-primary m-t-15 waves-effect" onClick={handleSubmit}>Ok</button>
                 </form>
               </div>
             </div>
@@ -569,9 +522,8 @@ const AdminAd = () => {
                 </button>
               </div>
               <div className="modal-body">
-                <p>This image is currently being displayed on the advertisement page.</p>
+                <p>This image is currently being displayed on the Landing page.</p>
                 <p>If you delete it, it will no longer be shown.</p>
-                <p>Please note that the you have paid charges for it. Charges cannot be reverted</p>
                 <p>Are you sure you want to proceed with the deletion?</p>
 
               </div>

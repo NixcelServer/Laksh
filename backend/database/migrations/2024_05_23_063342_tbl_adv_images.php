@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tbl_company_id')->nullable();
             $table->string('adv_img_path');
             $table->string('display',3)->default('no');
+            $table->string('adv_status',8)->default('pending');
             $table->integer('duration');
             $table->string('payment_status');
             $table->date('add_date')->nullable();

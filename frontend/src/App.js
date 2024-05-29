@@ -20,6 +20,7 @@ function App() {
   location.pathname === "/admintemplatedashboard" ||
   location.pathname === "/admintemplatekeywords" ||
   location.pathname === "/admintemplatecategories" ||
+  location.pathname === "/adv-images-update" ||
   location.pathname === "/example" ||
   
   location.pathname.startsWith("/subcategories/") ||
@@ -45,6 +46,7 @@ function App() {
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
       location.pathname === "/admintemplatemaincontent" ||
+      location.pathname === "/adv-images-update" ||
       location.pathname === "/usernavbar" ||
       location.pathname === "/userdashboard" ||
 

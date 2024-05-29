@@ -91,7 +91,7 @@ export default function Login() {
                 align={'start'}
                 >
                 <Text>Create New Account</Text>
-                <Navlink to={'/sign'} color={'blue.400'}>SignUp</Navlink>
+                <Navlink to={'/signup'} color={'blue.400'}>SignUp</Navlink>
               </Stack>
               <Button
               onClick={onsubmit}
