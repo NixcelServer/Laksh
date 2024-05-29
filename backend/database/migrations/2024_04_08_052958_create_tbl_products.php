@@ -16,12 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('tbl_company_id');
             $table->string('prod_name', 255);
             $table->text('prod_description')->nullable();
-            $table->string('prod_img_path', 255)->nullable();
+           
             $table->unsignedBigInteger('tbl_cat_id');
             $table->unsignedBigInteger('tbl_sub_cat_id');
             $table->decimal('prod_price', 8, 2);
             $table->unsignedBigInteger('tbl_uom_id')->nullable();
             $table->string('prod_min_order_qty')->nullable();
+            $table->string('display_price',10)->nullable()->default('yes');
             $table->date('add_date')->nullable();
             $table->time('add_time')->nullable();
             $table->date('updated_date')->nullable();

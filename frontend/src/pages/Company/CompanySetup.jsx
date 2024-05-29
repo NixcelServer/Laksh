@@ -694,7 +694,7 @@ const checkIFSC = (e) => {
                             />
                             {companyNameError && <p style={{ color: 'red' }}>{companyNameError}</p>}
                           </FormControl>
-                            <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
+                            <FormControl  width={["100%", "36%"]} mr={["0", "10%"]}>
                               <FormLabel>CIN Number</FormLabel>
                               <Input
                                 type="text"
@@ -709,7 +709,7 @@ const checkIFSC = (e) => {
                           </div>
                           <div style={{ marginBottom: "1rem" }}>
                             <Flex justifyContent={["center", "flex-end"]} flexDirection={["column", "row"]}>
-                              <FormControl isRequired width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
+                              <FormControl  width={["100%", "36%"]} marginBottom={["1rem", 0]} marginRight={[0, "20%"]}>
                                 <FormLabel>TAN Number</FormLabel>
                                 <Input
                                   type="text"
@@ -720,7 +720,7 @@ const checkIFSC = (e) => {
                                 />
                               {tanNoError && <p style={{ color: 'red' }}>{tanNoError}</p>} 
                               </FormControl>
-                              <FormControl isRequired width={["100%", "36%"]} mr={["0", "10%"]}>
+                              <FormControl  width={["100%", "36%"]} mr={["0", "10%"]}>
                                 <FormLabel>IEC</FormLabel>
                                 <Input
                                   type="text"

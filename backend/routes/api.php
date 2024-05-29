@@ -149,6 +149,9 @@ Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
 Route::get('/limited-products/{id}', [ProductController::class, 'limitedProducts']);
 
+// check product name
+Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);
+
 
 // check product name
 Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);

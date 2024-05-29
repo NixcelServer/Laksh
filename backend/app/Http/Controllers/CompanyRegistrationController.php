@@ -33,6 +33,10 @@ class CompanyRegistrationController extends Controller
         $company->c_alt_mobile_no = $request->c_alt_mobile_no;
         $company->c_landline_no = $request->c_landline_no;
         $company->c_alt_landline_no = $request->c_alt_landline_no;
+        if ($request->hasFile('file')) {
+            $directory = $company->tbl_company_id . '/company-logo' ; 
+            $company->c_logo_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+            }
         $company->add_date = Date::now()->toDateString();
         $company->add_time = Date::now()->toTimeString();
         $company->flag = 'show';
