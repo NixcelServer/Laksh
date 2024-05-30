@@ -89,6 +89,8 @@ const SubmitRequirement = () => {
 
   
   const [showForm, setShowForm] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+   
 
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
@@ -106,42 +108,85 @@ const SubmitRequirement = () => {
     setProductName(value);
   };
 
-  const handleSubmit = async () => {
-  try {
-    const userString = sessionStorage.getItem('user');
-    const user = JSON.parse(userString);
-    const encCompanyId = user.encCompanyId;
+//   const handleSubmit = async () => {
+//   try {
+//     const userString = sessionStorage.getItem('user');
+//     const user = JSON.parse(userString);
+//     const encCompanyId = user.encCompanyId;
 
-    const formData = {
-      productName: productName,
-      encCatId: selectedCategory,
-      encSubCatId: selectedSubcategory,
-      encUomId: selectedUnit,
-      price: productPrice,
-      productDes: productDescription,
-      encCompanyId: encCompanyId, // Include encCompanyId in formData
-      productQty: productQuantity,
-    };
-    //dispatch(submitRequirement(formData));
-  console.log("form data",formData);
+//     const formData = {
+//       productName: productName,
+//       encCatId: selectedCategory,
+//       encSubCatId: selectedSubcategory,
+//       encUomId: selectedUnit,
+//       price: productPrice,
+//       productDes: productDescription,
+//       encCompanyId: encCompanyId, // Include encCompanyId in formData
+//       productQty: productQuantity,
+//     };
+//     //dispatch(submitRequirement(formData));
+//   console.log("form data",formData);
       
-    const response = await axios.post('http://127.0.0.1:8000/api/submit-requirement', formData);
+//     const response = await axios.post('http://127.0.0.1:8000/api/submit-requirement', formData);
 
-    console.log('Response:', response);
+//     console.log('Response:', response);
 
-    console.log('Response:', response);
+//     console.log('Response:', response);
 
-    if (response.status === 200) {
-      console.log('Form submitted successfully');
-      // Assuming success message is returned from the server
-      console.log('Success message:', response.data.message);
-    } else {
-      console.error('Form submission failed');
-    }
+//     if (response.status === 200) {
+//       console.log('Form submitted successfully');
+//       // Assuming success message is returned from the server
+//       console.log('Success message:', response.data.message);
+//     } else {
+//       console.error('Form submission failed');
+//     }
+//   } catch (error) {
+//     console.error('Error submitting form:', error);
+//   }
+// };
+
+const handleSubmit = async () => {
+  try {
+    // Form submission logic...
+    setShowPopup(true); // Show the popup after form submission
   } catch (error) {
     console.error('Error submitting form:', error);
   }
 };
+
+const [emailEntered, setEmailEntered] = useState(false);
+
+const [email, setEmail] = useState('');
+const [otp, setOtp] = useState('');
+
+const handlePopupClose = () => {
+  setShowPopup(false);
+  setEmail(''); // Reset email field
+  setOtp(''); // Reset OTP field
+  setEmailEntered(false); // Reset email entered flag
+};
+
+const handleEmailChange = (event) => {
+  setEmail(event.target.value);
+};
+
+const handleEmailSubmit = () => {
+  // Add logic to submit email (e.g., send OTP)
+  setEmailEntered(true); // Set email entered flag to true
+};
+
+const handleOtpChange = (event) => {
+  setOtp(event.target.value);
+};
+
+const handleVerifyOTP = () => {
+  // Add logic to verify OTP
+  // After successful verification, you can close the modal
+  handlePopupClose();
+};
+
+
+
   return (
     <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
     <Box className="main-content" p={{ base: "10px", md: "20px" }} height = 'auto' mb="0px"  >
@@ -394,7 +439,56 @@ const SubmitRequirement = () => {
   </ModalContent>
 </Modal>
 
-
+ {/* Popup */}
+  {/* Popup */}
+  <Modal isOpen={showPopup} onClose={handlePopupClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader textAlign="center" fontWeight="bold" fontSize="xl" color="black#9f98e9" borderRadius="20px 20px 0 0" backgroundColor="#b4e998" borderBottomWidth="1px" pb="2">
+            Success!
+          </ModalHeader>
+          <ModalCloseButton _focus={{ border: "none" }} _hover={{ bg: "none" }} />
+          <ModalBody>
+            {emailEntered ? (
+              <div>
+                <Center>
+                  <p>Enter OTP sent to {email}</p>
+                </Center>
+                <div className="form-group">
+                  <label>OTP:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={handleOtpChange}
+                  />
+                </div>
+                <Center>
+                <Button colorScheme="blue" onClick={handleVerifyOTP} style={{marginTop:'10px',width:'80px',height:'30px',padding:'px'}}>Verify OTP</Button>
+                </Center>
+              </div>
+            ) : (
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+<Center>
+  <Button colorScheme="blue" onClick={handleEmailSubmit} style={{marginTop:'20px',marginBottom:'-30px',width:'80px',height:'30px'}}>Submit</Button>
+</Center>
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            {/* <Button colorScheme="blue" onClick={handlePopupClose}>Close</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Grid>
   );
 };

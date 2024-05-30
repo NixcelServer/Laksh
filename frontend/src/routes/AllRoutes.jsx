@@ -50,6 +50,7 @@ import Subscription from "../pages/AdminTemplate/SubscriptionPage";
 import Adapprove from "../pages/AdminTemplate/UserAdApproval";
 import SignUpPage from "../pages/User/signup";
 import CategoryPage from "../Components/home/HomeCategories";
+import ProductDetailsPage from "../pages/Products/ProductDetailsPage";
 
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
@@ -310,6 +311,16 @@ element={
             <>
             
               <CategoryPage/>
+            </>
+          }
+        />
+
+<Route
+          path="/productdetails"
+          element={
+            <>
+            
+              <ProductDetailsPage/>
             </>
           }
         />
