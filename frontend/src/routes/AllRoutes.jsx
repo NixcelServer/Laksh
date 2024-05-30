@@ -46,6 +46,10 @@ import AdvertisementForm from "../pages/User/UserAdvertisement";
 import Buyleads from "../pages/BuyLead";
 import UserAd from "../pages/User/UserAdvertisement";
 import AdminAd from "../pages/AdminTemplate/AdminAdvertisement";
+import Subscription from "../pages/AdminTemplate/SubscriptionPage";
+import Adapprove from "../pages/AdminTemplate/UserAdApproval";
+import SignUpPage from "../pages/User/signup";
+import CategoryPage from "../Components/home/HomeCategories";
 
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
@@ -85,7 +89,7 @@ export default function AllRoutes() {
           path="/example"
           element={
             <>
-            <UserNavbar/>
+            {/* <UserNavbar/> */}
               <Example/>
             </>
           }
@@ -261,11 +265,51 @@ element={
         />
 
 <Route
+          path="/subscription"
+          element={
+            <>
+            <UserNavbar/>
+              <Subscription/>
+            </>
+          }
+        />
+
+<Route
+          path="/useradapprove"
+          element={
+            <>
+            <UserNavbar/>
+              <Adapprove/>
+            </>
+          }
+        />
+
+<Route
           path="/adminad"
           element={
             <>
             <AdminTemplateNavbar/>
               <AdminAd/>
+            </>
+          }
+        />
+
+<Route
+          path="/signup"
+          element={
+            <>
+            
+              <SignUpPage/>
+            </>
+          }
+        />
+
+<Route
+          path="/categoriess"
+          element={
+            <>
+            
+              <CategoryPage/>
             </>
           }
         />

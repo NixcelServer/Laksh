@@ -42,11 +42,15 @@ const CategoryPage = () => {
 
   const handlePharmaceuticalsClick = () => {
     setShowPharmaceuticalsProducts(true);
+    setShowSubcategories(true);
+    setShowAdditionalImages(false);
     setShowChemicalsProducts(false); // Ensure Chemicals are hidden
   };
 
   const handleChemicalsClick = () => {
     setShowChemicalsProducts(true);
+    setShowSubcategories(true);
+    setShowAdditionalImages(false);
     setShowPharmaceuticalsProducts(false); // Ensure Pharmaceuticals are hidden
   };
 
@@ -70,8 +74,8 @@ const CategoryPage = () => {
                 </div>
                 <div className="card-body">
                   
-                    <button onClick={handleCategoryClick} className="btn btn-primary">Pharmaceuticals</button>
-                    <button onClick={handleCategoryClick} className="btn btn-primary">Chemicals</button> {/* New Chemicals button */}
+                    <button onClick={handlePharmaceuticalsClick} className="btn btn-primary">Pharmaceuticals</button>
+                    <button onClick={handleChemicalsClick} className="btn btn-primary">Chemicals</button> {/* New Chemicals button */}
                   
 
                   {showSubcategories && (
@@ -228,12 +232,10 @@ const CategoryPage = () => {
                         </div>
                       )}
 
+
+
 {showChemicalsProducts && (
                         <div>
-                            <div className="col-12 col-md-4 col-lg-3">
-                          <div className="mb-2 text-left" onClick={handlePharmaceuticalsClick} style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>Medicines</div>
-                          
-                        </div>
                           {/* Show products for Pharmaceuticals */}
                           <div className="row">
                             <div className="col-12 col-md-3 col-lg-2">

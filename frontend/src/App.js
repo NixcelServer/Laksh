@@ -55,7 +55,9 @@ function App() {
       location.pathname === "/userad" ||
       location.pathname === "/example" ||
       location.pathname === "/adminad" ||
-
+      location.pathname === "/subscription" ||
+      location.pathname === "/signup" ||
+      location.pathname === "/categoriess" ||
     
 
      

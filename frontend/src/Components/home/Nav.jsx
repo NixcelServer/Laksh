@@ -94,7 +94,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box  bg="#527c90" position="fixed" top={0} left={0} right={0} zIndex={999} >
+      <Box  bg="lightblue" position="fixed" top={0} left={0} right={0} zIndex={999} >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -237,19 +237,23 @@ export default function Navbar() {
           
     </>
   )}
-  {isLogin && (
-    <>
-    <MenuItem as={Link} to="#" icon={<FaUserCircle />}>
-        User1
-      </MenuItem>
-      <MenuItem as={Link} to="#" icon={<FaCog />}>
-        Settings
-      </MenuItem>
-      <MenuItem as={Link} to="#" icon={<FaBolt />} onClick={handleLogout}>
-        Logout
-      </MenuItem>
-    </>
-  )}
+{isLogin && (
+  <>
+    <MenuItem as={Link} to="#" icon={<FaUserCircle size={20} style={{ marginRight: '-5px',marginLeft:'-5px' }} />}>
+      User1
+    </MenuItem>
+    <hr style={{ margin: '5px 0' }} /> {/* Horizontal line */}
+    <MenuItem as={Link} to="#" icon={<FaCog />}>
+      Settings
+    </MenuItem>
+    <MenuItem as={Link} to="#" icon={<FaBolt />} onClick={handleLogout}>
+      Logout
+    </MenuItem>
+  </>
+)}
+
+
+
 </MenuList>
 
     </Menu>

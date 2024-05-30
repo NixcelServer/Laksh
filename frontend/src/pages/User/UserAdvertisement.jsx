@@ -172,7 +172,7 @@ const UserAd = () => {
                     <li data-target="#carouselExampleIndicators3" data-slide-to={2} />
                   </ol>
                   <div className="carousel-inner" style={{ maxHeight: "200px" }}> {/* Adjust maxHeight as needed */}
-                    <div className="carousel-item active">
+                    <div className="carousel-item active">  
                       <img
                         className="d-block w-100"
                         src="images/slide4.png"

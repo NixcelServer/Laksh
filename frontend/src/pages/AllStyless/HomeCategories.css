@@ -1,0 +1,11 @@
+.circular-image-container {
+    width: 150px; /* Adjust the size as needed */
+    height: 150px; /* Ensure this matches the width */
+    overflow: hidden;
+  }
+
+  .reduced-image {
+    max-width: 100px; /* Adjust as needed */
+    max-height: 100px; /* Adjust as needed */
+  }
+  
