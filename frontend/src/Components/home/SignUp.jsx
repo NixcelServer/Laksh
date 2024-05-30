@@ -1,24 +1,60 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const toast = useToast();
 
-  const handleEmailSubmit = (e) => {
+  const handleEmailSubmit = async(e) => {
     e.preventDefault();
     console.log(email);
+    try{
+      setStep(2); // Move to the OTP step
+      const response = await axios.post('http://localhost:8000/api/send-otp', { email });
+      
+      console.log(response);
+    }catch(error){
+      console.log(error)
+    }
 
     
     // Here you would add your Gmail authentication logic
-    setStep(2); // Move to the OTP step
+   
   };
 
-  const handleOtpSubmit = (e) => {
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    // Here you would add your OTP verification logic
-    alert('OTP Verified!');
-  };
+    try {
+        const payload = { email, otp };
+        const response = await axios.post('http://localhost:8000/api/verify-otp', payload);
+
+        if (response.status === 200) {
+            toast({
+                title: 'OTP Verified!',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            navigate('/sign', { state: { email } });
+        }
+    } catch (error) {
+        const errorMessage = error.response?.data?.error || 'An error occurred while verifying the OTP. Please try again.';
+        setErrorMessage(errorMessage);
+    }
+};
+
+  
 
   const styles = {
     app: {
@@ -198,7 +234,9 @@ const SignUp = () => {
                     width: '100%',
                     maxWidth: '180px',
                   }}
+                  
                 />
+                {errorMessage && <Text color="red.500">{errorMessage}</Text>}
               </div>
               <button type="submit" style={styles.button}>
                 Verify OTP

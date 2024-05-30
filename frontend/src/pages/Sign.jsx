@@ -14,27 +14,52 @@ import {
   useToast,
   InputLeftElement,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Signin } from '../redux/auth/auth.action';
 import axios from 'axios';
 export default function Sign() {
+  const location = useLocation();
+  const verifiedEmail = location.state.email;
+  // console.log(email1);
   const [showPassword, setShowPassword] = useState(false);
   const [name,setname] = useState('')
   const [countryCode, setCountryCode] = useState('+91');
   
   const [email,setEmail] = useState('')
+  
   const [password,setPass] = useState('')
   const [mobile,setmob] = useState('')
   const [emailExists, setEmailExists] = useState(false); // State to track if email exists
   const [passwordError, setPasswordError] = useState('');
+  const [initialized, setInitialized] = useState(false); // State to track if component is initialize
 
   const dispatch = useDispatch()
   const {error,isSign} = useSelector((store)=>store.authReducer)
   const navigate = useNavigate();
   const toast = useToast()
   // console.log(error,isSign)
+
+  
+  useEffect(() => {
+    // Update the email state after the component mounts
+    setEmail(verifiedEmail);
+  }, [verifiedEmail]); 
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      // Execute your logic when the user navigates away from the page
+      // Here, you can clear any data or reset the state if needed
+      setEmail(null);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -183,7 +208,7 @@ export default function Sign() {
            
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" value={email} onChange={onEmailChange} />
+              <Input type="email" value={email} onChange={onEmailChange} disabled />
                 {emailExists && (
                   <FormLabel color="red.500">Email already exists</FormLabel>
                 )}
