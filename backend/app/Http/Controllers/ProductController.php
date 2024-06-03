@@ -87,7 +87,7 @@ class ProductController extends Controller
 
     public function getProducts($id)
     {
-        $products = Product::where('tbl_company_id',EncDecHelper::encDecId($id,'decrypt'))->where('flag','show')->get();
+        $products = Product::where('tbl_company_id',EncDecHelper::encDecId($id,'decrypt'))->where('flag','show')->with('images')->get();
         foreach($products as $product){
             $product->encProdId = EncDecHelper::encDecId($product->tbl_prod_id,'encrypt');
             $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
@@ -98,9 +98,16 @@ class ProductController extends Controller
                 return EncDecHelper::encDecId($keywordId, 'encrypt');
             }) ->toArray();
 
+            // Add images paths to the product
+            $product->image_paths = $product->images->pluck('prod_img_path');
+
             unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id,$product->tbl_uom_id,$product->keywords);
         }
         return $products;
+        // $prodimgs = ProductImages::where('tbl_company_id',EncDecHelper::encDecId($id,'decrypt'))->where('flag','show')->get();
+        // foreach($prodimgs as $prodimg){
+        //     $prodimg->
+        // }
     }
 
     public function limitedProducts($id)
@@ -147,6 +154,7 @@ class ProductController extends Controller
   
     public function updateProduct(Request $request)
     {
+        // return response()->json($request);
         $decCompanyId = EncDecHelper::encDecId($request->encCompanyId,'decrypt');
         $decProdId = EncDecHelper::encDecId($request->prodId,'decrypt');
         $prod = Product::where('tbl_prod_id',$decProdId)->first();
@@ -154,9 +162,9 @@ class ProductController extends Controller
         $prod->prod_name = $request->prodName;
         $prod->prod_description = $request->prodDescription;
         $directory = $decCompanyId . '/products' ; 
-        if($request->hasFile('file')){
-        $prod->prod_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
-        }
+        // if($request->hasFile('file')){
+        // $prod->prod_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
+        // }
         $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat,'decrypt');
         $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat,'decrypt');
         $prod->prod_price = $request->prodPrice;
@@ -166,11 +174,37 @@ class ProductController extends Controller
         $prod->add_date = Date::now()->toDateString();
         $prod->add_time = Date::now()->toTimeString();
         
-        
+         // Save the pricing status
+       $prod->display_price = $request->input('display_price', 'yes');
+
         $prod->save();
 
+        $directory = $decCompanyId . '/products';
+        // Assuming $request->file('files') returns an array of files
+        $files = $request->file('files');
+
+        if ($files && is_array($files)) {
+    foreach ($files as $file) {
+        // Get the original filename
+        $fileName = $file->getClientOriginalName();
+
+        // Store the file in the specified directory with the original file name
+        $filePath = $file->storeAs($directory, $fileName);
+
+        // Create a new record in tbl_prod_img table for each file
+        $prodimg = new ProductImages();
+        $prodimg->tbl_prod_id = $prod->tbl_prod_id;
+        $prodimg->tbl_company_id = $decCompanyId;
+        $prodimg->prod_img_path = $filePath;
+        $prodimg->add_date = Date::now()->toDateString();
+        $prodimg->add_time = Date::now()->toTimeString();
+        $prodimg->save();
+    }
+}
+
+
         // Delete existing keywords associated with the product
-    $prod->keywords()->detach();
+        $prod->keywords()->detach();
 
         foreach ($request->keywords as $encKeywordId) {
             // Decrypt the keyword ID

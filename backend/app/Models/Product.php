@@ -37,4 +37,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Keyword::class,'tbl_prod_keywords','tbl_prod_id','tbl_keyword_id');
     }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImages::class, 'tbl_prod_id');
+    }
 }

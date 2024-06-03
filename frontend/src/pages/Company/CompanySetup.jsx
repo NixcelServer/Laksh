@@ -651,7 +651,7 @@ const checkIFSC = (e) => {
 
    return (
     // <!-- Main Content -->
-    <div class="main-content"  style={{ marginTop: -115}}>
+    <div class="main-content"  style={{ marginTop: -50}}>
       <section class="section">
         <div class="section-body">
           <div class="row">

@@ -14,4 +14,8 @@ class ProductImages extends Model
    
     protected $primaryKey = 'tbl_prod_img_id';
     public $timestamps = false;
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'tbl_prod_id');
+    }
 }

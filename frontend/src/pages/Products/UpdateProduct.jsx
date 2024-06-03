@@ -8,7 +8,9 @@ import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux
 
 import { getProducts } from "../../redux/Product/product.action";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { RiImageAddLine } from "react-icons/ri";
+import { Carousel } from "react-responsive-carousel";
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
@@ -63,13 +65,15 @@ const UpdateProduct = () => {
     prodSubCat: '',
     keywords: [],
     prodPrice: '',
-    pricePer: '',
+    display_price: "yes",
+    //pricePer: '',
     minOrderQty: '',
     prodUOM: '',
-    file: '',
+    files: '',
     prodId:'',
 });
 
+const [currentIndex, setCurrentIndex] = useState(0);
 useEffect(() => {
 
     const userString = sessionStorage.getItem('user');
@@ -97,13 +101,15 @@ useEffect(() => {
         prodSubCat: product.encSubCatId || '',
         keywords: selectedOptionsWithNames || [], // Update with selectedOptionsWithNames
         prodPrice: product.prod_price || '',
-        pricePer: '', // Assuming this field does not exist in the product object
+        // pricePer: '', // Assuming this field does not exist in the product object
+        display_price: "yes"||'',
         minOrderQty: product.prod_min_order_qty || '',
         prodUOM: product.encUomId || '',
-        file: product.prod_img_path || '', // Assuming file is a new upload, not present in the product object
+        files: product.image_paths || prevState.files || [],  // Assuming file is a new upload, not present in the product object
         prodId:product.encProdId
       }));
       console.log(product);
+      setPhotoPreviews(product.image_paths || [])
 
       const filteredSubcategories = subCategories.filter(subCategory => subCategory.encCatId === product.encCatId);
     console.log("filtered sub cat", filteredSubcategories);
@@ -111,11 +117,11 @@ useEffect(() => {
 
     const reader = new FileReader();
 
-    if (productDetails.file) {
-        setPhotoPreview(`http://127.0.0.1:8000/storage/${productDetails.file}`);
-      } else {
-        setPhotoPreview(null);
-      }
+    // if (productDetails.files) {
+    //     setPhotoPreview(`http://127.0.0.1:8000/storage/${productDetails.file}`);
+    //   } else {
+    //     setPhotoPreview(null);
+    //   }
 
   
     }
@@ -159,7 +165,7 @@ useEffect(() => {
     }));
     console.log(productDetails);
     console.log(JSON.stringify(productDetails, null, 2));
-    console.log("Selected File:", productDetails.file);
+    console.log("Selected File:", productDetails.files);
 
   };
 
@@ -188,30 +194,82 @@ useEffect(() => {
 
   }
 
- 
-  
- 
+  // const handleFileChange = (e) => {
+  //   const files = e.target.files;
+  //   setProductDetails({ ...productDetails, files });
+  //     const reader = new FileReader();
+  //   const maxFiles = 4; // Maximum number of files allowed
 
-  const handleFileChange = (e, setPreview) => {
-    const file = e.target.files[0]; // Get the selected file
-    setProductDetails({ ...productDetails, file });
-    const reader = new FileReader();
+  //   //Check if the number of selected files exceeds the maximum
+  //   if (files.length > maxFiles) {
+  //     alert(`You can only upload a maximum of ${maxFiles} images.`);
+  //     e.target.value = null; // Reset the input field to clear selected files
+  //     return;
+  //   }
 
-    reader.onloadend = () => {
-      setPreview(reader.result);
-    };
+  //   const previews = [];
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
+  //   for (let i = 0; i < files.length; i++) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       previews.push(e.target.result);
+  //       if (previews.length === files.length) {
+  //         const newPreviews = [...photoPreviews, ...previews];
+  //         setPhotoPreviews(newPreviews.slice(-maxFiles)); // Keep only the latest `maxFiles` images
+  //         setCurrentIndex(newPreviews.length - 1); // Set the current index to the last added image
+  //       }
+  //     };
+  //     reader.readAsDataURL(files[i]);
+  //   }
+  // };
 //   const handleFileChange = (e) => {
 //     setProductDetails({ ...productDetails, file: e.target.files[0] })
 // };
 
+const handleFileChange = (e) => {
+  const newFiles = Array.from(e.target.files);
+  const maxFiles = 4; // Maximum number of files allowed
 
+  // Retrieve existing files from the state
+  const currentFiles = productDetails.files || [];
+
+  // Combine old and new files
+  let combinedFiles = [...currentFiles, ...newFiles];
+
+  // Check if the total number of files exceeds the maximum
+  if (combinedFiles.length > maxFiles) {
+    alert(`You can only upload a maximum of ${maxFiles} images.`);
+    combinedFiles = combinedFiles.slice(0, maxFiles); // Keep only the first `maxFiles` files
+  }
+
+  // Update state with combined files
+  setProductDetails({ ...productDetails, files: combinedFiles });
+
+  const previews = [];
+
+  // Generate previews for each valid file
+  combinedFiles.forEach((file) => {
+    if (file instanceof File) { // Ensure the file is a valid File object
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        previews.push(event.target.result);
+        if (previews.length === combinedFiles.length) {
+          setPhotoPreviews(previews.slice(-maxFiles)); // Keep only the latest `maxFiles` images
+          setCurrentIndex(previews.length - 1); // Set the current index to the last added image
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+};
+
+
+const [pricingStatus, setPricingStatus] = useState('yes');
+
+  const handlePricingStatusChange = (event) => {
+    setPricingStatus(event.target.value);
+    setProductDetails({ ...productDetails, display_price: event.target.value });
+  };
 
 const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
@@ -235,10 +293,12 @@ const userString = sessionStorage.getItem('user');
     setProductDetails(prevProductDetails => ({
     ...prevProductDetails,
     encCompanyId: encCompanyId,
-    keywords:selectedKeys
+    keywords:selectedKeys,
+    display_price: pricingStatus
     }));
       // Logic to save changes and continue
       console.log("submit",productDetails);
+      
       //debugger;
       axios.post("http://127.0.0.1:8000/api/product/update-product", {
         ...productDetails,
@@ -329,6 +389,19 @@ const userString = sessionStorage.getItem('user');
     setShowDeleteConfirmation(false);
   }
 
+  const [photoPreviews, setPhotoPreviews] = useState([]);
+
+  const addMoreImages = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+    input.onchange = handleFileChange;
+    input.click();
+  };
+
+  
+
   return (
     <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
@@ -346,45 +419,95 @@ const userString = sessionStorage.getItem('user');
                       <div className="row">
                         <div className="col-lg-4">
                           <div className="card-content">
-                            <section className="section">
-                              <div className="section-body">
-                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                                  <div className="card">
-                                    <div className="card-header">
-                                      <h4>Add Image</h4>
-                                    </div>
-                                    {photoPreview && (
-                                      <div className="file-preview">
-                                        <img
-                                          src={photoPreview}
-                                          alt="Photo Preview"
-                                          style={{ width: "100%", height: "auto" }}
-                                        />
-                                      </div>
-                                    )}
-                                    <div className="card-body">
-                                      <div className="fallback">
-                                        <input
-                                          type="file"
-                                          id="photo"
-                                          name="photo"
-                                          accept="image/*"
-                                          onChange={(e) =>
-                                            handleFileChange(
-                                              e,
-                                              setPhotoPreview
-                                            )
-                                          }
-                                        />
-
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                          <section className="section">
+                            <div className="section-body">
+                              <div
+                                className="image-section"
+                                style={{
+                                  padding: "10px",
+                                  background: "#fff",
+                                  borderRadius: "10px",
+                                }}
+                              >
+                                <div className="card">
+  <div className="card-header">
+    <h4>Add Image</h4>
+  </div>
+  {photoPreviews.length > 0 && (
+    <div className="file-preview">
+      <Carousel
+        autoPlay
+        infiniteLoop
+        showThumbs={false}
+        showStatus={false}
+        showIndicators={true}
+        showArrows={true}
+        dynamicHeight={true}
+        className="carousel"
+        selectedItem={currentIndex}
+        onChange={(index) => setCurrentIndex(index)}
+      >
+        {photoPreviews.map((preview, index) => (
+          <div key={index}>
+            <img
+              src={preview.startsWith('data:') ? preview : `http://127.0.0.1:8000/storage/${preview}`}
+              alt={`Photo Preview ${index + 1}`}
+              style={{
+                width: "300px",
+                height: "200px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  )}
+  <div className="card-body">
+    <div className="fallback">
+      <input
+        type="file"
+        id="photo"
+        name="photo"
+        accept="image/*"
+        multiple
+        onChange={handleFileChange}
+      />
+    </div>
+    {photoPreviews.length < 4 && (
+      <h6 style={{ color: "GrayText" }}>
+        Add More Images
+        <button
+          onClick={() => document.getElementById('photo').click()}
+          style={{
+            padding: "8px 9px",
+            backgroundColor: "#AF7AC5",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+            transition: "0.3s",
+            marginTop: "20px",
+            marginLeft: "10px",
+          }}
+        >
+          <RiImageAddLine />
+        </button>
+      </h6>
+    )}
+    {photoPreviews.length >= 4 && (
+      <div style={{ color: "gray", marginTop: "10px" }}>
+        <span style={{ fontWeight: "bold", color: "#7DCEA0" }}>Warning:</span> Maximum number of images reached
+      </div>
+    )}
+  </div>
+</div>
                               </div>
-                            </section>
-                          </div>
+                            </div>
+                          </section>
                         </div>
+                      </div>
                         <div className="col-lg-4">
                           <div className="card-content">
                             <section className="section">
@@ -398,9 +521,9 @@ const userString = sessionStorage.getItem('user');
                                       style={{ height: "40px" }}
                                       name="productName"
                                       value={productDetails.prodName}
-                                      onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
-
-                                    />
+                                       onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
+                                     />
+                                   
                                   </div>
                                   <div className="form-group" >
                                     <label>Category:</label>
@@ -421,8 +544,25 @@ const userString = sessionStorage.getItem('user');
                                 
 
                                
-                                  <div className="form-group">
-                                    <label>Price :</label>
+                                  <div className="form-group"  
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "10px",
+                                  }}>
+                                     <div style={{ flex: 1 }}>
+                                    <label  style={{
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        color: "#2E4053",
+                                        fontFamily: "sans-serif",
+                                      }}>Price :</label>
+                                       <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
                                     <input
                                       type="number"
                                       className="form-control"
@@ -432,21 +572,104 @@ const userString = sessionStorage.getItem('user');
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
 
                                     />
-                                  </div>
-                                  <div className="form-group">
-                                    <label>Minimum Order Quantity:</label>
-                                    <input
-                                      type="number"
+                                    <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        per/-
+                                      </span>
+                                      <select
                                       className="form-control"
                                       style={{ height: "40px" }}
-                                      name="pricePer"
-                                      value = {productDetails.minOrderQty}
-                                      onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                    </div>
+                                  </div>
+                                  </div>
 
-                                    />
+                                 <div
+                                  className="form-group"
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <div style={{ flex: 1 }}>
+                                    <label
+                                      style={{
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        color: "#2E4053",
+                                        fontFamily: "",
+                                      }}
+                                    >
+                                      Minimum Order Quantity:
+                                    </label>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <input
+                                        type="number"
+                                        className="form-control"
+                                        style={{
+                                          height: "30px",
+                                          width: "calc(60%)",
+                                          fontSize: "12px",
+                                          padding: "2px",
+                                        }} // Reduced height and width
+                                        name="units"
+                                        onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+                                        
+                                      />
+                                      <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        Unit/-
+                                      </span>
+                                      {/* <select
+                                        className="form-control"
+                                        style={{
+                                          height: "30px",
+                                          width: "calc(60%)",
+                                          fontSize: "12px",
+                                          padding: "2px",
+                                        }} // Reduced height and width
+                                      > */}
+                                          <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
+                            </div>
                             </section>
                           </div>
                         </div>
@@ -485,7 +708,7 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                   
 
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                     <label>Price per:</label>
                                     <select
                                       className="form-control"
@@ -500,7 +723,7 @@ const userString = sessionStorage.getItem('user');
                                         <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
                                     ))}
                                     </select>
-                                  </div>
+                                  </div> */}
                                   
                                 <div className="form-group">
                                   <label>Keywords:</label>
@@ -542,7 +765,29 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                 </div>
 
-
+                                <div className="form-group">
+                                <label>Do you want to display Price :</label>
+                                <div style={{ position: "relative" }}>
+                                  <label style={{ marginRight: '10px', marginLeft: '10px' }}>
+                                    <input
+                                      type="radio"
+                                      value="yes"
+                                      checked={pricingStatus === 'yes'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    Yes
+                                  </label>
+                                  <label>
+                                    <input
+                                      type="radio"
+                                      value="no"
+                                      checked={pricingStatus === 'no'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    No
+                                  </label>
+                                </div>
+                              </div>
                         
                                   
                                   {/* Submit and Continue Button */}
