@@ -155,6 +155,31 @@ class PostController extends Controller
             $company = new Company;
             $company->tbl_user_id = $userId;
             $company->save();
+
+            $companyAddress = new CompanyAddress;
+            $companyAddress->tbl_company_id = $company->tbl_company_id;
+            $companyAddress->save();
+
+            $gstInfo = new GstInfo;
+            $gstInfo->tbl_company_id = $company->tbl_company_id;
+            $gstInfo->save();
+
+            $panInfo = new PanInfo;
+            $panInfo->tbl_company_id = $company->tbl_company_id;
+            $panInfo->save();
+
+            $bankDetails = new BankDetails;
+            $bankDetails->tbl_company_id = $company->tbl_company_id;
+            $bankDetails->save();
+
+            $csi = new SocialInfo;
+            $csi->tbl_company_id = $company->tbl_company_id;
+            $csi->save();
+
+            $advSubs =  new AdvSubscription;
+            $advSubs->tbl_user_id = $userId;
+            $advSubs->save();
+
         }
 
         $post = new Post;
