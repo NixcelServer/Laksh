@@ -13,6 +13,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Carousel } from "react-responsive-carousel";
@@ -23,8 +24,12 @@ export default function HomeTop() {
   const [name, setName] = useState("");
   const [mob, setMob] = useState("");
   const [email, setEmail] = useState("");
+  const [lpImages,setLpImages] = useState([]);
+
 
   useEffect(() => {
+
+    getLpImages();
     const user = JSON.parse(sessionStorage.getItem("user"));
 
     if (user) {
@@ -32,10 +37,37 @@ export default function HomeTop() {
     }
   }, [isLogin]);
 
+  const getLpImages = async() => {
+    const res = await axios.get(`http://127.0.0.1:8000/api/set-lp-imgs`)
+
+    if (res.status === 200) {
+        console.log('Data submitted successfully:', res.data);
+         setLpImages(res.data);
+       
+
+
+      } else {
+        console.error('Failed to submit data:', res.data);
+      }
+  }
+
+  console.log("check",lpImages);
+
+  const defaultImages = [
+    { src: "images/wearhouse.png", alt: "First slide" },
+    { src: "images/adv2.png", alt: "Second slide" },
+    { src: "images/adv3.png", alt: "Third slide" },
+  ];
+
+  const imagesToDisplay = lpImages.length > 0 ? lpImages.map(img => ({
+    src: `http://127.0.0.1:8000/storage/${img.lp_img_path}`,
+    alt: "Slide image" // Adjust as necessary if you have alt text in your backend
+  })) : defaultImages;
+
   return (
-    <Box>
+     <Box>
       <Box className="card-body" mt="60px">
-      <Carousel
+        <Carousel
           autoPlay
           infiniteLoop
           interval={3000} // Slide interval in milliseconds (3 seconds)
@@ -46,27 +78,15 @@ export default function HomeTop() {
           dynamicHeight={true}
           className="carousel"
         >
-          <div>
-            <img
-              src="images/adv1.png"
-              alt="First slide"
-              style={{ objectFit: "cover", maxHeight: "300px" }}
-            />
-          </div>
-          <div>
-            <img
-              src="images/adv2.png"
-              alt="Second slide"
-              style={{ objectFit: "cover", maxHeight: "300px" }}
-            />
-          </div>
-          <div>
-            <img
-              src="images/adv3.png"
-              alt="Third slide"
-              style={{ objectFit: "cover", maxHeight: "300px" }}
-            />
-          </div>
+          {imagesToDisplay.map((image, index) => (
+            <div key={index}>
+              <img
+                src={image.src}
+                alt={image.alt}
+                style={{ objectFit: "cover", maxHeight: "300px" }}
+              />
+            </div>
+          ))}
         </Carousel>
       </Box>
     </Box>

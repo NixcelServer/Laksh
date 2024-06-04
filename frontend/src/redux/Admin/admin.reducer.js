@@ -9,7 +9,7 @@ const initalState = {
     keywords:[],
     uom:[],
     subCategories: [],
-   
+    advImages:[],
     users: [],
     admins:[]
 }
@@ -35,6 +35,9 @@ export const reducer = (state = initalState, { type,payload }) => {
 
     case types.GET_SUBCATEGORIES:
         return { ...state, subCategories: payload };
+
+        case types.SET_ADV_IMG:
+        return { ...state, advImages: payload };
 
         
 

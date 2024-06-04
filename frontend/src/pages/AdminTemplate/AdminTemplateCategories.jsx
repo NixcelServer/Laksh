@@ -8,9 +8,6 @@ import { IoEyeOutline } from "react-icons/io5";
 import { MdOutlineAssignment, MdDeleteOutline, MdDoneAll } from "react-icons/md";
 import axios from 'axios';
 
-
-
-
 const Categories = () => {
     const categories = useSelector(state => state.masterData.categories);
     const subCategories = useSelector(state => state.masterData.subCategories);
@@ -349,7 +346,7 @@ const Categories = () => {
                                                     top: 10,
                                                     right: 10,
                                                     padding: '1px 20px',
-                                                    backgroundColor: '#527c90',
+                                                    backgroundColor: 'dodgerblue',
                                                     color: 'white',
                                                     border: 'none',
                                                     borderRadius: '5px',
@@ -443,8 +440,6 @@ const Categories = () => {
                                     onClick={handleOK}
                                     aria-label="Close"
                                 >
-                                    
-
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -458,7 +453,6 @@ const Categories = () => {
                                     className="btn btn-secondary"
                                     onClick={handleOK}
                                 >
-                                    
                                     Ok
                                 </button>
 
@@ -615,7 +609,7 @@ const Categories = () => {
                                     type="button"
                                     className="btn btn-primary"
                                     onClick={closeModal}
-                                    style={{ height: '30px', width: 'auto', fontSize: '13px', padding: '0 6px', display: 'flex', alignItems: 'center', fontWeight: 'normal', justifyContent: 'center', backgroundColor: '#209ccd', borderRadius: '20%' }}
+                                    style={{ height: '30px', width: 'auto',marginBottom:'-3%',fontSize: '13px', padding: '0 6px ', display: 'flex', alignItems: 'center', fontWeight: 'normal', justifyContent: 'center', backgroundColor: '#209ccd', borderRadius: '20%' }}
                                 >
                                      Close
                                 </button>
@@ -624,7 +618,7 @@ const Categories = () => {
                                     type="button"
                                     className="btn btn-success"
                                     onClick={handleUpdateChanges}
-                                    style={{ height: '30px', width: 'auto', fontSize: '13px', padding: '0 6px', display: 'flex', alignItems: 'center', fontWeight: 'normal', justifyContent: 'center', borderRadius: '20%' }}
+                                    style={{ height: '30px', width: 'auto', marginBottom:'-3%',fontSize: '13px', padding: '0 6px', display: 'flex', alignItems: 'center', fontWeight: 'normal', justifyContent: 'center', borderRadius: '20%' }}
                                 >
                                    <HiOutlineViewGridAdd /> Update
                                 </button>

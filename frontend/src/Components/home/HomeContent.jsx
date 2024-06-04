@@ -16,7 +16,7 @@ import {
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { getCategories, getSubCategories, getUOM } from "../../redux/Admin/admin.action";
+import { getCategories, getSubCategories, getUOM, setImages } from "../../redux/Admin/admin.action";
 import { useDispatch,useSelector } from "react-redux";
 import { getOrders } from "../../redux/Order/order.action";
 
@@ -38,6 +38,8 @@ const SubmitRequirement = () => {
   const [pricePerPiece, setPricePerPiece] = useState('');
   const [enccomapnyId, setEnccomapnyId] = useState('');
   const[productQuantity,setProductQuantity]=useState('');
+
+  const advImages = useSelector(state => state.masterData.advImages);
   //const [isOpen, setIsOpen] = useState(false);
   
   
@@ -46,10 +48,20 @@ const SubmitRequirement = () => {
       dispatch(getCategories());
       dispatch(getSubCategories()); 
       dispatch(getUOM());
-
+      fetchImages();
     },
   []);
   
+
+  const fetchImages = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/display-adv-images'); // Adjust the API endpoint as necessary
+      dispatch(setImages(response.data)); // Ensure you have a setImages action to store the images in the Redux store
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    }
+  };
+
   //const orders = useSelector(state => state.orders);
 
   // Carousel settings
@@ -245,34 +257,16 @@ const handleVerifyOTP = () => {
         >
           <div className="card-body" style={{ marginBottom: "0px" }}>
             <Slider {...carouselSettings}>
-              <div>
-                <img
-                  src="/images/image1.png"
-                  alt="carousel-image-1"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image2.png"
-                  alt="carousel-image-2"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image1.png"
-                  alt="carousel-image-3"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image2.png"
-                  alt="carousel-image-2"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
+            {advImages.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`} // Assuming the API returns image URLs in a 'url' field
+                    alt={`carousel-image-${index}`}
+                    style={{ margin: '0 auto' }}
+                  />
+                </div>
+              ))}
+             
             </Slider>
           </div>
         </div>

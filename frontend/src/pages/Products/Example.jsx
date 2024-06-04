@@ -1,452 +1,875 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+//import React, { useEffect, useState } from "react";
+import feather from "feather-icons";
+import axios from 'axios';
+import Select from 'react-select';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux/Admin/admin.action';
 
-const CategoryPage = () => {
-  const [viewAllClicked, setViewAllClicked] = useState(false);
-  const [showAdditionalImages, setShowAdditionalImages] = useState(false);
-  const [showSubcategories, setShowSubcategories] = useState(false);
-  const [showPharmaceuticalsProducts, setShowPharmaceuticalsProducts] = useState(false);
-  const [showChemicalsProducts, setShowChemicalsProducts] = useState(false); // New state for Chemicals
-  const [showAllProducts, setShowAllProducts] = useState(false);
-  const [showPrductDetails,setShowProductDetails] = useState(false);
+import { getProducts } from "../../redux/Product/product.action";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { RiImageAddLine } from "react-icons/ri";
+import { Carousel } from "react-responsive-carousel";
+// import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
+// import { getUOM } from '../../redux/Admin/UOM/uom.action';
+
+const UpdateProduct = () => {
+  useEffect(() => {
+    feather.replace();
+    dispatch(getCategories());
+    dispatch(getSubCategories());
+    dispatch(getKeywords());
+    dispatch(getUOM());
+
+    
+
+  }, []);
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  
+
+  // Sample data (you will get this from your reducer)
+
+ 
+
+  const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(false); // Initially hide the add product form
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [selectedKeywords, setSelectedKeywords] = useState([]);
+  const [showKeywords, setShowKeywords] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  //te to hold product details
+  const [updateMode, setUpdateMode] = useState(false); 
+  const dispatch = useDispatch();
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const location = useLocation();
+  const { product } = location.state || {};
+
+  const keywords = useSelector(state => state.masterData.keywords);
+  const categories = useSelector(state => state.masterData.categories);
+  const subCategories = useSelector(state => state.masterData.subCategories);
+  const uoms = useSelector(state => state.masterData.uom);
 
 
-  const handleProductDetails =() => {
-setShowProductDetails(true);
+  // const categories = useSelector(state => state.adminReducer.categories);
+  // console.log("in categoreis",categories);
+  
+  const [productDetails, setProductDetails] = useState({
+    encCompanyId: '',
+    prodName: '',
+    prodDescription: '',
+    prodCat: '',
+    prodSubCat: '',
+    keywords: [],
+    prodPrice: '',
+    display_price: "yes",
+    //pricePer: '',
+    minOrderQty: '',
+    prodUOM: '',
+    file: '',
+    prodId:'',
+});
+
+const [currentIndex, setCurrentIndex] = useState(0);
+useEffect(() => {
+
+    const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+
+    if (product && keywords) {
+      // Set selectedOptions with product.encKeywords
+      const selectedOptionsWithNames = product.encKeywords.map(keywordId => {
+        const keyword = keywords.find(kw => kw.encKeywordId === keywordId);
+        return {
+          value: keywordId,
+          label: keyword ? keyword.keyword_name : '' // Check if keyword exists and get its name
+        };
+      });
+      setSelectedOptions(selectedOptionsWithNames || []);
+  
+      // Update productDetails
+      setProductDetails(prevState => ({
+        ...prevState,
+        encCompanyId: encCompanyId || '',
+        prodName: product.prod_name || '',
+        prodDescription: product.prod_description || '',
+        prodCat: product.encCatId || '',
+        prodSubCat: product.encSubCatId || '',
+        keywords: selectedOptionsWithNames || [], // Update with selectedOptionsWithNames
+        prodPrice: product.prod_price || '',
+        pricePer: '', // Assuming this field does not exist in the product object
+        minOrderQty: product.prod_min_order_qty || '',
+        prodUOM: product.encUomId || '',
+        file: product.prod_img_path || '', // Assuming file is a new upload, not present in the product object
+        prodId:product.encProdId
+      }));
+      console.log(product);
+
+      const filteredSubcategories = subCategories.filter(subCategory => subCategory.encCatId === product.encCatId);
+    console.log("filtered sub cat", filteredSubcategories);
+    setFilteredSubCategories(filteredSubcategories);
+
+    const reader = new FileReader();
+
+    if (productDetails.file) {
+        setPhotoPreview(`http://127.0.0.1:8000/storage/${productDetails.file}`);
+      } else {
+        setPhotoPreview(null);
+      }
+
+  
+    }
+  }, [product, keywords]);
+  
+
+  console.log("product Deets",productDetails);
+  console.log("selectedOptions",selectedKeywords);
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+ 
+   // useEffect will run whenever dispatch changes
+
+  
+
+ 
+   //filtered out the sub categories based on category selected
+   const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    console.log("selected category",selectedCategory)
+    setProductDetails({ ...productDetails, prodCat: selectedCategory });
+    // Filter subcategories based on the selected category
+    const filteredSubcategories = subCategories.filter(subCategory => subCategory.encCatId === selectedCategory);
+    console.log("filtered sub cat", filteredSubcategories);
+    setFilteredSubCategories(filteredSubcategories);
+};
+
+  const handleUomChange = (e) => {
+    const selectedUom = e.target.value;
+    setProductDetails({...productDetails, prodUOM:selectedUom,});
+    
+  }
+
+  
+  const handleChange = selected => {
+    setSelectedOptions(selected);
+    const selectedKeywords = selected.map(option => option.value); // Extracting keyword names
+    setProductDetails(prevState => ({
+      ...prevState,
+      keywords: selectedKeywords // Update the keywords field in productDetails
+    }));
+    console.log(productDetails);
+    console.log(JSON.stringify(productDetails, null, 2));
+    console.log("Selected File:", productDetails.file);
+
+  };
+
+  const categoryNameFromId = (encCatId) => {
+    const category = categories.find(cat => cat.encCatId === encCatId);
+    return category ? category.cat_name : 'Category not found';
+  };
+
+  const subCategoryNameFromId = (encSubCatId) => {
+    const subCategory = subCategories.find(subCat =>subCat.encSubCatId === encSubCatId);
+    return subCategory ? subCategory.sub_cat_name : 'Sub-Category not found';
+  }
+
+  const uomNameFromId = (encUomId) => {
+    const uom = uoms.find(uom =>uom.encUomId === encUomId);
+    return uom ? uom.unit_name : 'Uom not found';
+  }
+
+  const keywordsNameFromId = (encKeywords) => {
+    const keywordNames = encKeywords.map(encKeywordId => {
+      const keyword = keywords.find(keyword => keyword.encKeywordId === encKeywordId);
+      return keyword ? keyword.keyword_name : 'Unknown'; // Return 'Unknown' if no match found
+  });
+
+  return keywordNames.join(', '); // Return comma-separated keyword names
 
   }
 
-  const handleViewAllClick = () => {
-    setViewAllClicked(true);
-    setShowAdditionalImages(true);
+ 
+  
+ 
+
+  // const handleFileChange = (e, setPreview) => {
+  //   const file = e.target.files[0]; // Get the selected file
+  //   setProductDetails({ ...productDetails, file });
+  //   const reader = new FileReader();
+
+  //   reader.onloadend = () => {
+  //     setPreview(reader.result);
+  //   };
+
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   } else {
+  //     setPreview(null);
+  //   }
+  // };
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setProductDetails({ ...productDetails, files });
+      const reader = new FileReader();
+    const maxFiles = 4; // Maximum number of files allowed
+
+    //Check if the number of selected files exceeds the maximum
+    if (files.length > maxFiles) {
+      alert(`You can only upload a maximum of ${maxFiles} images.`);
+      e.target.value = null; // Reset the input field to clear selected files
+      return;
+    }
+
+    const previews = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previews.push(e.target.result);
+        if (previews.length === files.length) {
+          const newPreviews = [...photoPreviews, ...previews];
+          setPhotoPreviews(newPreviews.slice(-maxFiles)); // Keep only the latest `maxFiles` images
+          setCurrentIndex(newPreviews.length - 1); // Set the current index to the last added image
+        }
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  };
+//   const handleFileChange = (e) => {
+//     setProductDetails({ ...productDetails, file: e.target.files[0] })
+// };
+
+const [pricingStatus, setPricingStatus] = useState('yes');
+
+  const handlePricingStatusChange = (event) => {
+    setPricingStatus(event.target.value);
+    setProductDetails({ ...productDetails, display_price: event.target.value });
   };
 
-  const handleShowAllClick = () => {
-    setShowAllProducts(true);
+const userString = sessionStorage.getItem('user');
+    const user = JSON.parse(userString);
+    const encCompanyId = user.encCompanyId;
+
+    useEffect(() => {
+        setProductDetails(prevProductDetails => ({
+            ...prevProductDetails,
+            encCompanyId: encCompanyId
+        }));
+    }, [encCompanyId]);
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(encCompanyId);
+    
+    const selectedKeys = selectedOptions.map(option => option.value);
+      // Update productDetails state with the obtained encCompanyId
+    setProductDetails(prevProductDetails => ({
+    ...prevProductDetails,
+    encCompanyId: encCompanyId,
+    keywords:selectedKeys
+    }));
+      // Logic to save changes and continue
+      console.log("submit",productDetails);
+      //debugger;
+      axios.post("http://127.0.0.1:8000/api/product/update-product", {
+        ...productDetails,
+        keywords: selectedKeys // Ensure keywords are updated
+    }, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+        navigate('/products')
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    //   dispatch(getProducts(encCompanyId));
+    //   //navigate('/');
+    //   setShowForm(false); // Hide the form after saving
   };
 
-  const handleHideAllClick = () => {
-    setShowAdditionalImages(false);
-    setViewAllClicked(false);
-    setShowSubcategories(false);
-    setShowPharmaceuticalsProducts(false);
-    setShowChemicalsProducts(false); // Reset Chemicals state
-    setShowAllProducts(false);
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
-  const handleCategoryClick = () => {
-    setShowSubcategories(true);
-    setShowAdditionalImages(false);
-    setShowPharmaceuticalsProducts(true);
-    setShowChemicalsProducts(false);
+  const handleDropdownClick = () => {
+    setShowKeywords(!showKeywords);
   };
 
-  const handleGoBackClick = () => {
-    setShowAllProducts(false);
-    setShowPharmaceuticalsProducts(true);
-    setShowChemicalsProducts(false); // Reset Chemicals state
+  const handleCancelUpdate = () => {
+    setUpdateMode(false); // Exit update mode
+  };
+  const formattedOptions = keywords.map(keyword => ({
+    value: keyword.encKeywordId, // assuming keyword_id is the unique identifier
+    label: keyword.keyword_name
+  }));
+  // Function to handle update
+  const handleUpdate = () => {
+    // Logic to update product details
+    console.log('Product details updated!');
+    setUpdateMode(false); // Exit update mode after updating
   };
 
-  const handlePharmaceuticalsClick = () => {
-    setShowPharmaceuticalsProducts(true);
-    setShowSubcategories(true);
-    setShowAdditionalImages(false);
-    setShowChemicalsProducts(false); // Ensure Chemicals are hidden
+
+
+  const handleUpdateProductDetails = () => {
+    setShowForm(!showForm);
   };
 
-  const handleChemicalsClick = () => {
-    setShowChemicalsProducts(true);
-    setShowSubcategories(true);
-    setShowAdditionalImages(false);
-    setShowPharmaceuticalsProducts(false); // Ensure Pharmaceuticals are hidden
+  // Function to handle delete product details
+  const handleDeleteProductDetails = (product) => {
+    setProductToDelete(product);
+    setShowDeleteConfirmation(true)
+    console.log("product",product);
+    document.querySelector('.modal-content').style.display = 'block';  // Reset product details
+    // Hide the add product form after submitting
+   // setShowForm(false);
+
+    // Function to map encCatId to categoryName
+ 
+
+  
+    
+  };
+
+  const handleConfirmDelete = async() => {
+    const product = productToDelete;
+    try {
+      const userString =  sessionStorage.getItem('user');
+      const user = JSON.parse(userString);
+      const encUserId = user.encUserId;
+  
+      const payload = {
+        encUserId
+      };
+  
+      const response = await axios.delete(`http://127.0.0.1:8000/api/product/${product.encProdId}`, { data: payload }); 
+      dispatch(getProducts(encCompanyId));     
+      // dispatch(getCategories());
+    } catch (error) {
+      console.error("Error deleting keyword:", error);
+    }
+    setShowDeleteConfirmation(false);
+  };
+
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  }
+
+  const [photoPreviews, setPhotoPreviews] = useState([]);
+
+  const addMoreImages = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+    input.onchange = handleFileChange;
+    input.click();
   };
 
   return (
-    <div className="main-content" style={{ margin: '100px auto', maxWidth: '1200px', padding: '0 15px', backgroundColor: 'white' }}>
-      <section className="section">
-        <div className="section-body">
-          <div className="row">
-            <div className="col-12">
-              <div className="card">
-                <div className="card-header">
-                <h4
-      style={{
-        fontFamily: 'Arial, sans-serif',
-        fontSize: '24px',
-        color: '#3366ff',
-        textAlign: 'center',
-        marginBottom: '20px',
-        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-        transition: 'color 0.5s ease-in-out',
-      }}
-      onMouseOver={(e) => e.target.style.color = '#3366ff'}
-      onMouseOut={(e) => e.target.style.color = '#3498DB'}
-    >
-      Explore our Vibrant Categories!
-    </h4>                  {/* <div className="card-header-action">
-                    {!viewAllClicked && (
-                      <button onClick={handleViewAllClick} className="btn btn-primary">View All</button>
-                    )}
-                    {viewAllClicked && showAdditionalImages && (
-                      <button onClick={handleHideAllClick} className="btn btn-danger">Hide All</button>
-                    )}
-                  </div> */}
-                </div>
-                <div className="card-body">
-                  
-                    <button onClick={handlePharmaceuticalsClick} className="btn btn-primary">Pharmaceuticals</button>
-                    <button onClick={handleChemicalsClick} className="btn btn-primary" style={{marginLeft:'10px'}}>Chemicals</button> {/* New Chemicals button */}
-                  
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+      <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
+          
+        </div>
 
-                  {showSubcategories && (
-                    <div>           
-                      {showPharmaceuticalsProducts && (
-                        <div>
-                    <div className="mb-2 text-left" style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>Medicines</div>
+        
+          <section className="section" style={{ background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="card" style={{ width: "100%", marginBottom: "20px", background: "#fff", borderRadius: "10px", boxShadow: "none", border: "none" }}>
+                  <div className="card-statistic-4">
+                    <div className="align-items-center justify-content-between">
+                      <div className="row">
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="image-section" style={{ padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="card">
+                                    <div className="card-header">
+                                      <h4>Add Image</h4>
+                                    </div>
+                                    {photoPreviews.length > 0 && (
+                                    <div className="file-preview">
+                                      <Carousel
+                                        autoPlay
+                                        infiniteLoop
+                                        showThumbs={false}
+                                        showStatus={false}
+                                        showIndicators={true}
+                                        showArrows={true}
+                                        dynamicHeight={true}
+                                        className="carousel"
+                                        selectedItem={currentIndex}
+                                        onChange={(index) =>
+                                          setCurrentIndex(index)
+                                        }
+                                      >
+                                        {photoPreviews.map((preview, index) => (
+                                          <div key={index}>
+                                            <img
+                                              src={preview}
+                                              alt={`Photo Preview ${index + 1}`}
+                                              style={{
+                                                width: "300px",
+                                                height: "200px",
+                                                objectFit: "cover",
+                                              }}
+                                            />
+                                          </div>
+                                        ))}
+                                      </Carousel>
+                                    </div>
+                                  )}
+                                    <div className="card-body">
+                                      <div className="fallback">
+                                        <input
+                                          type="file"
+                                          id="photo"
+                                          name="photo"
+                                          accept="image/*"
+                                          onChange={(e) =>
+                                            handleFileChange( e)
+                                          }
+                                        />
 
-                          {/* Show products for Pharmaceuticals */}
-                          <div className="row">
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 1</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" onClick={handleProductDetails}/>
+                                      </div>
+                                      {photoPreviews.length < 4 && (
+                                      <h6 style={{ color: "GrayText" }}>
+                                        Add More Images
+                                        <button
+                                          onClick={addMoreImages}
+                                          style={{
+                                            padding: "8px 9px",
+                                            backgroundColor: "#AF7AC5",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            boxShadow:
+                                              "0 4px 8px 0 rgba(0,0,0,0.2)",
+                                            transition: "0.3s",
+                                            marginTop: "20px",
+                                            marginLeft: "10px",
+                                          }}
+                                        >
+                                          <RiImageAddLine />
+                                        </button>
+                                      </h6>
+                                    )}
+                                    {photoPreviews.length >= 4 && (
+                                      <div
+                                        style={{
+                                          color: "gray",
+                                          marginTop: "10px",
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            fontWeight: "bold",
+                                            color: "#7DCEA0",
+                                          }}
+                                        >
+                                          Warning:
+                                        </span>{" "}
+                                        Maximum number of images reached
+                                      </div>
+                                    )}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 2</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 3</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 4</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 5</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 6</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            {/* Repeat for other initial products */}
-                            
+                            </section>
                           </div>
-                       
-
-                
-                          {/* Additional products to be shown after clicking "Show All" */}
-                          {showAllProducts && (
-                            <div className="row">
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 11</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 12</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 13</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 14</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 15</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 16</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              {/* Repeat for other additional products */}
-                            </div>
-                          )}
-
-
-                         {/* Show/Hide "Show All" button based on the state */}
-{/* Show/Hide "Show All" button based on the state */}
-<div className="card-footer d-flex justify-content-end">
-  {!showAllProducts && (
-    <button
-      onClick={handleShowAllClick}
-      className="btn btn-primary align-self-end"
-      style={{ marginBottom: '10px' }}
-    >
-      Show All
-    </button>
-  )}
-  
-
-  {showAllProducts && (
-    <button
-      onClick={handleGoBackClick}
-      className="btn btn-primary align-self-end"
-      style={{ marginBottom: '10px' }}
-    >
-      Back
-    </button>
-  )}
-</div>
-
-
-
-
                         </div>
-                      )}
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="product-details" style={{ textAlign:"left", padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group" style={{marginBottom:'50px'}}>
+                                    <label>Product Name:</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="productName"
+                                      value={productDetails.prodName}
+                                       onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
+                                     />
+                                   
+                                  </div>
+                                  <div className="form-group" >
+                                    <label>Category:</label>
+                                    <select
+                                    id="category"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="category"
+                                      value={productDetails.prodCat}
+                                      onChange={handleCategoryChange}
+                                    >
+                                      <option value="">Select Category</option>
+                                      {categories.map(category => (
+                                        <option key={category.encCatId} value={category.encCatId}>{category.cat_name}</option>
+                                    ))}
+                                    </select>
+                                  </div>
+                                
 
+                               
+                                  <div className="form-group"  
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "10px",
+                                  }}>
+                                     <div style={{ flex: 1 }}>
+                                    <label  style={{
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        color: "#2E4053",
+                                        fontFamily: "sans-serif",
+                                      }}>Price :</label>
+                                       <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                    <input
+                                      type="number"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="price"
+                                      value ={productDetails.prodPrice}
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
 
+                                    />
+                                    <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        per/-
+                                      </span>
+                                      <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                    </div>
+                                  </div>
+                                  </div>
 
-{showChemicalsProducts && (
-  
-                        <div>
-                    <div className="mb-2 text-left" style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>Chemical Equipments</div>
-                          {/* Show products for Pharmaceuticals */}
-                          <div className="row">
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 1</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
+                                 <div
+                                  className="form-group"
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <div style={{ flex: 1 }}>
+                                    <label
+                                      style={{
+                                        fontSize: "12px",
+                                        fontWeight: "bold",
+                                        color: "#2E4053",
+                                        fontFamily: "",
+                                      }}
+                                    >
+                                      Minimum Order Quantity:
+                                    </label>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <input
+                                        type="number"
+                                        className="form-control"
+                                        style={{
+                                          height: "30px",
+                                          width: "calc(60%)",
+                                          fontSize: "12px",
+                                          padding: "2px",
+                                        }} // Reduced height and width
+                                        name="units"
+                                        onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+                                        
+                                      />
+                                      <span
+                                        style={{
+                                          marginLeft: "5px",
+                                          marginRight: "5px",
+                                        }}
+                                      >
+                                        Unit/-
+                                      </span>
+                                      {/* <select
+                                        className="form-control"
+                                        style={{
+                                          height: "30px",
+                                          width: "calc(60%)",
+                                          fontSize: "12px",
+                                          padding: "2px",
+                                        }} // Reduced height and width
+                                      > */}
+                                          <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 3</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 4</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 5</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 6</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            {/* Repeat for other initial products */}
-                            
+                            </section>
                           </div>
-                       
-
-                
-                          {/* Additional products to be shown after clicking "Show All" */}
-                          {showAllProducts && (
-                            <div className="row">
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 11</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 12</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 13</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 14</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 15</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 16</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              {/* Repeat for other additional products */}
-                            </div>
-                          )}
-
-
-                         {/* Show/Hide "Show All" button based on the state */}
-{/* Show/Hide "Show All" button based on the state */}
-<div className="card-footer d-flex justify-content-end">
-  {!showAllProducts && (
-    <button
-      onClick={handleShowAllClick}
-      className="btn btn-primary align-self-end"
-      style={{ marginBottom: '10px' }}
-    >
-      Show All
-    </button>
-  )}
-  
-
-  {showAllProducts && (
-    <button
-      onClick={handleGoBackClick}
-      className="btn btn-primary align-self-end"
-      style={{ marginBottom: '10px' }}
-    >
-      Back
-    </button>
-  )}
-</div>
-
-
-
-
                         </div>
-                      )}
+                        <div className="col-lg-4">
+                          <div className="card-content">
+                            <section className="section">
+                              <div className="section-body">
+                                <div className="product-details" style={{  textAlign:"left",padding: "10px", background: "#fff", borderRadius: "10px" }}>
+                                  <div className="form-group">
+                                    <label>Product Description:</label>
+                                    <textarea
+                                      className="form-control"
+                                      rows="3"
+                                      style={{ height: "20px !important" }}
+                                      name="description"
+                                      value = {productDetails.prodDescription}
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodDescription: e.target.value })}
 
+                                    ></textarea>
+                                  </div>
+                                  <div className="form-group">
+                                    <label>Subcategory:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="subcategory"
+                                      value={productDetails.prodSubCat}
+                                      onChange={(e) => setProductDetails({ ...productDetails, prodSubCat: e.target.value })}
 
+                                    >
+                                      <option value="">Select Subcategory</option>
+                                      {filteredSubCategories.map(subCategory => (
+                                        <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
+                                    ))}
+                                    </select>
+                                  </div>
+                                  
 
-  {/* Display product details card */}
-  {showPrductDetails &&(
-<div className="card" style={{ 
-  padding: '20px',
-  maxWidth: '1000px', 
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15)',
-  marginTop: '20px',
-  position: 'relative'
-}}>
-  <div className="row">
-    <div className="col-lg-6" style={{ padding: '20px' }}>
-      <div style={{ marginTop: '30px', marginLeft: '20px', maxWidth: '400px' }}>
-        <img src="https://via.placeholder.com/400x200" alt="Product Preview" style={{ width: '100%', height: '200px' }} />
-      </div>
-    </div>
-    <div className="col-lg-6" style={{ padding: '10px' }}>
-      <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>
-          Sample Product
-        </h3>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>Description:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>Category:</span> Sample Category
-        </p>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>SubCategory:</span> Sample SubCategory
-        </p>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>Keywords:</span> Keyword1, Keyword2, Keyword3
-        </p>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>Price:</span> $50
-        </p>
-        <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-          <span style={{ fontWeight: 'bold' }}>Unit Of Measurement:</span> Sample UOM
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-  )}
+                                    {/* <div className="form-group">
+                                    <label>Price per:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value = {productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit of Measurements</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                  </div> */}
+                                  
+                                <div className="form-group">
+                                  <label>Keywords:</label>
+                                  <div style={{ position: "relative" }}>
+                                    <Select
+                                      options={formattedOptions}
+                                      isMulti
+                                      onChange={handleChange}
+                                      value={selectedOptions}
+                                      menuPlacement="auto" // Ensure the dropdown opens based on available space
+                                      menuShouldScrollIntoView={true}
+                                      menuPosition="fixed" // Fix the position of the dropdown to avoid it being cut off by overflow
+                                      menuPortalTarget={document.body} // Render the dropdown in the body to avoid overflow issues
+                                      styles={{ // Custom styles for the dropdown menu
+                                        menu: provided => ({
+                                          ...provided,
+                                          maxHeight: "200px", // Set the fixed height of the dropdown menu container
+                                          overflowY: "auto", // Enable vertical scrolling
+                                          "&::-webkit-scrollbar": {
+                                            display: "none", // Hide scrollbar for Chrome, Safari, and Opera
+                                          },
+                                          scrollbarWidth: "none", // Hide scrollbar for Firefox
+                                        }),
+                                        menuList: provided => ({
+                                          ...provided,
+                                          "&::-webkit-scrollbar": {
+                                            display: "none", // Hide any additional scrollbars in WebKit browsers
+                                          },
+                                          scrollbarWidth: "none", // Hide any additional scrollbars in Firefox
+                                        }),
+                                      }}
+                                    />
+                                    <div>
+                                      {/* Render selected values */}
+                                      {selectedOptions.map(option => (
+                                        <div key={option.value}>{option.keyword_name}</div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
 
-
+                                <div className="form-group">
+                                <label>Do you want to display Price :</label>
+                                <div style={{ position: "relative" }}>
+                                  <label style={{ marginRight: '10px', marginLeft: '10px' }}>
+                                    <input
+                                      type="radio"
+                                      value="yes"
+                                      checked={pricingStatus === 'yes'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    Yes
+                                  </label>
+                                  <label>
+                                    <input
+                                      type="radio"
+                                      value="no"
+                                      checked={pricingStatus === 'no'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    No
+                                  </label>
+                                </div>
+                              </div>
+                        
+                                  
+                                  {/* Submit and Continue Button */}
+                                  
+                                    <button
+                                      type="button"
+                                      style={{
+                                        bottom: "20px",
+                                        right: "70px",
+                                        backgroundColor: "#4CAF50",
+                                        border: "none",
+                                        color: "white",
+                                        padding: "8px 5px",
+                                        fontSize: "1em",
+                                        cursor: "pointer",
+                                        borderRadius: "5px",
+                                      }}
+                                      onClick={handleSubmit}
+                                    >
+                                      Save and Continue
+                                    </button>
+                                  
+                                </div>
+                              </div>
+                            </section>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
+        
+
+        {/* Display product details card */}
+       
+   <div
+                    className={`modal fade ${showDeleteConfirmation ? "show" : ""}`}
+                    id="deleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="deleteConfirmationModalLabel"
+                    aria-hidden={!showDeleteConfirmation}
+                    style={{ display: showDeleteConfirmation ? "block" : "none" }}
+                >
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.3)', zIndex: 0 }}></div>
+
+        <div className="modal-content">
+            <div className="modal-header">
+                <h5 className="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" className="close" onClick={handleCancelDelete} aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>                            
+                
+            </div>
+            <div className="modal-body">
+                Are you sure you want to delete 
+            </div>
+            <div className="modal-footer">
+                
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}
+                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}                                                >
+                    Delete
+                </button>
+            </div>
         </div>
-      </section>
+    </div>
+                </div>
+  <div className="modal-content" style={{ display: 'none' }}>
+  <div className="col-12 col-sm-6 col-lg-3">
+    <div className="card">
+      <div className="card-body text-center">
+        <div className="mb-2">Confirmation</div>
+        <button className="btn btn-primary" id="swal-6">Launch</button>
+      </div>
+    </div>
+  </div>
+
+            {/* <div className="modal-body">
+                Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?
+            </div> */}
+            {/* <div className="modal-footer">
+               
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}
+                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}                                                >
+                    Delete
+                </button>
+            </div> */}
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default CategoryPage;
+export default UpdateProduct;

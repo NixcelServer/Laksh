@@ -94,7 +94,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box  bg="lightblue" position="fixed" top={0} left={0} right={0} zIndex={999} >
+      <Box  bg="#4299E1" position="fixed" top={0} left={0} right={0} zIndex={999} >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -153,7 +153,7 @@ export default function Navbar() {
                     textAlign="center"
                     color="white"
                     />
-                    <Button colorScheme={"teal"} ml="5px" mr="5px">
+                    <Button color={"gray"} ml="5px" mr="5px">
                     <Search2Icon />
                     </Button>
                 </InputGroup>

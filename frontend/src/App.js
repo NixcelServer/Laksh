@@ -20,6 +20,7 @@ function App() {
   location.pathname === "/admintemplatedashboard" ||
   location.pathname === "/admintemplatekeywords" ||
   location.pathname === "/admintemplatecategories" ||
+  location.pathname === "/adv-images-update" ||
   location.pathname === "/example" ||
   
   location.pathname.startsWith("/subcategories/") ||
@@ -45,6 +46,7 @@ function App() {
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
       location.pathname === "/admintemplatemaincontent" ||
+      location.pathname === "/adv-images-update" ||
       location.pathname === "/usernavbar" ||
       location.pathname === "/userdashboard" ||
 
@@ -57,13 +59,16 @@ function App() {
       location.pathname === "/adminad" ||
       location.pathname === "/subscription" ||
       location.pathname === "/signup" ||
+      location.pathname === "/sign" ||
       location.pathname === "/categoriess" ||
       location.pathname === "/productdetails" ||
-
+      location.pathname === "/allcategories" ||
      
       location.pathname === "/products" ||
       location.pathname === "/product/add-product" ||
       location.pathname === "/product/update-product" ||
+      location.pathname === "/adminpro" ||
+      location.pathname === "/login" ||
      
       
 

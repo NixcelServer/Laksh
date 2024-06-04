@@ -43,6 +43,28 @@ Route::post('/login',[AuthController::class,'login']);
 //admin dashboard contents
 Route::get('/dashcontents',[AdminController::class,'adminDashboardContents']);
 
+//adding landing page images
+Route::post('/add-landing-pg-img',[AdminController::class,'addLandingPageImgs']);
+
+//get the images uploaded by admin
+Route::get('/get-lp-imgs', [AdminController::class, 'getLpImages']);
+
+//delete landing page image
+Route::delete('/landing-pg-imgs/delete/{encLpImgId}/{encUserId}', [AdminController::class, 'deleteLpImage']);
+
+
+//get the pending adv images
+Route::get('/get-pending-adv-imgs',[AdminController::class,'getPendingAdv']);
+
+Route::get('/approve-advertisement/{id}',[AdminController::class,'approveAdv']);
+
+Route::get('/reject-advertisement/{id}',[AdminController::class,'rejectAdv']);
+
+
+
+Route::post('selected-lp-images',[AdminController::class,'selectedImg']);
+
+
 //user registrtion
 Route::post('/register',[AuthController::class,'register']);
 
@@ -127,6 +149,13 @@ Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
 Route::get('/limited-products/{id}', [ProductController::class, 'limitedProducts']);
 
+// check product name
+Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);
+
+
+// check product name
+Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);
+
 
 //submit requirements routes
 Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
@@ -139,6 +168,22 @@ Route::post('/update-order',[PostController::class,'updateOrder']);
 
 Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
 
+
+
+Route::post('/add-adv-img',[UserController::class,'addAdvImages']);
+
+// Route for fetching uploaded advertisement images
+Route::get('get-adv-img', [UserController::class, 'getAdvImages']);
+
+Route::get('/display-adv-images',[UserController::class,'advertismentImgs']);
+
+Route::post('selected-u-images-adv',[UserController::class,'selectedImg']);
+
+Route::delete("/adv-imgs/delete/{id}", [UserController::class, "deleteImg"]);
+
+Route::post('/update-subs-status',[UserController::class,"updateSubStatus"]);
+
+Route::get('/set-lp-imgs',[UserController::class,'setLpImgs']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

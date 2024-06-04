@@ -1,6 +1,6 @@
 import { Alert, Heading } from "@chakra-ui/react";
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 
@@ -46,261 +46,237 @@ import AdvertisementForm from "../pages/User/UserAdvertisement";
 import Buyleads from "../pages/BuyLead";
 import UserAd from "../pages/User/UserAdvertisement";
 import AdminAd from "../pages/AdminTemplate/AdminAdvertisement";
-import Subscription from "../pages/AdminTemplate/SubscriptionPage";
-import Adapprove from "../pages/AdminTemplate/UserAdApproval";
-import SignUpPage from "../pages/User/signup";
+import RequireAuth from "../utils/RequireAuth";
+import UserAdApproval from "../pages/AdminTemplate/UserAdApproval";
+import SignUp from "../Components/home/SignUp";
 import CategoryPage from "../Components/home/HomeCategories";
 import ProductDetailsPage from "../pages/Products/ProductDetailsPage";
-
+import Allcategories from "../Components/home/AllCategories";
+import AdminProducts from "../pages/AdminTemplate/AdminProduct";
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
 export default function AllRoutes() {
   const isAuthenticated = useSelector(state => state.authReducer.isLogin);
   const userString = sessionStorage.getItem('user');
-  console.log("landing page",userString);
-  let userRole = null;
+  const user = JSON.parse(userString);
 
-  if (userString) {
-    const user = JSON.parse(userString);
-    userRole = user.u_designation;
-    console.log("in user role",userRole);
-  }
 
   return (
     <>
 
       <Routes>
+
+        {isAuthenticated && user?.u_designation === 'admin' && (
+          <Route path="/" element={<Navigate to="/admintemplatedashboard" />} />
+        )}
+
+
+        <Route element={<RequireAuth allowedRoles={["admin"]} />}>
+          <Route
+            path="/admintemplatedashboard"
+            element={
+              <>
+
+                <AdminTemplateNavbar />
+                <AdminTemplateDashboard />
+
+              </>
+            }
+          />
+
+          <Route
+            path="/admintemplatemaincontent"
+            element={
+              <>
+                <UserNavbar />
+                <AdminTemplateMaincontent />
+
+              </>
+            }
+          />
+
+          <Route
+            path="/admintemplatecategories"
+            element={
+              <>
+                <AdminTemplateNavbar />
+                <AdminTemplateCategories />
+              </>
+            }
+          />
+
+
+          <Route
+
+            path="/subcategories/:encCatId"
+            element={
+              <>
+                <AdminTemplateNavbar />
+                <AdminTemplateSubcategories />
+              </>
+            }
+          />
+          <Route
+            path="/admintemplatekeywords"
+            element={
+              <>
+                <AdminTemplateNavbar />
+                <AdminTemplateKeywords />
+              </>
+            }
+          />
+
+
+          <Route
+            path="/adv-images-update"
+            element={
+              <>
+                <AdminTemplateNavbar />
+                <UserAdApproval />
+              </>
+            }
+          />
+
+          <Route
+            path="/admintemplateuom"
+            element={
+              <>
+                <AdminTemplateNavbar />
+                <AdminTemplateUOM />
+              </>
+            }
+          />
+
+          <Route
+            path="/admintemplatenavbar"
+            element={
+              <>
+                <AdminTemplateNavbar />
+              </>
+            }
+          />
+
+        </Route>
         <Route path={"/"} element={<Home />} />
-        
-        
+
+
         <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
-        <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate/>} />
+        <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate />} />
 
         <Route path={"/login"} element={<Login />} />
         <Route path={"/alogin"} element={<AdminLogin />} />
 
         <Route path={"/sign"} element={<Sign />} />
         <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
-        
 
 
-    
-<Route
+        <Route
+            path="/signup"
+            element={
+              <>
+                <SignUp />
+              </>
+            }
+          />
+
+        <Route
           path="/example"
           element={
             <>
-            {/* <UserNavbar/> */}
-              <Example/>
-            </>
-          }
-        />
-
-      
-
-
-<Route
-          path="/admintemplatedashboard"
-          element={
-            <>
-              <AdminTemplateNavbar/>
-              <AdminTemplateDashboard/>
-              
-            </>
-          }
-        />
-
-<Route
-          path="/admintemplatemaincontent"
-          element={
-            <>
-              <UserNavbar/>
-              <AdminTemplateMaincontent/>
-              
-            </>
-          }
-        />
-
-<Route
-          path="/admintemplatecategories"
-          element={
-            <>
-            <AdminTemplateNavbar/>
-              <AdminTemplateCategories/>
+              <UserNavbar />
+              <Example />
             </>
           }
         />
 
 
-<Route
-          
-          path="/subcategories/:encCatId"
-          element={
-            <>
-            <AdminTemplateNavbar/>
-              <AdminTemplateSubcategories/>
-            </>
-          }
-        />
-<Route
-          path="/admintemplatekeywords"
-          element={
-            <>
-            <AdminTemplateNavbar/>
-              <AdminTemplateKeywords/>
-            </>
-          }
-        />
 
-<Route
-          path="/admintemplateuom"
-          element={
-            <>
-            <AdminTemplateNavbar/>
-              <AdminTemplateUOM/>
-            </>
-          }
-        />
 
-<Route
-          path="/admintemplatenavbar"
-          element={
-            <>
-              <AdminTemplateNavbar/>
-            </>
-          }
-        />
 
-<Route
+
+
+
+        <Route
           path="/userdashboard"
           element={
             <>
-            <UserNavbar/>
-              <UserDashboard/>
+              <UserNavbar />
+              <UserDashboard />
             </>
           }
         />
 
-<Route
+        <Route
           path="/usernavbar"
           element={
             <>
-            
-              <UserNavbar/>
+
+              <UserNavbar />
             </>
           }
         />
 
 
 
-<Route
+        <Route
           path="/products"
           element={
             <>
-            <UserNavbar/>
-              <Product/>
-              
+              <UserNavbar />
+              <Product />
+
             </>
           }
         />
 
-<Route
+        <Route
           path="/product/add-product"
           element={
             <>
-            <UserNavbar/>
-              <AddProduct/>
-              
+              <UserNavbar />
+              <AddProduct />
+
             </>
           }
         />
 
-<Route path="/product/update-product" 
-element={
-  <>
-  <UpdateProduct/>
-<UserNavbar />
-</>
-}
- />
+        <Route path="/product/update-product"
+          element={
+            <>
+              <UpdateProduct />
+              <UserNavbar />
+            </>
+          }
+        />
 
-<Route
+        <Route
           path="/buylead"
           element={
             <>
-            <UserNavbar/>
-              <BuyLead/>
+              <UserNavbar />
+              <BuyLead />
             </>
           }
         />
 
 
-<Route
+        <Route
           path="/companysetup"
           element={
             <>
-            <UserNavbar/>
-              <CompanySetup/>
+              <UserNavbar />
+              <CompanySetup />
             </>
           }
         />
 
-<Route
+        <Route
           path="/myorders"
           element={
             <>
-            <UserNavbar/>
-              <MyOrder/>
-            </>
-          }
-        />
-
-<Route
-          path="/userad"
-          element={
-            <>
-            <UserNavbar/>
-              <UserAd/>
-            </>
-          }
-        />
-
-<Route
-          path="/subscription"
-          element={
-            <>
-            <UserNavbar/>
-              <Subscription/>
-            </>
-          }
-        />
-
-<Route
-          path="/useradapprove"
-          element={
-            <>
-            <UserNavbar/>
-              <Adapprove/>
-            </>
-          }
-        />
-
-<Route
-          path="/adminad"
-          element={
-            <>
-            <AdminTemplateNavbar/>
-              <AdminAd/>
-            </>
-          }
-        />
-
-<Route
-          path="/signup"
-          element={
-            <>
-            
-              <SignUpPage/>
+              <UserNavbar />
+              <MyOrder />
             </>
           }
         />
@@ -309,8 +285,8 @@ element={
           path="/categoriess"
           element={
             <>
-            
-              <CategoryPage/>
+              
+              <CategoryPage />
             </>
           }
         />
@@ -319,17 +295,57 @@ element={
           path="/productdetails"
           element={
             <>
-            
-              <ProductDetailsPage/>
+              
+              <ProductDetailsPage />
+            </>
+          }
+        />
+
+        <Route
+          path="/userad"
+          element={
+            <>
+              <UserNavbar />
+              <UserAd />
             </>
           }
         />
 
 <Route
+          path="/allcategories"
+          element={
+            <>
+              <Allcategories/>
+              
+            </>
+          }
+        />
+
+        <Route
+          path="/adminad"
+          element={
+            <>
+              <AdminTemplateNavbar />
+              <AdminAd />
+            </>
+          }
+        />
+
+<Route
+          path="/adminpro"
+          element={
+            <>
+              <AdminTemplateNavbar />
+              <AdminProducts />
+            </>
+          }
+        />
+
+        <Route
           path="/datatables"
           element={
             <>
-            <Eg/>
+              <Eg />
 
             </>
           }
@@ -344,13 +360,13 @@ element={
 
         <Route />
 
-            <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} />}>
-            <Route path="/sell" element={
+        <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} />}>
+          <Route path="/sell" element={
             <>
-             <Sell/>
+              <Sell />
             </>
-          }/>
-            </Route>
+          } />
+        </Route>
 
       </Routes>
     </>

@@ -13,6 +13,8 @@ import {
   Heading,
   useToast,
   InputLeftElement,
+  ChakraProvider,
+  Image
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -149,28 +151,34 @@ export default function Sign() {
   },[error,isSign])
 
   return (
-    <>
-       <Flex
-      minH={'100vh'}
-      // align={'center'}
-      justify={'center'}
-      backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
-      backgroundSize="cover"
-      
-      >
-      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
-          <Heading  pb='10px'  color={'whiteAlpha.800'} fontSize={'4xl'} textAlign={'center'}>
-            Sign up
-          </Heading>
     
+    <div>
+      <ChakraProvider>
+        <Flex
+          minH={'100vh'}
+          align={'center'}
+          justify={'center'}
+          // backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
+          backgroundColor={'white'}
+          backgroundSize="cover"
+      >
+        <Box p={4}>
+        <Flex alignItems="center" 
+       
+        >
+       <Image src="/images/loginillustration.png" alt="Signup Illustration" style={{width:'50%'}}boxSize={{ base: '50%', sm: '30%' }}/>
+
+      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={18}  >
+        <Stack align={'center'} mb={'-5'} mt={'4'}>
+          <Heading  p='10px' color={'#4197E0'} fontSize={'4xl'}>Sign Up</Heading>
         </Stack>
         <Box
           rounded={'lg'}
           bg={'whiteAlpha.700'}
-          boxShadow={'lg'}
-          p={8}>
-          <Stack spacing={4}>
+          boxShadow={'0px 8px 20px rgba(52, 152, 219, 0.8)'} 
+          p={4}
+          >
+          <Stack spacing={2}>
             <HStack>
               <Box>
                 <FormControl id="name" isRequired>
@@ -218,7 +226,7 @@ export default function Sign() {
               </InputGroup>
             </FormControl>
 
-            <Stack spacing={10} pt={2}>
+            <Stack spacing={10} pt={1}>
               <Button
                 onClick={onsubmit}           
                 loadingText="Submitting"
@@ -227,7 +235,9 @@ export default function Sign() {
                 color={'white'}
                 _hover={{
                   bg: 'blue.500',
-                }}>
+                  
+                }}
+                >
                 Sign up
               </Button>
             </Stack>
@@ -235,7 +245,23 @@ export default function Sign() {
           </Stack>
         </Box>
       </Stack>
+      
+      </Flex>
+      </Box>
     </Flex>
-    </>
+    </ChakraProvider>
+    </div>
+    
   )
 }
+
+
+
+
+
+
+
+
+
+
+

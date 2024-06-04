@@ -1,3 +1,5 @@
+
+
 //import React, { useEffect, useState } from "react";
 import feather from "feather-icons";
 import axios from "axios";
@@ -54,6 +56,7 @@ const AddProduct = () => {
   const [productToDelete, setProductToDelete] = useState(null);
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
+  const [errors, setErrors] = useState({}); // State for validation errors
 
   const [productDetails, setProductDetails] = useState({
     encCompanyId: "",
@@ -63,10 +66,10 @@ const AddProduct = () => {
     prodSubCat: "",
     keywords: [],
     prodPrice: "",
-    pricePer: "",
+    display_price: "yes",
     minOrderQty: "",
     prodUOM: "",
-    file: "",
+    files: "",
   });
 
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -112,7 +115,7 @@ const AddProduct = () => {
     }));
     console.log(productDetails);
     console.log(JSON.stringify(productDetails, null, 2));
-    console.log("Selected File:", productDetails.file);
+    console.log("Selected File:", productDetails.files);
     console.log("in sele", selectedOptions);
   };
 
@@ -159,14 +162,17 @@ const AddProduct = () => {
     console.log("Changes saved!");
   };
 
-  const handleFileChange = (event) => {
-    const files = event.target.files;
+  
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setProductDetails({ ...productDetails, files });
+      const reader = new FileReader();
     const maxFiles = 4; // Maximum number of files allowed
 
-    // Check if the number of selected files exceeds the maximum
+    //Check if the number of selected files exceeds the maximum
     if (files.length > maxFiles) {
       alert(`You can only upload a maximum of ${maxFiles} images.`);
-      event.target.value = null; // Reset the input field to clear selected files
+      e.target.value = null; // Reset the input field to clear selected files
       return;
     }
 
@@ -208,6 +214,8 @@ const AddProduct = () => {
         },
       }
     );
+    console.log("in res",res);
+    
     await dispatch(getProducts(encCompanyId));
     //navigate('/');
     setShowForm(false); // Hide the form after saving
@@ -223,19 +231,22 @@ const AddProduct = () => {
       encCompanyId: encCompanyId,
     }));
   }, [encCompanyId]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    
     console.log(encCompanyId);
 
     // Update productDetails state with the obtained encCompanyId
     setProductDetails((prevProductDetails) => ({
       ...prevProductDetails,
       encCompanyId: encCompanyId,
+      display_price: pricingStatus
+      
     }));
     // Logic to save changes and continue
     console.log(productDetails);
-    //debugger;
+   
     const res = axios.post(
       "http://127.0.0.1:8000/api/product/store",
       productDetails,
@@ -326,11 +337,44 @@ const AddProduct = () => {
     input.click();
   };
 
-  const [pricingStatus, setPricingStatus] = useState('');
+  const [pricingStatus, setPricingStatus] = useState('yes');
 
   const handlePricingStatusChange = (event) => {
     setPricingStatus(event.target.value);
+    setProductDetails({ ...productDetails, display_price: event.target.value });
   };
+
+  // const handlePriceChange = (event) => {
+  //   setProductDetails({ ...productDetails, display_price: event.target.value });
+  // };
+
+  const [isProductNameAvailable, setIsProductNameAvailable] = useState(true);
+  const checkProductName = async (productName) => {
+    try {
+      const response = await axios.post(`http://127.0.0.1:8000/api/check-product-name/${encCompanyId}`, {
+        prod_name: productName
+      });
+      setIsProductNameAvailable(!response.data);
+    } catch (error) {
+      console.error("Error checking product name:", error);
+    }
+  };
+
+  const handleProductNameChange = (e) => {
+    const productName = e.target.value;
+    setProductDetails({ ...productDetails, prodName: productName });
+    checkProductName(productName);
+  };
+  
+  const validateForm = () => {
+    const newErrors = {};
+    if (!productDetails.prodName) newErrors.prodName = "Product name is required";
+    if (!isProductNameAvailable) newErrors.prodName = "Product name already exists";
+
+     setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   return (
     <div
@@ -434,8 +478,10 @@ const AddProduct = () => {
                                         name="photo"
                                         accept="image/*"
                                         multiple
-                                        onChange={handleFileChange}
-                                      />
+                                        onChange={(e) =>
+                                             handleFileChange(e)
+                                               }
+                                    />
                                     </div>
                                     {photoPreviews.length < 4 && (
                                       <h6 style={{ color: "GrayText" }}>
@@ -502,19 +548,19 @@ const AddProduct = () => {
                                   className="form-group"
                                   style={{ marginBottom: "35px" }}>
                                 
-                                  <label>Product Name:</label>
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    style={{ height: "40px" }} // Reduced height and width
-                                    name="productName"
-                                    onChange={(e) =>
-                                      setProductDetails({
-                                        ...productDetails,
-                                        prodName: e.target.value,
-                                      })
-                                    }
-                                  />
+                                <label>Product Name :</label>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="productName"
+                                      // onChange={(e) => setProductDetails({ ...productDetails, prodName: e.target.value })}
+                                      value={productDetails.prodName}
+                                      onChange={handleProductNameChange}
+                                    />
+                                    {!isProductNameAvailable && (
+                                      <p style={{ color: "red" }}>Product name already exists</p>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                   <label>Category:</label>
@@ -546,6 +592,7 @@ const AddProduct = () => {
                                     marginTop: "10px",
                                   }}
                                 >
+                                   {/* {pricingStatus === 'yes' && ( */}
                                   <div style={{ flex: 1 }}>
                                     <label
                                       style={{
@@ -580,6 +627,7 @@ const AddProduct = () => {
                                           })
                                         }
                                       />
+                                      
                                       <span
                                         style={{
                                           marginLeft: "5px",
@@ -589,28 +637,23 @@ const AddProduct = () => {
                                         per/-
                                       </span>
                                       <select
-                                        className="form-control"
-                                        style={{
-                                          height: "30px",
-                                          width: "calc(60%)",
-                                          fontSize: "12px",
-                                          padding: "2px",
-                                        }} // Reduced height and width
-                                      >
-                                        <option value="">Select Unit</option>
-                                        {uoms.map((unit) => (
-                                          <option
-                                            key={unit.encUomId}
-                                            value={unit.encUomId}
-                                          >
-                                            {unit.unit_name}
-                                          </option>
-                                        ))}
-                                      </select>
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
                                     </div>
                                   </div>
+                                    {/* )} */}
                                 </div>
-
+                            
                                 <div
                                   className="form-group"
                                   style={{
@@ -645,13 +688,9 @@ const AddProduct = () => {
                                           fontSize: "12px",
                                           padding: "2px",
                                         }} // Reduced height and width
-                                        name="pricePer"
-                                        onChange={(e) =>
-                                          setProductDetails({
-                                            ...productDetails,
-                                            minOrderQty: e.target.value,
-                                          })
-                                        }
+                                        name="units"
+                                        onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+                                        
                                       />
                                       <span
                                         style={{
@@ -661,7 +700,7 @@ const AddProduct = () => {
                                       >
                                         Unit/-
                                       </span>
-                                      <select
+                                      {/* <select
                                         className="form-control"
                                         style={{
                                           height: "30px",
@@ -669,17 +708,21 @@ const AddProduct = () => {
                                           fontSize: "12px",
                                           padding: "2px",
                                         }} // Reduced height and width
-                                      >
-                                        <option value="">Select Unit</option>
-                                        {uoms.map((unit) => (
-                                          <option
-                                            key={unit.encUomId}
-                                            value={unit.encUomId}
-                                          >
-                                            {unit.unit_name}
-                                          </option>
-                                        ))}
-                                      </select>
+                                      > */}
+                                          <select
+                                      className="form-control"
+                                      style={{ height: "40px" }}
+                                      name="unit"
+                                      value={productDetails.prodUOM}
+                                      onChange={handleUomChange}
+                                      
+                                    >
+                                       <option value="">Select Unit</option>
+                                      {uoms.map(uom => (
+                                        <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
+                                    ))}
+                                    </select>
+                                      {/* </select> */}
                                     </div>
                                   </div>
                                 </div>
@@ -788,54 +831,48 @@ const AddProduct = () => {
                                 </div>
 
                                 <div className="form-group">
-                                  <label>Do you want to display Price :</label>
-                                  <div style={{ position: "relative" }}>
+                                <label>Do you want to display Price :</label>
+                                <div style={{ position: "relative" }}>
                                   <label style={{ marginRight: '10px', marginLeft: '10px' }}>
-      <input
-        type="radio"
-        value="Yes"
-        checked={pricingStatus === 'Yes'}
-        onChange={handlePricingStatusChange}
-      />
-      Yes
-    </label>
-    <label>
-      <input
-        type="radio"
-        value="No"
-        checked={pricingStatus === 'No'}
-        onChange={handlePricingStatusChange}
-      />
-      No
-    </label>
-                                    
-                                  </div>
+                                    <input
+                                      type="radio"
+                                      value="yes"
+                                      checked={pricingStatus === 'yes'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    Yes
+                                  </label>
+                                  <label>
+                                    <input
+                                      type="radio"
+                                      value="no"
+                                      checked={pricingStatus === 'no'}
+                                      onChange={handlePricingStatusChange}
+                                    />
+                                    No
+                                  </label>
                                 </div>
-
-                               
-
-      
-
-
+                              </div>
+                                      
                                 {/* Submit and Continue Button */}
 
                                 <div style={{ textAlign: 'right' }}>
-  <button
-    type="button"
-    style={{
-      backgroundColor: "#4CAF50",
-      border: "none",
-      color: "white",
-      padding: "8px 15px",
-      fontSize: "1em",
-      cursor: "pointer",
-      borderRadius: "5px",
-    }}
-    onClick={handleSubmit}
-  >
-    Save and Continue
-  </button>
-</div>
+                                <button
+                                  type="button"
+                                  style={{
+                                    backgroundColor: "#4CAF50",
+                                    border: "none",
+                                    color: "white",
+                                    padding: "8px 15px",
+                                    fontSize: "1em",
+                                    cursor: "pointer",
+                                    borderRadius: "5px",
+                                  }}
+                                  onClick={handleSubmit}
+                                >
+                                  Save and Continue
+                                </button>
+                              </div>
 
                               </div>
                             </div>

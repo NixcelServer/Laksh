@@ -10,6 +10,7 @@ use App\Models\GstInfo;
 use App\Models\PanInfo;
 use App\Models\SocialInfo;
 use App\Models\BankDetails;
+use App\Models\AdvSubscription;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Storage;
@@ -111,6 +112,10 @@ class AuthController extends Controller
         $csi->tbl_company_id = $company->tbl_company_id;
         $csi->save();
 
+        $advSubs =  new AdvSubscription;
+        $advSubs->tbl_user_id = $userId;
+        $advSubs->save();
+
         //insert entry into mst_tbl_companies
         // $userId = $user->tbl_user_id;
         // $company = new Company;
@@ -146,6 +151,9 @@ class AuthController extends Controller
             $companyId = Company::where('tbl_user_id',$user->tbl_user_id)->value('tbl_company_id');
             $encCompanyId = EncDecHelper::encDecId($companyId,'encrypt');
             $user->encCompanyId = $encCompanyId;
+
+            $user->isSubscribed = (bool) AdvSubscription::where('tbl_user_id', $user->tbl_user_id)->value('is_subscribed');
+
             // Unset the non-encrypted ID
             unset($user->tbl_user_id,$user->u_password,$user->add_date,$user->add_time,$user->update_date,
                     $user->update_time,$user->verified_by,$user->verified_date,
