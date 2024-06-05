@@ -1,7 +1,7 @@
 
 
  import * as types from "./admin.action.type"
- import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI, getSubCategoriesAPI, addSubCategoryAPI } from "./admin.api"
+ import { getCategoriesAPI, addCategoryAPI, getKeywordsAPI, addKeywordAPI, getUOMAPI, addUOMAPI, getSubCategoriesAPI, addSubCategoryAPI, updateCategoryAPI } from "./admin.api"
 // import { deleteAdminDataAPI, deleteProductAPI, getAdminsDataAPI, getPlywoodAPI, getUsersDataAPI, postAdminDataAPI, postProductAPI, updateAdminDataAPI, updateProductAPI } from "./admin.api"
 
 // export const getPlywoodProducts =(color,Page,limit,order,price)=>async (dispatch)=>{
@@ -155,6 +155,17 @@ export const addCategory = (payload) => async(dispatch) => {
     }
 };
 
+export const updateCategory = (payload) => async(dispatch) => {
+    try{
+        
+        const res = await updateCategoryAPI(payload);
+      //  dispatch({ type: types.GET_CATEGORIES, payload:res});
+    } catch(err) {
+        console.log(err);
+        // dispatch({ type: types.ERROR, payload: err.response.data.error });
+    }
+};
+
 export const setCategories = (categories) => async(dispatch) => {
     dispatch({ type: types.SET_CATEGORIES, payload:categories});
     
@@ -228,4 +239,12 @@ export const addUOM = (payload) => async(dispatch) => {
         // dispatch({ type: types.ERROR, payload: err.response.data.error });
     }
 };
+
+export const setImages = (payload) => async(dispatch) => {
+    try{
+        dispatch({ type:types.SET_ADV_IMG,payload:payload});
+    }catch(err){
+        console.log(err);
+    }
+}
 

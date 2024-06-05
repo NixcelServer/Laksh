@@ -23,13 +23,13 @@ return new class extends Migration
             $table->unsignedBigInteger('tbl_sub_cat_id');
             $table->string('supplier_loc')->nullable();
             $table->string('req_status')->nullable();
+            $table->text('packing_details')->nullable();
+            $table->text('other_specifications')->nullable();
             $table->date('add_date')->nullable();
             $table->time('add_time')->nullable();
             $table->date('updated_date')->nullable();
             $table->time('updated_time')->nullable();
             $table->string('flag', 45)->default('show');
-           
-
             $table->foreign('tbl_company_id')->references('tbl_company_id')->on('mst_tbl_companies');
             $table->foreign('tbl_uom_id')->references('tbl_uom_id')->on('mst_tbl_uom')->nullable();
             $table->foreign('tbl_cat_id')->references('tbl_cat_id')->on('mst_tbl_categories');

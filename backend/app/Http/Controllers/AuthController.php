@@ -10,9 +10,13 @@ use App\Models\GstInfo;
 use App\Models\PanInfo;
 use App\Models\SocialInfo;
 use App\Models\BankDetails;
+use App\Models\AdvSubscription;
+use App\Models\UserOtp;
 use Illuminate\Support\Facades\Date;
 use App\Helpers\EncDecHelper;
+use App\Helpers\EmailHelper;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 
@@ -111,6 +115,10 @@ class AuthController extends Controller
         $csi->tbl_company_id = $company->tbl_company_id;
         $csi->save();
 
+        $advSubs =  new AdvSubscription;
+        $advSubs->tbl_user_id = $userId;
+        $advSubs->save();
+
         //insert entry into mst_tbl_companies
         // $userId = $user->tbl_user_id;
         // $company = new Company;
@@ -146,6 +154,9 @@ class AuthController extends Controller
             $companyId = Company::where('tbl_user_id',$user->tbl_user_id)->value('tbl_company_id');
             $encCompanyId = EncDecHelper::encDecId($companyId,'encrypt');
             $user->encCompanyId = $encCompanyId;
+
+            $user->isSubscribed = (bool) AdvSubscription::where('tbl_user_id', $user->tbl_user_id)->value('is_subscribed');
+
             // Unset the non-encrypted ID
             unset($user->tbl_user_id,$user->u_password,$user->add_date,$user->add_time,$user->update_date,
                     $user->update_time,$user->verified_by,$user->verified_date,
@@ -164,6 +175,47 @@ class AuthController extends Controller
     //     //$email = $request->query('email');
     //     return response()->json($email);
     // }
+
+    public function sendOtp(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        
+        // Generate OTP
+        $otpCode = random_int(100000, 999999);
+        
+        // Store OTP in database with expiry time
+        UserOtp::create([
+            'u_email_id' => $request->email,
+            'otp' => $otpCode,
+            'expires_at' => Date::now()->addMinutes(2)
+        ]);
+
+        EmailHelper::sendOtp($request->email,$otpCode);
+        return response()->json("Otp sent successfully",200);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required',
+            'email' => 'required|email'
+        ]);
+
+        // Retrieve OTP record
+        $otp = UserOtp::where('u_email_id', $request->email)
+                      ->where('otp', $request->otp)
+                      ->where('expires_at', '>', Date::now())
+                      ->first();
+
+        if ($otp) {
+            // Invalidate the OTP to prevent reuse
+            $otp->delete();
+            return response()->json(['message' => 'OTP verified', 'email' => $request->email], 200);
+        }
+
+        return response()->json(['error' => 'Invalid OTP'], 400);
+    }
+
 
 
 

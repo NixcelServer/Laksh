@@ -12,11 +12,13 @@ import {
     Heading,
     Text,
     useToast,
-   
+    ChakraProvider
   } from '@chakra-ui/react';
   import {Link as Navlink, useNavigate} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { Log } from '../redux/auth/auth.action';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+
 export default function Login() {
     const [email,setEmail] = useState('')
     const [password,setPass] = useState('')
@@ -60,23 +62,35 @@ export default function Login() {
 
   return (
     <div>
+      <ChakraProvider>
         <Flex
           minH={'100vh'}
           align={'center'}
           justify={'center'}
-          backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
+          // backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
+          backgroundColor={'white'}
           backgroundSize="cover"
       >
-      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={18} px={6} >
-        <Stack align={'center'}>
-          <Heading  p='10px' color={'whiteAlpha.800'} fontSize={'4xl'}>Login</Heading>
+        <Box p={4}>
+        <Flex alignItems="center" 
+       
+        >
+       <img src="/images/loginillustration.png" alt="Signup Illustration" style={{width:'50%'}}boxSize={{ base: '50%', sm: '30%' }}/>
+
+      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={18}  >
+        <Stack align={'center'} mb={'-5'} mt={'4'}>
+          <Heading  p='10px' color={'#4197E0'} fontSize={'4xl'}>Login</Heading>
         </Stack>
         <Box
           rounded={'lg'}
           bg={'whiteAlpha.700'}
-          boxShadow={'lg'}
-          p={8}>
-          <Stack spacing={4}>
+          boxShadow={'0px 8px 30px rgba(52, 152, 219, 0.8)'} 
+          p={8}
+          
+          >
+
+          <Stack spacing={4}
+          >
             <FormControl id="email" required>
               <FormLabel>Email address</FormLabel>
               <Input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}} />
@@ -91,7 +105,7 @@ export default function Login() {
                 align={'start'}
                 >
                 <Text>Create New Account</Text>
-                <Navlink to={'/sign'} color={'blue.400'}>SignUp</Navlink>
+                <Navlink to={'/signup'} color={'blue'} style={{marginTop:"1.5%" ,color:"blue"}}>SignUp</Navlink>
               </Stack>
               <Button
               onClick={onsubmit}
@@ -106,7 +120,11 @@ export default function Login() {
           </Stack>
         </Box>
       </Stack>
+      
+      </Flex>
+      </Box>
     </Flex>
+    </ChakraProvider>
     </div>
   )
 }

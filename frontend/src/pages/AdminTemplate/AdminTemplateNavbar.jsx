@@ -5,6 +5,7 @@ import feather from 'feather-icons'; // Import feather-icons
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { authLogout } from '../../redux/auth/auth.action';
+import { RiAdvertisementLine } from "react-icons/ri";
 
 
 
@@ -27,9 +28,10 @@ const AdminTemplateNavbar = () => {
     return(
 <div>
         <div className="navbar-bg" />
-        <nav className="navbar navbar-expand-lg main-navbar sticky">
+        <nav className="navbar navbar-expand-lg main-navbar sticky" style={{ backgroundColor: '#527c90' }}>
           <div className="form-inline mr-auto">
             <ul className="navbar-nav mr-3">
+
               <li><a href="#" data-toggle="sidebar" className="nav-link nav-link-lg
                 collapse-btn"> <i data-feather="align-justify" /></a></li>
               {/* <li><a href="#" className="nav-link nav-link-lg fullscreen-btn">
@@ -107,11 +109,14 @@ const AdminTemplateNavbar = () => {
               <li className="">
                 {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
                 <Link to="/admintemplateuom" className=""> <i data-feather="layers" /><span>UOM</span></Link>
-                <ul className="dropdown-menu">
-                  <li><a className="nav-link" href="email-inbox.html">Inbox</a></li>
-                  <li><a className="nav-link" href="email-compose.html">Compose</a></li>
-                  <li><a className="nav-link" href="email-read.html">read</a></li>
-                </ul>
+              </li>
+              <li className="">
+                {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
+                <Link to="/adminad" className=""><RiAdvertisementLine /><span>Landing Page Images</span></Link>
+              </li>
+              <li className="">
+                {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
+                <Link to="/adv-images-update" className=""><RiAdvertisementLine /><span>Advertisement Images</span></Link>
               </li>
               
              

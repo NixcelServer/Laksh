@@ -17,14 +17,14 @@ export default function HomeSections() {
                 data.map((el,i)=>(<HomeGrid key={i} data1={el} />))
             }
         </VStack> */}
-        <VStack p='10px' spacing={4}>
+        <VStack p='10px' spacing={4}  >
       {selectedCategories.map((category) => (
-        <Box key={category.encCatId} width="100%" mt="-10">
+        <Box key={category.encCatId} width="100%" mt="0" bg="white">
         
-          <HomeGrid
+          <HomeGrid 
             title={category.cat_name}
             single={{
-              img: "/images/image2.png", // Category image
+              img: category.cat_img_path, // Category image
               title: "Category Highlight", // Example static title
               sub1: "Detail 1", // Example static detail
               sub2: "Detail 2", // Example static detail

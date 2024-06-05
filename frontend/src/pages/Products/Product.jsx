@@ -8,6 +8,7 @@ import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux
 
 import { getProducts } from "../../redux/Product/product.action";
 import { Link, useNavigate } from "react-router-dom";
+import Slider from 'react-slick';
 
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
@@ -38,7 +39,7 @@ const Product = () => {
     // Add more options as needed
   ];
 
-
+  const [pricingStatus, setPricingStatus] = useState('yes');
   const [showForm, setShowForm] = useState(false); // Initially hide the add product form
   const [photoPreview, setPhotoPreview] = useState(null);
   const [selectedKeywords, setSelectedKeywords] = useState([]);
@@ -65,7 +66,7 @@ const Product = () => {
     pricePer: '',
     minOrderQty: '',
     prodUOM: '',
-    file: '',
+    files: '',
 });
 
 
@@ -309,7 +310,7 @@ const userString = sessionStorage.getItem('user');
   }
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-40px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           <Link to="/product/add-product">
@@ -414,7 +415,7 @@ const userString = sessionStorage.getItem('user');
                                   </div>
                                 
 
-                               
+                                  {/* {pricingStatus === 'yes' && ( */}
                                   <div className="form-group">
                                     <label>Price :</label>
                                     <input
@@ -423,9 +424,10 @@ const userString = sessionStorage.getItem('user');
                                       style={{ height: "40px" }}
                                       name="price"
                                       onChange={(e) => setProductDetails({ ...productDetails, prodPrice: e.target.value })}
-
+                                      
                                     />
                                   </div>
+                                  {/* )}  */}
                                   <div className="form-group">
                                     <label>Minimum Order Quantity:</label>
                                     <input
@@ -577,24 +579,56 @@ const userString = sessionStorage.getItem('user');
     position: 'relative' // Position relative for absolute positioning of delete button
   }}>
     <div className="row">
-      <div className="col-lg-6" style={{ padding: '20px' }}>
-        <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
-        {product.prod_img_path && (
-            <img src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt="Product Preview" style={{ width: '800%', height: '200px' }}  />
-            
-          )}
-        </div>
+    <div className="col-lg-6" style={{ padding: '20px' }}>
+  <div style={{ marginTop: '30px', marginLeft:'20px', maxWidth: '400px' }}>
+  {product.image_paths && product.image_paths.length === 1 ? (
+  <img 
+    src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
+    alt="Product Preview" 
+    style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
+  />
+) : product.image_paths && product.image_paths.length > 1 ? (
+  <Slider
+    dots
+    infinite
+    speed={500}
+    slidesToShow={1}
+    slidesToScroll={1}
+    autoplay
+    autoplaySpeed={3000}
+  >
+    {product.image_paths.map((prod_img_path, imgIndex) => (
+      <div key={imgIndex}>
+        <img 
+          src={`http://127.0.0.1:8000/storage/${prod_img_path}`} 
+          alt={`Product Preview ${imgIndex + 1}`} 
+          style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
+        />
       </div>
+    ))}
+  </Slider>
+) : (
+  <img 
+    src="images/default_image.jpg" // replace with the actual path to your default image
+    alt="Default Product Preview" 
+    style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
+  />
+)}
+
+  </div>
+</div>
       <div className="col-lg-6" style={{ padding: '10px' }}>
         <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Subcategory: {subCategoryNameFromId(product.encSubCatId)} </p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Keywords: {keywordsNameFromId(product.encKeywords)}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Price: {product.prod_price || '$50'}</p>
-          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Unit of Measurement: {uomNameFromId(product.encUomId)}</p>
+        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>{product.prod_name || 'Sample Product'}
+                                     </h3>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Description:</span> {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Category:</span> {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>SubCategory:</span> {subCategoryNameFromId(product.encSubCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Keywords:</span> {keywordsNameFromId(product.encKeywords)}</p>
+          {product.display_price === 'yes' && (
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Price:</span> {product.prod_price || '$50'}</p>
+        )}
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Unit Of Measurement:</span> {uomNameFromId(product.encUomId)}</p>
 
           {/* Update and Delete buttons */}
           {updateMode ? (
@@ -631,7 +665,7 @@ const userString = sessionStorage.getItem('user');
               textDecoration: 'none',
               display: 'inline-block',
               fontSize: '14px',
-              margin: '10px 0',
+              margin: '10px 0 0 9px',
               cursor: 'pointer',
               borderRadius: '4px',
             }}
