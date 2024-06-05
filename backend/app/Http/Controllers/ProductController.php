@@ -15,32 +15,40 @@ class ProductController extends Controller
     //
     public function storeProduct(Request $request)
     {
-        //
-        $decCompanyId = EncDecHelper::encDecId($request->encCompanyId,'decrypt');
+        $decCompanyId = EncDecHelper::encDecId($request->encCompanyId, 'decrypt');
         $prod = new Product;
         $prod->tbl_company_id = $decCompanyId;
         $prod->prod_name = $request->prodName;
         $prod->prod_description = $request->prodDescription;
-       
-        $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat,'decrypt');
-        $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat,'decrypt');
+        $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat, 'decrypt');
+        $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat, 'decrypt');
         $prod->prod_price = $request->prodPrice;
-        $prod->tbl_uom_id = EncDecHelper::encDecId($request->prodUOM,'decrypt');
+        $prod->tbl_uom_id = EncDecHelper::encDecId($request->prodUOM, 'decrypt');
         $prod->prod_min_order_qty = $request->minOrderQty;
-        
         $prod->add_date = Date::now()->toDateString();
         $prod->add_time = Date::now()->toTimeString();
+        $prod->display_price = $request->input('display_price', 'yes');
 
-       // Save the pricing status
-       $prod->display_price = $request->input('display_price', 'yes');
+        // Assuming $request->file('files') returns an array of files
+        $files = $request->file('files');
+
+        if ($files && count($files) > 0) {
+            // Get the original filename of the first file
+            $firstFile = $files[0];
+            $firstFileName = $firstFile->getClientOriginalName();
+
+            // Store the first file in the specified directory with the original file name
+            $directory = $decCompanyId . '/products';
+            $firstFilePath = $firstFile->storeAs($directory, $firstFileName);
+
+            // Store the first image path in prod_img_path
+            $prod->prod_img_path = $firstFilePath;
+        }
 
         $prod->save();
-        
-        $directory = $decCompanyId . '/products';
 
-            // Assuming $request->file('files') returns an array of files
-            $files = $request->file('files');
-
+        // Save each image in the ProductImages table
+        if ($files) {
             foreach ($files as $file) {
                 // Get the original filename
                 $fileName = $file->getClientOriginalName();
@@ -57,9 +65,7 @@ class ProductController extends Controller
                 $prodimg->add_time = Date::now()->toTimeString();
                 $prodimg->save();
             }
-
-
-        
+        }
 
         foreach ($request->keywords as $encKeywordId) {
             // Decrypt the keyword ID
@@ -75,15 +81,8 @@ class ProductController extends Controller
         }
 
         return response()->json($prod);
-
-        
-        
-
-        // $directory = $decCompanyId . '/products' ; 
-        // $prod->prod_img_path = $request->file('file')->storeAs($directory, $request->file('file')->getClientOriginalName());
-        // return response()->json("success");
-
     }
+
 
     public function getProducts($id)
     {
@@ -115,10 +114,11 @@ class ProductController extends Controller
         
          $decCatId = EncDecHelper::encDecId($id,'decrypt');
          $products = Product::where('tbl_cat_id', $decCatId)
-         ->where('flag', 'show')
-         ->inRandomOrder()
-         ->take(9)
-         ->get();
+    ->where('flag', 'show')
+    ->whereNotNull('prod_img_path') // Ensures products have a non-null prod_img_path
+    ->inRandomOrder()
+    ->take(9)
+    ->get();
 
          foreach($products as $product)
          {
