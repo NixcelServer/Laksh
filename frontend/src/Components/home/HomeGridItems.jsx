@@ -23,8 +23,8 @@ import React from "react";
 const HomeGridItems = ({ product }) => (
     <Box borderWidth="1px" borderRadius="lg" overflow="hidden" width="250px" height="120px" display="flex" alignItems="center" >
       <Image src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt={product.prod_name} width="150px" height="120px" objectFit="cover" />
-      <Box p="6" flex="1" ml="2">
-      <Text fontWeight="bold" textTransform="uppercase" fontSize="s" noOfLines={3}>
+      <Box p="1" flex="1" ml="2">
+      <Text fontWeight="bold" textTransform="uppercase" fontSize="xs" noOfLines={2} marginLeft={'-11%'}>
       {product.prod_name}
     </Text>
         {/* <Text mt="2">{product.prod_description}</Text>

@@ -207,9 +207,6 @@ export default function Navbar() {
       <MenuItem as={Link} to="login" icon={<FaUser />}>
         Login
       </MenuItem>
-      <MenuItem as={Link} to="alogin" icon={<FaBolt />}>
-        Admin
-      </MenuItem>
 
       <MenuItem as={Link} to="userdashboard" icon={<MdSell />}>
         Sell
@@ -231,6 +228,9 @@ export default function Navbar() {
         About us
       </MenuItem>
 
+      <MenuItem as={Link} to="alogin" icon={<FaBolt />}>
+        Admin
+      </MenuItem>
                
                
               

@@ -16,7 +16,7 @@
     "bootstrap": "^5.3.3",
     "datatables.net": "^2.0.7",
     "feather-icons": "^4.29.2",
-    "framer-motion": "^10.9.1",
+    "framer-motion": "^10.18.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",

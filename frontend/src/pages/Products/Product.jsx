@@ -585,7 +585,7 @@ const userString = sessionStorage.getItem('user');
       <img 
         src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
         alt={`Product Preview`} 
-        style={{ width: '100%', height: 'auto', marginBottom: '10px' }} 
+        style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
       />
     ) : (
       <Slider
@@ -612,7 +612,7 @@ const userString = sessionStorage.getItem('user');
 </div>
       <div className="col-lg-6" style={{ padding: '10px' }}>
         <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>{product.prod_name || 'Sample Product'}   </h3>
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Product Name: {product.prod_name || 'Sample Product'}</p>
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Description: {product.prod_description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
           <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>Category: {categoryNameFromId(product.encCatId)} </p>

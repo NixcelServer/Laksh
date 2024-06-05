@@ -72,7 +72,7 @@ const Buyleads = (buyLead) => {
                         <section className="section">
                           <div className="section-body">
                             <div className="left-side" style={{ textAlign: 'left', padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                              <h5 className="card-title" style={{ color: '#2AA699', fontSize: '15px', marginTop: '20px', fontFamily: 'sans-serif' }}>{buylead.prod_name}</h5>
+                              <h5 className="card-title" style={{ color: '#2AA699', fontSize: '15px', marginTop: '0px', fontFamily: 'sans-serif' }}>{buylead.prod_name}</h5>
                               <label style={{ fontStyle: 'italic', fontSize: '12px' }}>{buylead.prod_des}</label>
                               <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Quantity: {buylead.qty}</p>
                               <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Category: {categoryNameFromId(buylead.encCatId)}</p>
@@ -88,7 +88,7 @@ const Buyleads = (buyLead) => {
                         <section className="section">
                           <div className="section-body">
                             <div className="right-side" style={{ textAlign: 'left', padding: "10px", background: "#fff", borderRadius: "10px" }}>
-                              <h5 className="card-title" style={{ color: '#2AA699', fontSize: '15px', marginTop: '20px', fontFamily: 'sans-serif' }}>Buyer Details</h5>
+                              <h5 className="card-title" style={{ color: '#2AA699', fontSize: '15px', marginTop: '0px', fontFamily: 'sans-serif' }}>Buyer Details</h5>
                               <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>
                                 Email {buylead.buyerEmail ? <span style={{ color: 'green' }}>✔</span> : '❌'}
                               </p>
@@ -102,7 +102,7 @@ const Buyleads = (buyLead) => {
                       </div>
                     </div>
                     <div className="col-lg-4 col-md-12 col-sm-12" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-                      <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px', fontStyle: 'italic' }}>
+                      <p style={{ color: '#666', fontSize: '14px', marginBottom: '0px', fontStyle: 'italic' }}>
                         Posted on: <span style={{fontWeight:"bold"}}>{buylead.date} 26/05/2024</span>
                       </p>
                     </div>
