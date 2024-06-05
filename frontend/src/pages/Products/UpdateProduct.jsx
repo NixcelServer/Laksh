@@ -403,7 +403,7 @@ const userString = sessionStorage.getItem('user');
   
 
   return (
-    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-120px" }}>
+    <div style={{ background: "#f2f2f2", padding: "0px", marginTop: "-20px" }}>
       <div className="main-content" style={{ maxWidth: "1600px", maxHeight:"1400px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "right", marginBottom: "20px" }}>
           

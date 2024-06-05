@@ -7,6 +7,12 @@ use App\Models\Post;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\CompanyAddress;
+use App\Models\GstInfo;
+use App\Models\PanInfo;
+use App\Models\BankDetails;
+use App\Models\SocialInfo;
+use App\Models\AdvSubscription;
 use App\Helpers\EncDecHelper;
 use App\Helpers\EmailHelper;
 
@@ -25,6 +31,8 @@ class PostController extends Controller
         $post->prod_des = $request->productDes;
         $post->tbl_cat_id = EncDecHelper::encDecId($request->encCatId,'decrypt');
         $post->tbl_sub_cat_id = EncDecHelper::encDecId($request->encSubCatId,'decrypt');
+        $post->packing_details = $request->packingDetails;
+        $post->other_specifications = $request->otherSpecifications;
         //$post->supplier_loc = $request->supplierLoc;
         $post->add_date = Date::now()->toDateString();
         $post->add_time = Date::now()->toTimeString();
@@ -77,6 +85,8 @@ class PostController extends Controller
         $post->prod_des = $request->prod_des;
         $post->tbl_cat_id = EncDecHelper::encDecId($request->encCatId,'decrypt');
         $post->tbl_sub_cat_id = EncDecHelper::encDecId($request->encSubCatId,'decrypt');
+        $post->packing_details = $request->packing_details;
+        $post->other_specifications = $request->other_specifications;
         //$post->supplier_loc = $request->supplierLoc;
         $post->add_date = Date::now()->toDateString();
         $post->add_time = Date::now()->toTimeString();
@@ -191,6 +201,8 @@ class PostController extends Controller
         $post->tbl_cat_id = EncDecHelper::encDecId($request->encCatId,'decrypt');
         $post->tbl_sub_cat_id = EncDecHelper::encDecId($request->encSubCatId,'decrypt');
         //$post->supplier_loc = $request->supplierLoc;
+        $post->packing_details = $request->packingDetails;
+        $post->other_specifications = $request->otherSpecifications;
         $post->add_date = Date::now()->toDateString();
         $post->add_time = Date::now()->toTimeString();
         $post->save();

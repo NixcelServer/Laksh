@@ -8,7 +8,6 @@ import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux
 
 import { getProducts } from "../../redux/Product/product.action";
 import { Link, useNavigate } from "react-router-dom";
-import Slider from 'react-slick';
 
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
@@ -66,7 +65,7 @@ const Product = () => {
     pricePer: '',
     minOrderQty: '',
     prodUOM: '',
-    files: '',
+    file: '',
 });
 
 
@@ -579,37 +578,14 @@ const userString = sessionStorage.getItem('user');
     position: 'relative' // Position relative for absolute positioning of delete button
   }}>
     <div className="row">
-    <div className="col-lg-6" style={{ padding: '20px' }}>
-  <div style={{ marginTop: '30px', marginLeft:'20px', maxWidth: '400px' }}>
-    {product.image_paths && product.image_paths.length === 1 ? (
-      <img 
-        src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
-        alt={`Product Preview`} 
-        style={{ width: '100%', height: 'auto', marginBottom: '10px' }} 
-      />
-    ) : (
-      <Slider
-        dots
-        infinite
-        speed={500}
-        slidesToShow={1}
-        slidesToScroll={1}
-        autoplay
-        autoplaySpeed={3000}
-      >
-        {product.image_paths.map((prod_img_path, imgIndex) => (
-          <div key={imgIndex}>
-            <img 
-              src={`http://127.0.0.1:8000/storage/${prod_img_path}`} 
-              alt={`Product Preview ${imgIndex + 1}`} 
-              style={{ width: '100%', height: 'auto', marginBottom: '10px' }} 
-            />
-          </div>
-        ))}
-      </Slider>
-    )}
-  </div>
-</div>
+      <div className="col-lg-6" style={{ padding: '20px' }}>
+        <div style={{ marginTop: '30px',marginLeft:'20px',maxWidth: '400px' }}>
+        {product.prod_img_path && (
+            <img src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt="Product Preview" style={{ width: '800%', height: '200px' }}  />
+            
+          )}
+        </div>
+      </div>
       <div className="col-lg-6" style={{ padding: '10px' }}>
         <div style={{ textAlign: 'left', color: 'black', marginBottom: '10px' }}>
           <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', borderBottom: '2px solid #333', paddingBottom: '5px', marginBottom: '10px' }}>Product Details</h3>

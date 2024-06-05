@@ -16,7 +16,7 @@ import {
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { getCategories, getSubCategories, getUOM } from "../../redux/Admin/admin.action";
+import { getCategories, getSubCategories, getUOM, setImages } from "../../redux/Admin/admin.action";
 import { useDispatch,useSelector } from "react-redux";
 import { getOrders } from "../../redux/Order/order.action";
 import {
@@ -28,6 +28,7 @@ import {
 
 
 const SubmitRequirement = () => {
+  const advImages = useSelector(state => state.masterData.advImages);
   const dispatch = useDispatch(); // Initialize useDispatch
   const categories = useSelector(state => state.masterData.categories);
   //const keywords = useSelector(state => state.masterData.keywords);
@@ -44,6 +45,8 @@ const SubmitRequirement = () => {
   const [pricePerPiece, setPricePerPiece] = useState('');
   const [enccomapnyId, setEnccomapnyId] = useState('');
   const[productQuantity,setProductQuantity]=useState('');
+  const[otherSpecifications,setOtherSpecifications] = useState('');
+  const[packingDetails,setPackingDetails] = useState('');
   //const [isOpen, setIsOpen] = useState(false);
   
   
@@ -52,10 +55,19 @@ const SubmitRequirement = () => {
       dispatch(getCategories());
       dispatch(getSubCategories()); 
       dispatch(getUOM());
-
+      fetchImages();
     },
   []);
   
+  const fetchImages = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/display-adv-images'); // Adjust the API endpoint as necessary
+      dispatch(setImages(response.data)); // Ensure you have a setImages action to store the images in the Redux store
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    }
+  };
+
   //const orders = useSelector(state => state.orders);
 
   // Carousel settings
@@ -90,6 +102,8 @@ const SubmitRequirement = () => {
     setProductDescription('');
     setProductQuantity('');
     setEnccomapnyId('');
+    setPackingDetails('');
+    setOtherSpecifications('');
   }
 
 
@@ -129,6 +143,8 @@ const SubmitRequirement = () => {
       productDes: productDescription,
       encCompanyId: encCompanyId, // Include encCompanyId in formData
       productQty: productQuantity,
+      packingDetails: packingDetails,
+      otherSpecifications: otherSpecifications
     };
     //dispatch(submitRequirement(formData));
   console.log("form data",formData);
@@ -319,38 +335,21 @@ const handleVerifyOTP = async(e) => {
         >
           <div className="card-body" style={{ marginBottom: "0px" }}>
             <Slider {...carouselSettings}>
-              <div>
-                <img
-                  src="/images/image1.png"
-                  alt="carousel-image-1"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image2.png"
-                  alt="carousel-image-2"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image1.png"
-                  alt="carousel-image-3"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/image2.png"
-                  alt="carousel-image-2"
-                  style={{ margin: "0 auto" }}
-                />
-              </div>
+            {advImages.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`} // Assuming the API returns image URLs in a 'url' field
+                    alt={`carousel-image-${index}`}
+                    style={{ margin: '0 auto' }}
+                  />
+                </div>
+              ))}
+             
             </Slider>
           </div>
         </div>
       </Box>
+
 
     
 
@@ -391,6 +390,7 @@ const handleVerifyOTP = async(e) => {
         className="form-control"
         rows="2"
         style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
+        onChange={(e) => setProductDescription(e.target.value)}
     ></textarea>
 </div>
 
@@ -463,6 +463,7 @@ const handleVerifyOTP = async(e) => {
                             className="form-control"
                             rows="2"
                             style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
+                            onChange={(e) => setOtherSpecifications(e.target.value)}
                             ></textarea>
                     </div>
                 </div>
@@ -475,6 +476,7 @@ const handleVerifyOTP = async(e) => {
         className="form-control"
         rows="2"
         style={{ height: "auto", maxHeight: "50px", width: "45%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
+        onChange={(e) => setPackingDetails(e.target.value)}
     ></textarea>
                     </div>
                     
