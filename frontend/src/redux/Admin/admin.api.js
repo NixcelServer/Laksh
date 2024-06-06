@@ -80,6 +80,8 @@ export const addUOMAPI = async(payload) => {
       return res.data;
 }
 
+
+
 // export const getPlywoodAPI = async (color="brown",Page=1,limit=10,order="asc",price=0) => {
 //        let res = await axios.get(`${baseURL}plywood?page=${Page}&limit=${limit}&Color=${color}&price=${price}&order=${order}`,{
 //         headers: {

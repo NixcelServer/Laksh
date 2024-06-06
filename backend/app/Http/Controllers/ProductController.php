@@ -8,6 +8,9 @@ use App\Models\ProductKeyword;
 use App\Helpers\EncDecHelper;
 use Illuminate\Support\Facades\Date;
 use App\Models\ProductImages;
+use App\Models\Category;
+use App\Models\SubCategory;
+
 
 
 class ProductController extends Controller
@@ -231,4 +234,98 @@ class ProductController extends Controller
         // return response($ProductNameExists);
         return response()->json($ProductNameExists);
     }
+ 
+
+    // public function productByCategory($id)
+    // { 
+    //     // Decrypt category ID
+    //     $decCatId = EncDecHelper::encDecId($id, 'decrypt');
+        
+    //     // Find the category
+    //     $category = Category::find($decCatId);
+
+    //     // Check if category exists
+    //     if (!$category) {
+    //         return response()->json(['error' => 'Category not found'], 404);
+    //     }
+
+    //     // Initialize array to store subcategories and their products
+    //     $response = [
+    //         'subCategories' => [],
+    //     ];
+
+    //     // Get subcategories of the main category
+    //     $subCategories = SubCategory::where('tbl_cat_id',$decCatId)->where('flag','show')->get(); // Assuming 'hasMany' relationship
+        
+    //     // Loop through subcategories
+    //     foreach ($subCategories as $subcategory) {
+            
+    //         // Get products for the subcategory
+    //         $subProducts = Product::where('tbl_sub_cat_id', $subcategory->tbl_sub_cat_id)
+    //                             ->where('flag', 'show')
+    //                             ->get();
+            
+    //         // Add subcategory and its products to the response
+    //         $response['subCategories'][] = [
+    //             'subcategory' => $subcategory,
+    //             'products' => $subProducts
+    //         ];
+    //     }
+
+    //     return response()->json($response);
+    // }
+
+    public function productByCategory($id)
+    { 
+        // Decrypt category ID
+        $decCatId = EncDecHelper::encDecId($id, 'decrypt');
+        
+        // Find the category
+        $category = Category::find($decCatId);
+    
+        // Check if category exists
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+    
+        // Initialize array to store subcategories and their products
+        $response = [
+            'subCategories' => [],
+        ];
+    
+        // Get subcategories of the main category
+        $subCategories = SubCategory::where('tbl_cat_id', $decCatId)->where('flag', 'show')->get(); // Assuming 'hasMany' relationship
+        
+        // Loop through subcategories
+        foreach ($subCategories as $subcategory) {
+            // Encrypt subcategory ID
+            $subcategory->encSubCatId=EncDecHelper::encDecId( $subcategory->tbl_sub_cat_id, 'encrypt');
+             unset($subcategory->tbl_cat_id);
+            
+            // Get products for the subcategory
+            $subProducts = Product::where('tbl_sub_cat_id', $subcategory->tbl_sub_cat_id)
+                                  ->where('flag', 'show')
+                                  ->get()
+                                  ->map(function ($product) {
+            // Encrypt relevant fields
+               $product->encProdId = EncDecHelper::encDecId($product->tbl_prod_id,'encrypt');
+               $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
+               $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id, 'encrypt');
+           
+            $product->encUomId = EncDecHelper::encDecId($product->tbl_uom_id,'encrypt');
+            unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id,$product->tbl_uom_id);
+            return $product;
+            });
+            
+            // Add subcategory and its products to the response
+            $response['subCategories'][] = [
+                 'subcategory' =>$subcategory ,
+                'products' => $subProducts
+            ];
+            unset($subcategory->tbl_sub_cat_id);
+        }
+    
+        return response()->json($response);
+    }
+    
 }

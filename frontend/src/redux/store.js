@@ -13,6 +13,7 @@ import { bulbReducer } from "./BulbAdmin/bulbadmin.reducer";
 import { machineReducer } from "./MachineAdmin/machineadmin.reducer";
 import {productReducer}from "./Product/product.reducer";
 import { orderReducer } from "./Order/order.reducer";
+import { userReducer } from "./User/user.reducer";
 
 const root_reducer = combineReducers({
 	authReducer,
@@ -21,7 +22,8 @@ const root_reducer = combineReducers({
   bulb: bulbReducer,
   machine: machineReducer,
   productReducer,
-  orderReducer
+  orderReducer,
+  userReducer
   
 });
 

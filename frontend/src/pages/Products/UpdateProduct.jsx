@@ -194,37 +194,7 @@ useEffect(() => {
 
   }
 
-  // const handleFileChange = (e) => {
-  //   const files = e.target.files;
-  //   setProductDetails({ ...productDetails, files });
-  //     const reader = new FileReader();
-  //   const maxFiles = 4; // Maximum number of files allowed
-
-  //   //Check if the number of selected files exceeds the maximum
-  //   if (files.length > maxFiles) {
-  //     alert(`You can only upload a maximum of ${maxFiles} images.`);
-  //     e.target.value = null; // Reset the input field to clear selected files
-  //     return;
-  //   }
-
-  //   const previews = [];
-
-  //   for (let i = 0; i < files.length; i++) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       previews.push(e.target.result);
-  //       if (previews.length === files.length) {
-  //         const newPreviews = [...photoPreviews, ...previews];
-  //         setPhotoPreviews(newPreviews.slice(-maxFiles)); // Keep only the latest `maxFiles` images
-  //         setCurrentIndex(newPreviews.length - 1); // Set the current index to the last added image
-  //       }
-  //     };
-  //     reader.readAsDataURL(files[i]);
-  //   }
-  // };
-//   const handleFileChange = (e) => {
-//     setProductDetails({ ...productDetails, file: e.target.files[0] })
-// };
+  
 
 const handleFileChange = (e) => {
   const newFiles = Array.from(e.target.files);

@@ -20,7 +20,7 @@ class Category extends Model
 
     public function subCategory()
     {
-        return $this->hasOne(SubCategory::class);
+        return $this->hasOne(SubCategory::class,'tbl_cat_id');
     }
 
     public function product()

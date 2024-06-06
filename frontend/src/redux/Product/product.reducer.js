@@ -1,10 +1,11 @@
-import { GET_ALL_PRODUCTS, GET_PRODUCTS, SELECTED_PRODUCTS, SET_PRODUCT_DETAILS } from './product.action.type';
+import { GET_ALL_PRODUCTS, GET_PRODUCTS, GET_PRODUCTS_BY_SUBCATEGORY, SELECTED_PRODUCTS, SET_PRODUCT_DETAILS } from './product.action.type';
 
 const initialState = {
   productDetails: [],
   products: [],
   allProducts: [],
   selectedProducts:[],
+  productsBySubCategory:[],
 };
 
 export const productReducer = (state = initialState, action) => {
@@ -23,6 +24,11 @@ export const productReducer = (state = initialState, action) => {
 
             case SELECTED_PRODUCTS:
           return {...state, selectedProducts:action.payload};
+
+          case GET_PRODUCTS_BY_SUBCATEGORY:
+            return { ...state, productsBySubCategory:action.payload}
+
+
 
     default:
       return state;

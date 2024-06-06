@@ -49,7 +49,7 @@ import AdminAd from "../pages/AdminTemplate/AdminAdvertisement";
 import RequireAuth from "../utils/RequireAuth";
 import UserAdApproval from "../pages/AdminTemplate/UserAdApproval";
 import SignUp from "../Components/home/SignUp";
-
+import CategoryPage from "../Components/home/HomeCategories";
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
@@ -309,7 +309,15 @@ export default function AllRoutes() {
         />
 
 
-
+    <Route
+          path="/categoriess/:encCatId"
+          element={
+            <>
+              
+              <CategoryPage />
+            </>
+          }
+        />
 
 
 

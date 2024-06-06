@@ -1,5 +1,5 @@
 import * as types from "./admin.action.type";
-
+//import { SELECT_CATEGORY } from './actions';
 const initalState = {
 
     isLoading: false,
@@ -11,7 +11,10 @@ const initalState = {
     subCategories: [],
     advImages:[],
     users: [],
-    admins:[]
+    admins:[],
+   
+   
+    
 }
  
 export const reducer = (state = initalState, { type,payload }) => {
@@ -39,6 +42,16 @@ export const reducer = (state = initalState, { type,payload }) => {
         case types.SET_ADV_IMG:
         return { ...state, advImages: payload };
 
+    case type.SELECT_CATEGORY:
+      return {
+          ...state,
+          selectedCategory: action.payload
+      };
+      // case SET_SELECTED_CATEGORY:
+      //   return {
+      //     ...state,
+      //     selectedCategory: action.payload,
+      //   };
         
 
 //         case types.GET_PRODUCT_LOADING:

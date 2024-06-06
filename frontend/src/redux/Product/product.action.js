@@ -1,5 +1,5 @@
-import { SET_PRODUCT_DETAILS, GET_PRODUCTS, GET_ALL_PRODUCTS, SELECTED_PRODUCTS } from "./product.action.type";
-import { getAllProductsAPI, getProductsAPI } from "./product.api";
+import { SET_PRODUCT_DETAILS, GET_PRODUCTS, GET_ALL_PRODUCTS, SELECTED_PRODUCTS,  GET_PRODUCTS_BY_SUBCATEGORY } from "./product.action.type";
+import { getAllProductsAPI, getSubCatWiseProdAPI, getProductsAPI } from "./product.api";
 
 export const setProductDetails = (details) => {
   return {
@@ -33,3 +33,14 @@ export const setSelectedProducts = (limitedProducts) => async(dispatch) => {
   
 
 };
+
+export const getSubCategoryWiseProducts = (encCatId) => async(dispatch) => {
+  try{
+    const res = await getSubCatWiseProdAPI(encCatId);
+    dispatch({ type: GET_PRODUCTS_BY_SUBCATEGORY, payload:res});
+  }catch (err) {
+    console.log(err);
+    // Dispatch an error action or handle the error in some way
+  }
+  
+}

@@ -168,8 +168,6 @@ export const updateCategory = (payload) => async(dispatch) => {
 
 export const setCategories = (categories) => async(dispatch) => {
     dispatch({ type: types.SET_CATEGORIES, payload:categories});
-    
-
   };
   
 
@@ -247,4 +245,6 @@ export const setImages = (payload) => async(dispatch) => {
         console.log(err);
     }
 }
+
+
 
