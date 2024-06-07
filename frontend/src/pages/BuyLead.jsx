@@ -74,10 +74,10 @@ const Buyleads = (buyLead) => {
                             <div className="left-side" style={{ textAlign: 'left', padding: "10px", background: "#fff", borderRadius: "10px" }}>
                               <h5 className="card-title" style={{ color: '#2AA699', fontSize: '15px', marginTop: '0px', fontFamily: 'sans-serif' }}>{buylead.prod_name}</h5>
                               <label style={{ fontStyle: 'italic', fontSize: '12px' }}>{buylead.prod_des}</label>
-                              <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Quantity: {buylead.qty}</p>
+                              <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Quantity: {buylead.prod_qty} {uomNameFromId(buylead.encUomId)}</p>
                               <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Category: {categoryNameFromId(buylead.encCatId)}</p>
                               <p style={{ color: '#666', fontSize: '12px', marginBottom: '-8px' }}>Subcategory: {subCategoryNameFromId(buylead.encSubCatId)}</p>
-                              <p style={{ color: '#666', fontSize: '12px', marginBottom: '-11px' }}>Unit of Measurement: {uomNameFromId(buylead.encUomId)}</p>
+                              
                             </div>
                           </div>
                         </section>
@@ -103,7 +103,7 @@ const Buyleads = (buyLead) => {
                     </div>
                     <div className="col-lg-4 col-md-12 col-sm-12" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                       <p style={{ color: '#666', fontSize: '14px', marginBottom: '0px', fontStyle: 'italic' }}>
-                        Posted on: <span style={{fontWeight:"bold"}}>{buylead.date} 26/05/2024</span>
+                        Posted on: <span style={{fontWeight:"bold"}}>{buylead.add_date} </span>
                       </p>
                     </div>
                   </div>

@@ -28,7 +28,8 @@ export default function HomeSections() {
               title: "Category Highlight", // Example static title
               sub1: "Detail 1", // Example static detail
               sub2: "Detail 2", // Example static detail
-              sub3: "Detail 3"  // Example static detail
+              sub3: "Detail 3" , // Example static detail
+              sub4: "Detail 4"  // Example static detail
             }}
             info={products[category.encCatId] || []} // Pass products belonging to the category
           />

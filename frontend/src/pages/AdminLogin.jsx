@@ -1,112 +1,134 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
-    Flex,
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    Checkbox,
-    Stack,
-    Link,
-    Button,
-    Heading,
-    Text,
-    useToast,
-   
-  } from '@chakra-ui/react';
-  import {Link as Navlink, useNavigate} from 'react-router-dom'
+  Flex,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Link,
+  Button,
+  Heading,
+  Text,
+  useToast,
+  ChakraProvider
+} from '@chakra-ui/react';
+import { Link as Navlink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AdminLog } from '../redux/auth/auth.action';
+
 export default function AdminLogin() {
-    const [email,setEmail] = useState('')
-    const [password,setPass] = useState('')
-    const toast = useToast()
-    const navigate = useNavigate();
-    const {error,isLogin} = useSelector((store)=>store.authReducer)
-    const dispatch = useDispatch()
+  const [email, setEmail] = useState('');
+  const [password, setPass] = useState('');
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { error, isLogin } = useSelector((store) => store.authReducer);
+  const dispatch = useDispatch();
 
+  const onsubmit = () => {
+    const payload = {
+      email,
+      password
+    };
+    dispatch(AdminLog(payload));
+  };
 
-    const onsubmit = ()=>{
-      const payload ={
-        email,
-        password
-      }
-  
-      dispatch(AdminLog(payload))
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: error,
+        status: 'error',
+        duration: 1000,
+        isClosable: true
+      });
+      dispatch({ type: 'SET_ERROR_FALSE', payload: false });
     }
-    useEffect(()=>{
-      if(error){
-        toast({
-          title: error,
-          status: 'error',
-          duration: 1000,
-          isClosable: true,
-        })
-        dispatch({ type: 'SET_ERROR_FALSE', payload: false }); // Dispatch action to set isSign to false
-
-      }
-      if(isLogin){
-        toast({
-          title: 'Login Sucessfull.',
-          status: 'success',
-          duration: 1000,
-          isClosable: true,
-        })
-        navigate('/admintemplatedashboard')
-      }
-  
-    },[error,isLogin])
-
+    if (isLogin) {
+      toast({
+        title: 'Login Sucessfull.',
+        status: 'success',
+        duration: 1000,
+        isClosable: true
+      });
+      navigate('/admintemplatedashboard');
+    }
+  }, [error, isLogin]);
 
   return (
-    <div>
-        <Flex
-          minH={'100vh'}
-          align={'center'}
-          justify={'center'}
-          backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
-          backgroundSize="cover"
+    <ChakraProvider>
+      <Flex
+        minH={'100vh'}
+        align={'center'}
+        justify={'center'}
+        backgroundColor={'white'}
+        backgroundSize="cover"
+        style={{
+          background:
+            'linear-gradient(109.6deg, rgb(255, 230, 109) 11.2%, rgb(87, 232, 107) 100.2%)'
+        }}
       >
-      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={18} px={6} >
-        <Stack align={'center'}>
-          <Heading  p='10px' color={'whiteAlpha.800'} fontSize={'4xl'}>Login</Heading>
-        </Stack>
-        <Box
-          rounded={'lg'}
-          bg={'whiteAlpha.700'}
-          boxShadow={'lg'}
-          p={8}>
-          <Stack spacing={4}>
-            <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}} />
-            </FormControl>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
-              <Input type="password" value={password} onChange={(e)=>{setPass(e.target.value)}} />
-            </FormControl>
-            <Stack spacing={10}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                >
-                <Text>Create New Account</Text>
-                <Navlink to={'/sign'} color={'blue.400'}>SignUp</Navlink>
-              </Stack>
-              <Button
-              onClick={onsubmit}
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}>
-                Login
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
+        <Box p={4}>
+  <Flex alignItems="center">
+    <Box
+      display={{ base: 'none', md: 'block' }} // Hide image on mobile, show on desktop
+      mr={4} // Reduce the distance between image and login section
+    >
+      <img
+        src="/images/adminimg"
+        alt="Signup Illustration"
+        style={{ width: '80%', marginBottom: '-4%' }} // Increase the image size
+        boxSize={{ base: '50%', sm: '30%' }}
+      />
+    </Box>
+    <Stack spacing={0} mx={'auto'} maxW={'lg'} py={18} px={6}>
+      <Stack align={'center'} mt={4} mb={-4}>
+        <Heading p="10px" color={'Black'} fontSize={'4xl'}>
+          Login
+        </Heading>
       </Stack>
-    </Flex>
-    </div>
-  )
+      <Box rounded={'lg'} boxShadow={'lg'} p={8}>
+        <Stack spacing={4}>
+          <FormControl id="email">
+            <FormLabel>Email address</FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id="password">
+            <FormLabel>Password</FormLabel>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPass(e.target.value)}
+            />
+          </FormControl>
+          <Stack spacing={10}>
+            <Stack direction={{ base: 'column', sm: 'row' }} align={'start'}>
+              <Text>Create New Account</Text>
+              <Navlink to={'/sign'} color={'blue.400'}>
+                SignUp
+              </Navlink>
+            </Stack>
+            <Button
+              onClick={onsubmit}
+              bg={'blue.400'}
+              color={'white'}
+              _hover={{
+                bg: 'blue.500'
+              }}
+            >
+              Login
+            </Button>
+          </Stack>
+        </Stack>
+      </Box>
+    </Stack>
+  </Flex>
+</Box>
+
+      </Flex>
+    </ChakraProvider>
+  );
 }

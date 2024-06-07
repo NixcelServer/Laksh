@@ -21,17 +21,26 @@ import React from "react";
 //     </Box>
 // }
 const HomeGridItems = ({ product }) => (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" width="250px" height="120px" display="flex" alignItems="center" >
-      <Image src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt={product.prod_name} width="150px" height="120px" objectFit="cover" />
-      <Box p="1" flex="1" ml="2">
-      <Text fontWeight="bold" textTransform="uppercase" fontSize="xs" noOfLines={2} marginLeft={'-11%'}>
-      {product.prod_name}
-    </Text>
-        {/* <Text mt="2">{product.prod_description}</Text>
-        <Text mt="2">Price: {product.prod_price}</Text>
-        <Text mt="2">Min Order Qty: {product.prod_min_order_qty}</Text> */}
-      </Box>
-    </Box>
+ 
+  <Box borderWidth="1px" borderRadius="lg" overflow="hidden" width="150px" height="120px" position="relative">
+    <Image
+      src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`}
+      alt={product.prod_name}
+      width="100%"
+      height="100%"
+      objectFit="cover"
+    />
+    <Text fontWeight="bold" color="white" textTransform="uppercase" fontSize="xs" noOfLines={2}>text image
+        {product.prod_name}
+      </Text>
+  </Box>
+  
+
+  
+  
+
+  
   );
   
   export default HomeGridItems;
+

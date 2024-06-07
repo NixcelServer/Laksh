@@ -1,11 +1,47 @@
 import React, { useState } from 'react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
 
 const ProductDetailsPage = () => {
   const [showModal, setShowModal] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productDescription, setProductDescription] = useState('');
+  const [productQuantity, setProductQuantity] = useState('');
+  const [packingDetails, setPackingDetails] = useState('');
+  const [otherSpecifications, setOtherSpecifications] = useState('');
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [uoms, setUoms] = useState([]);
 
   const toggleModal = () => {
     setShowModal(!showModal);
   };
+
+  const onOpen = () => setShowModal(true);
+  const onClose = () => {
+    setShowModal(false);
+    setProductName('');
+    setSelectedCategory('');
+    setSelectedSubcategory('');
+    setSelectedUnit('');
+    setProductPrice('');
+    setProductDescription('');
+    setProductQuantity('');
+    setPackingDetails('');
+    setOtherSpecifications('');
+  }
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    // Update filteredSubCategories based on selected category
+  }
+
+  const checkSessionAndSubmit = () => {
+    // Add your form submission logic here
+  }
 
   return (
     <div
@@ -15,6 +51,7 @@ const ProductDetailsPage = () => {
         alignItems: 'center',
         height: '100vh', // Full viewport height to center vertically
         padding: '20px', // Padding to ensure space around the card
+        position: 'relative', // Make the parent container relative for absolute positioning of the button
       }}
     >
       <div
@@ -50,11 +87,10 @@ const ProductDetailsPage = () => {
                   marginBottom: '10px',
                 }}
               >
-                 Product Name
+                Product Name
               </h3>
               <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Description:</span> Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit.
+                <span style={{ fontWeight: 'bold' }}>Description:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               </p>
               <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
                 <span style={{ fontWeight: 'bold' }}>Category:</span> Sample Category
@@ -75,96 +111,115 @@ const ProductDetailsPage = () => {
           </div>
           <button
             className="btn btn-icon icon-left btn-info"
-            style={{ 
-              width: '100px',
-              height:'5px', 
-              position: 'absolute', 
-              bottom: '10px', 
-              right: '10px', 
-              backgroundColor: '#A569BD' 
-            }}            onClick={toggleModal}
+            style={{
+              position: 'absolute',
+              bottom: '10px',
+              right: '10px',
+              backgroundColor: '#A569BD',
+              display: 'flex',
+              alignItems: 'center',
+              padding: '2px 3px',
+              fontSize: '12px', // Reduce text size
+            }}    
+            onClick={onOpen}
           >
-            <i className="fas fa-info-circle"></i> Enquire Now
+            <i className="fas fa-info-circle" style={{ fontSize: '14px', marginRight: '5px' }}></i> {/* Keep icon size larger */}
+            Enquire Now
           </button>
         </div>
       </div>
- {showModal && (
-  <div
-    className="modal"
-    style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <div
-      className="modal-content"
-      style={{
-        width: '40%',
-        height: '80%',
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '8px',
-        position: 'relative', // Relative positioning for the submit button
-      }}
+
+      <Modal isOpen={showModal} onClose={onClose} isCentered size="lg">
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader
+      textAlign="center"
+      fontWeight="bold"
+      fontSize="xl"
+      color="black#9f98e9"
+      borderRadius="0 0 0 0"
+      backgroundColor="lightblue"
+      borderBottomWidth="1px"
+      pb="2"
     >
-      <div style={{ backgroundColor: '#C39BD3', padding: '10px', borderRadius: '8px 8px 0 0', position: 'relative' }}>
-        <h2 style={{ color: 'black', textAlign: 'center' }}>Product Information</h2>
-        <button
-          onClick={toggleModal}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            backgroundColor: 'transparent',
-            border: 'none',
-            fontSize: '20px',
-            cursor: 'pointer',
-          }}
-        >
-          &times;
-        </button>
-      </div>
-
-      <div style={{ marginTop: '40px' }}>
-        <div style={{ marginBottom: '10px', alignItems: 'left' }}>
-          <label htmlFor="productName" style={{ color: '#333', fontStyle: 'italic', marginRight: '10px', width: '150px' }}>Product Name :</label>
-          <input type="text" id="productName" name="productName" style={{ border: '1px solid #A569BD', borderRadius: '4px', padding: '8px', flex: '1' }} />
+      Product Details
+    </ModalHeader>
+    <ModalCloseButton _focus={{ border: "none" }} _hover={{ bg: "none" }} />
+    <ModalBody>
+        <div style={{ flex: '1 1 48%' }}>
+          <label style={{fontWeight:'bold'}}>Product Name</label>
         </div>
-
-        <div style={{ marginBottom: '10px', alignItems: 'left' }}>
-          <label htmlFor="description" style={{ color: '#333', fontStyle: 'italic', marginRight: '10px', width: '150px' }}>Description :</label>
-          <input type="text" id="description" name="description" style={{ border: '1px solid #A569BD', borderRadius: '4px', padding: '8px', flex: '1' }} />
+        <div style={{ flex: '1 1 48%' }}>
+          <label>Product Description:</label>
         </div>
+        
+        
+      <div className="form-group" style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+                    <div style={{ flex: 1 }}>
+                        <label>Product Quantity:</label>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <input
+                                type="number"
+                                className="form-control"
+                                style={{ height: "30px", width: "20% ",fontSize:"12px",padding:"2px" }} // Reduced height and width
+                                name="Prod_qty"
+                                value={productQuantity}
+                                onChange={(e) => setProductQuantity(e.target.value)}
+                            />
+                            <span style={{ marginLeft: "5px" }}>unit/-</span> 
+                            <select
+                                className="form-control"
+                                style={{ height: "30px", width: "20%",fontSize:"12px",padding:"2px" }} // Reduced height and width
+                                name="unit"
+                                value={selectedUnit}
+                                onChange={(e) => setSelectedUnit(e.target.value)}
+                            >
+                                <option value="">Select Unit</option>
+                                {uoms.map(unit => (
+                                    <option key={unit.encUomId} value={unit.encUomId}>{unit.unit_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
 
-        <div style={{ marginBottom: '10px', alignItems: 'left' }}>
-          <label htmlFor="quantity" style={{ color: '#333', fontStyle: 'italic', marginRight: '10px', width: '150px' }}>Quantity :</label>
-          <input type="text" id="quantity" name="quantity" style={{ border: '1px solid #A569BD', borderRadius: '4px', padding: '8px', flex: '1' }} />
+                <div style={{ flex: '1 1 48%', marginTop: '1px' }}>
+                <label>Requirement Details</label>
+          <textarea
+            className="form-control"
+            placeholder="Enter Requirement Details"
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+            style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
+
+          />
         </div>
+      
+    </ModalBody>
+    <ModalFooter mt={-8}>
+    <Button 
+  colorScheme="blue" 
+  mr={1} 
+  
+  onClick={checkSessionAndSubmit} 
+  style={{ 
+    height: '30px', 
+    minWidth: '60px', 
+    padding: '0 6px', 
+    fontSize: '14px',
+    marginTop:'17px',
+    marginBottom:'-8px'
+  }}
+>
+  Submit
+</Button>
 
-        <div style={{ marginBottom: '10px', alignItems: 'left' }}>
-          <label htmlFor="uom" style={{ color: '#333', marginRight: '10px', width: '130px' }}>Unit of Measure :</label>
-          <input type="text" id="uom" name="uom" style={{ border: '1px solid #A569BD', borderRadius: '4px', padding: '8px', flex: '1', marginLeft: '20px' }} />
-        </div>
-      </div>
 
-      <button
-        className="btn btn-primary"
-        onClick={toggleModal}
-        style={{ position: 'absolute', bottom: '10px', right: '10px', backgroundColor: '#A569BD' }}
-      >
-        Submit
-      </button>
-    </div>
-  </div>
-)}
-
+     
+    </ModalFooter>
+  </ModalContent>
+</Modal>
 
     </div>
   );

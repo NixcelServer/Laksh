@@ -34,16 +34,21 @@ const Allcategories = () => {
                 </div>
                 <div className="card-body">
                  
-                <div className="card-header d-flex justify-content-between align-items-center">
-                
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Category</Link>
-                </div>
+                <div className="card-header d-flex justify-content-between align-items-center" style={{ padding: '10px 5px', marginTop: '-5px', marginBottom: '-5px', marginLeft:'80px' }}>
+    <div style={{ display: 'flex', gap: '10px' }}>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+    </div>
+</div>
+
+
+
+
+
                   
                 </div>
               </div>

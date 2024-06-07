@@ -40,6 +40,15 @@ Route::get('/', function () {
 //admin login 
 Route::post('/login',[AuthController::class,'login']);
 
+//user registrtion
+Route::post('/register',[AuthController::class,'register']);
+
+//user login
+Route::post('/logsin',[AuthController::class,'uLogin']);
+
+Route::post('/send-otp',[AuthController::class,'sendOtp']);
+Route::post('/verify-otp',[AuthController::class,'verifyOtp']);
+
 //admin dashboard contents
 Route::get('/dashcontents',[AdminController::class,'adminDashboardContents']);
 
@@ -65,11 +74,7 @@ Route::get('/reject-advertisement/{id}',[AdminController::class,'rejectAdv']);
 Route::post('selected-lp-images',[AdminController::class,'selectedImg']);
 
 
-//user registrtion
-Route::post('/register',[AuthController::class,'register']);
 
-//user login
-Route::post('/logsin',[AuthController::class,'uLogin']);
 
 //check for existing mail id
 //Route::get('/check-existing-email', [AuthController::class,'checkExistingEmail']);
@@ -167,6 +172,8 @@ Route::get('/buyleads/{id}',[PostController::class,'getBuyleads']);
 Route::post('/update-order',[PostController::class,'updateOrder']);
 
 Route::delete('/delete-order/{id}',[PostController::class,'deleteOrder']);
+
+Route::post('/submit-requirement-email',[PostController::class,'submitRequirementEmail']);
 
 
 

@@ -96,6 +96,48 @@ class EmailHelper{
     return response()->json(['message' => 'Admin Email sent successfully'], 200);
 }
 
+public static function sendOtp($email,$otp)
+{
+  // Create a new PHPMailer instance
+  $mail = new PHPMailer(true); // Enable exceptions
+
+  // Set SMTP server settings
+  $mail->isSMTP();
+  $mail->Host = 'smtp.gmail.com'; // Change this to your SMTP host
+  $mail->Port = '587'; // Change this to your SMTP port
+  $mail->SMTPAuth = true;
+  $mail->Username = 'jagtapsaurabh74@gmail.com'; // Change this to your SMTP username
+  $mail->Password = 'isnvhwsotwkmdswm'; // Change this to your SMTP password
+
+  $mail->setFrom($mail->Username, 'Laksh');
+  $mail->addAddress($email);
+
+  $subject = "OTP Verification for Your Account on Laksh";
+  $message = "Hello,
+  
+  Thank you for signing up with Laksh. To complete your registration, please use the following One-Time Password (OTP):
+  
+  Your OTP: $otp
+  
+  This OTP is valid for 10 minutes. Please do not share this code with anyone.
+  
+  If you did not initiate this request, please ignore this email.
+  
+  Thank you,
+  The Laksh Team";
+  
+
+    $mail->Subject = $subject;
+    $mail->Body = $message;
+ 
+
+    $mail->isHTML(false); // Set email format to plain text
+    
+
+    $mail->send();
+
+}
+
    
 }    
 

@@ -160,42 +160,7 @@ export default function AllRoutes() {
         </Route>
         <Route path={"/"} element={<Home />} />
 
-
-        <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
-        <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate />} />
-
-        <Route path={"/login"} element={<Login />} />
-        <Route path={"/alogin"} element={<AdminLogin />} />
-
-        <Route path={"/sign"} element={<Sign />} />
-        <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
-
-
-        <Route
-            path="/signup"
-            element={
-              <>
-                <SignUp />
-              </>
-            }
-          />
-
-        <Route
-          path="/example"
-          element={
-            <>
-              <UserNavbar />
-              <Example />
-            </>
-          }
-        />
-
-
-
-
-
-
-
+        <Route element={<RequireAuth allowedRoles={["buyer"]} />}>
 
         <Route
           path="/userdashboard"
@@ -207,19 +172,7 @@ export default function AllRoutes() {
           }
         />
 
-        <Route
-          path="/usernavbar"
-          element={
-            <>
-
-              <UserNavbar />
-            </>
-          }
-        />
-
-
-
-        <Route
+<Route
           path="/products"
           element={
             <>
@@ -310,6 +263,61 @@ export default function AllRoutes() {
             </>
           }
         />
+        
+        </Route>
+        
+
+        <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
+        <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate />} />
+
+        <Route path={"/login"} element={<Login />} />
+        <Route path={"/alogin"} element={<AdminLogin />} />
+
+        <Route path={"/sign"} element={<Sign />} />
+        <Route path="*" element={<Heading h="55vh">Page not found</Heading>} />
+
+
+        <Route
+            path="/signup"
+            element={
+              <>
+                <SignUp />
+              </>
+            }
+          />
+
+        <Route
+          path="/example"
+          element={
+            <>
+              
+              <Example />
+            </>
+          }
+        />
+
+
+
+
+
+
+
+
+        
+
+        <Route
+          path="/usernavbar"
+          element={
+            <>
+
+              <UserNavbar />
+            </>
+          }
+        />
+
+
+
+        
 
 <Route
           path="/allcategories"

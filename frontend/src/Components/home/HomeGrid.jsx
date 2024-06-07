@@ -73,14 +73,17 @@ export default function HomeGrid({ title, single, info }) {
         </div>
       </Box>
       <Box m='auto'>
-        <Grid templateColumns={{ base: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' }} p='10px' gap={3}>
+        <Grid templateColumns={{ base: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' }} p='10px' gap={6}>
           {info.map((product, i) => (
             <HomeGridItems key={i} product={product} />
           ))}
         </Grid>
       </Box>
+      
     </Flex>
     <hr style={{ border: '1px solid teal', marginBottom: '-20px', marginTop: '20px' }} />
+    
   </Box>
+  
   )
 }

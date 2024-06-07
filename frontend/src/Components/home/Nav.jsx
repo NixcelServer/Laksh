@@ -94,7 +94,16 @@ export default function Navbar() {
 
   return (
     <>
-      <Box  bg="#4299E1" position="fixed" top={0} left={0} right={0} zIndex={999} >
+
+{/* style={{
+          background:
+            'linear-gradient(109.6deg, rgb(255, 230, 109) 11.2%, rgb(87, 232, 107) 100.2%)'
+        }}
+
+        Green- #7FE86C
+        Yellow- #4299E1 */}
+
+      <Box  bg="#2ECC71" position="fixed" top={0} left={0} right={0} zIndex={999} >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   Box,
@@ -6,262 +6,203 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
   Stack,
   Button,
   Heading,
   useToast,
   InputLeftElement,
-  ChakraProvider,
-  Image
+  Image,
+  ChakraProvider
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Signin } from '../redux/auth/auth.action';
 import axios from 'axios';
-export default function Sign() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [name,setname] = useState('')
-  const [countryCode, setCountryCode] = useState('+91');
-  
-  const [email,setEmail] = useState('')
-  const [password,setPass] = useState('')
-  const [mobile,setmob] = useState('')
-  const [emailExists, setEmailExists] = useState(false); // State to track if email exists
-  const [passwordError, setPasswordError] = useState('');
+import { useLocation, useNavigate } from 'react-router-dom';
 
-  const dispatch = useDispatch()
-  const {error,isSign} = useSelector((store)=>store.authReducer)
+export default function Sign() {
+const location = useLocation();
+  const verifiedEmail = location.state.email;
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [email, setEmail] = useState('');
+  const [password, setPass] = useState('');
+  const [mobile, setMob] = useState('');
+  const [emailExists, setEmailExists] = useState(false); // State to track if email exists
+
+  const dispatch = useDispatch();
+  const { error, isSign } = useSelector((store) => store.authReducer);
   const navigate = useNavigate();
-  const toast = useToast()
-  // console.log(error,isSign)
+  const toast = useToast();
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return regex.test(password);
   };
+  
+  useEffect(() => {
+    // Update the email state after the component mounts
+    setEmail(verifiedEmail);
+  }, [verifiedEmail]); 
 
   const checkExistingEmail = async (email) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/check-existing-email?email=${email}`
-      );
+      const response = await axios.get(`http://localhost:8000/api/check-existing-email?email=${email}`);
       setEmailExists(response.data.exists); // Update emailExists state based on API response
     } catch (error) {
       console.error('Error:', error);
-      
     }
   };
 
   const onEmailChange = (e) => {
     setEmail(e.target.value);
-    // setEmailExists(false); // Reset emailExists state when user changes the email
-    // checkExistingEmail(e.target.value); // Check if the entered email exists
   };
 
-  
-  const onsubmit = async(e)=>{
-    // const payload ={
-    //   name,
-    //   email,
-    //   password,
-    //   age: 0,
-    //   mobile,
-     
-      
-    // }
-    // console.log(payload);
-    // dispatch(Signin(payload))
-
+  const onSubmit = async (e) => {
     try {
       e.preventDefault();
 
-      // if (!validatePassword(password)) {
-      //   setPasswordError('Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.');
-      //   toast({
-      //     title: 'Invalid Password',
-      //     description: 'Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.',
-      //     status: 'error',
-      //     duration: 3000,
-      //     isClosable: true,
-      //   });
-      //   return;
-      // }
-        const payload ={
-      name,
-      email,
-      password,
-      age: 0,
-      mobile,
-     
-      
-    }
-    console.log(payload);
-    dispatch(Signin(payload))
-
-      
-      // toast({
-      //   title: 'Account Created Successfully',
-      //   status: 'success',
-      //   duration: 3000,
-      //   isClosable: true,
-      // });
-      // navigate('/'); // Redirect to home page after successful signup
+      const payload = {
+        name,
+        email,
+        password,
+        age: 0,
+        mobile,
+      };
+      console.log(payload);
+      dispatch(Signin(payload));
     } catch (error) {
-      // Handle error
       console.error('Error:', error.response.data);
       const errorMessage = error.response.data.message || 'An error occurred';
-      console.log("erroer",errorMessage);
+      console.log("error", errorMessage);
       toast({
-        title: errorMessage|| 'An error occurred',
+        title: errorMessage || 'An error occurred',
         status: 'error',
         duration: 3000,
         isClosable: true,
       });
     }
+  };
 
-
-  }
-
-  useEffect(()=>{
-    if(error){
+  useEffect(() => {
+    if (error) {
       toast({
-        title: error ,
+        title: error,
         status: 'error',
         duration: 3000,
         isClosable: true,
-      })
+      });
       dispatch({ type: 'SET_ERROR_FALSE', payload: false }); // Dispatch action to set isSign to false
-      
     }
-    if(isSign){
+    if (isSign) {
       toast({
-        title: 'Account Created Sucessfully',
+        title: 'Account Created Successfully',
         status: 'success',
         duration: 2000,
         isClosable: true,
-      })
-      
+      });
       dispatch({ type: 'SET_SIGN_FALSE', payload: false }); // Dispatch action to set isSign to false
-      navigate('/login')
+      navigate('/login');
     }
-
-  },[error,isSign])
+  }, [error, isSign]);
 
   return (
-    
-    <div>
-      <ChakraProvider>
-        <Flex
-          minH={'100vh'}
-          align={'center'}
-          justify={'center'}
-          // backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
-          backgroundColor={'white'}
-          backgroundSize="cover"
+    <ChakraProvider>
+      <Flex
+      position="fixed" // Fix the content position
+        minH="60vh"
+        justify="center"
+        backgroundColor={'white'}
+        backgroundSize="30%"
+        backgroundRepeat="no-repeat"
+        backgroundPosition="center"
+        margin="2rem" // Set margin
+        direction="column"
+        px={{ base: 4, sm: 6, md: 8 }} // Responsive padding on x-axis
       >
         <Box p={4}>
-        <Flex alignItems="center" 
-       
-        >
-       <Image src="/images/loginillustration.png" alt="Signup Illustration" style={{width:'50%'}}boxSize={{ base: '50%', sm: '30%' }}/>
-
-      <Stack spacing={3} mx={'auto'} maxW={'lg'} py={18}  >
-        <Stack align={'center'} mb={'-5'} mt={'4'}>
-          <Heading  p='10px' color={'#4197E0'} fontSize={'4xl'}>Sign Up</Heading>
-        </Stack>
-        <Box
-          rounded={'lg'}
-          bg={'whiteAlpha.700'}
-          boxShadow={'0px 8px 20px rgba(52, 152, 219, 0.8)'} 
-          p={4}
-          >
-          <Stack spacing={2}>
-            <HStack>
-              <Box>
-                <FormControl id="name" isRequired>
-                  <FormLabel>Name</FormLabel>
-                  <Input type="text" value={name} onChange={(e)=>{setname(e.target.value)}} />
-                </FormControl>
-              </Box>
-             
-            </HStack>
-           
-            <FormControl id="email" isRequired>
+          <Flex alignItems="center" mb={4}>
+            {/* Image in the main container */}
+            <Image src="/images/signupregistration.avif" alt="Signup Illustration" boxSize={{ base: '50%', sm: '30%' }} />
+            <Stack spacing={2} mx={'auto'} maxW={'lg'} py={4} px={6} flex={1}>
+              <Heading color={'#3498DB'} fontSize={{ base: 20, sm: 24, md: 32 }} textAlign={'center'}>
+                Sign up
+              </Heading>
+              <Box
+  rounded={'md'}
+  bg={'whiteAlpha.700'}
+  boxShadow={'0px 8px 16px rgba(52, 152, 219, 0.8)'} // Set box shadow color to #3498DB
+  p={3}
+  maxW={'md'}
+  w={'80%'}
+  mx={'auto'}
+  h={'100%'}
+  alignSelf="center" // Align the box to the right
+>
+                <Stack spacing={4}>
+                  <FormControl id="name" isRequired>
+                    <FormLabel fontSize={{ base: 14, md: 14 }} textAlign="left">Name</FormLabel>
+                    <Input type="text" value={name} onChange={(e) => setName(e.target.value)} fontSize={{ base: 14, md: 16 }} textAlign="left" />
+                  </FormControl>
+                 <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" value={email} onChange={onEmailChange} />
+              <Input type="email" value={email} onChange={onEmailChange} disabled />
                 {emailExists && (
                   <FormLabel color="red.500">Email already exists</FormLabel>
                 )}
             </FormControl>
-            <FormControl id="con_password" isRequired>
-              <FormLabel>Mob No </FormLabel>
-              <InputGroup>3
-              <InputLeftElement
-            pointerEvents="none"
-            children={countryCode}
-          />
-          <Input
-            type="number"
-            value={mobile}
-            onChange={(e)=>{setmob(e.target.value)}}
-          />
-              </InputGroup>
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e)=>{setPass(e.target.value)}}/>
-                <InputRightElement h={'full'}>
+                  <FormControl id="con_password" isRequired>
+                    <FormLabel fontSize={{ base: 14, md: 14 }} textAlign="left">Mob No</FormLabel>
+                    <InputGroup>
+                      <InputLeftElement pointerEvents="none" fontSize={{ base: 14, md: 15 }} children={countryCode} />
+                      <Input type="number" value={mobile} onChange={(e) => setMob(e.target.value)} fontSize={{ base: 14, md: 16 }} textAlign="left" />
+                    </InputGroup>
+                  </FormControl>
+                  <FormControl id="password" isRequired>
+                    <FormLabel fontSize={{ base: 14, md: 14 }} textAlign="left">Password</FormLabel>
+                    <InputGroup>
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPass(e.target.value)}
+                        fontSize={{ base: 14, md: 16 }}
+                        textAlign="left"
+                      />
+                      <InputRightElement h={'full'}>
+                        <Button
+                          variant={'ghost'}
+                          onClick={() => setShowPassword((showPassword) => !showPassword)}
+                        >
+                          {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
                   <Button
-                    variant={'ghost'}
-                    onClick={() =>
-                      setShowPassword((showPassword) => !showPassword)
-                    }>
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    onClick={onSubmit}
+                    loadingText="Submitting"
+                    size="sm"
+                    width={'100%'}
+                    alignSelf={'center'}
+                    bg={'#3498DB'}
+                    color={'white'}
+                    _hover={{ bg: 'blue.500' }}
+                    fontSize={{ base: 14, md: 16 }}
+                    mx="auto" // Center the button horizontally
+                    mt={4} // Add margin top for spacing
+                  >
+                    Sign up
                   </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-
-            <Stack spacing={10} pt={1}>
-              <Button
-                onClick={onsubmit}           
-                loadingText="Submitting"
-                size="lg"
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                  
-                }}
-                >
-                Sign up
-              </Button>
+                </Stack>
+              </Box>
             </Stack>
-           
-          </Stack>
+            {/* Second image */}
+            <Image src="/images/signupregistration2.avif" alt="Signup Illustration 2" boxSize={{ base: '50%', sm: '30%' }} />
+          </Flex>
         </Box>
-      </Stack>
-      
       </Flex>
-      </Box>
-    </Flex>
     </ChakraProvider>
-    </div>
-    
-  )
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
