@@ -278,9 +278,9 @@ const handleVerifyOTP = async(e) => {
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7} style={{ height: '250px', overflow: 'hidden', backgroundColor: 'yellow', marginBottom: '40px' }}>
-  <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" bg="gray.200">
-      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto", backgroundColor: 'pink' }}>
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7} style={{ height: '250px', overflow: 'hidden', marginBottom: '40px' }}>
+  <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" >
+      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto" }}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
               <div className="form-group">
                 <label
@@ -323,14 +323,14 @@ const handleVerifyOTP = async(e) => {
         </div>
       </Box>
 
-      <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px" bg="gray.200" style={{ overflow: "hidden" }}>
+      <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px"  style={{ overflow: "hidden" }}>
   <div
     className="card"
     style={{ padding: "0px", borderRadius: "12px", height: "212px", overflow: "hidden" }}
   >
     <Slider {...carouselSettings} style={{ 
       marginBottom: "0px", 
-      backgroundColor: "yellow", 
+      
       height: "auto" 
     }}>
       {advImages.map((image, index) => (
