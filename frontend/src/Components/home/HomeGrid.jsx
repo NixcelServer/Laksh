@@ -3,8 +3,10 @@ import React from 'react'
 
 import HomeGridItems from './HomeGridItems'
 
-export default function HomeGrid({ title, single, info }) {
+export default function HomeGrid({ title, single, info,onTitleClick }) {
   const firstProductImage = info.length > 0 ? info[0] : '';
+
+ 
   return (
     // <Box m='10px' p='30px' boxShadow='md' rounded='md'   >
     //     <Heading p='10px' size={{base:"md",md:"lg"}} textAlign='left'  >{data1.title}</Heading>
@@ -46,10 +48,11 @@ export default function HomeGrid({ title, single, info }) {
     <Box m='10px' p='30px' boxShadow='md' rounded='md'  width="100%" height="500px" overflow="hidden">
             <hr style={{ border: '1px solid teal', marginTop: '-4px' }} />
 
-    <Heading p='10px' m="-2" size={{ base: "md", md: "lg" }} textAlign='left'>{title}</Heading>
+    <Heading p='10px' m="-2" size={{ base: "md", md: "lg" }} textAlign='left' onClick={onTitleClick}>{title}</Heading>
     {/* Rest of the content */}
     <Flex alignItems={'center'} >
-      <Box display={{ base: "none", md: 'flex' }}>
+      <Box display={{ base: "none", md: 'flex' }}
+      >
         <div
           style={{
             display: 'flex',
@@ -65,8 +68,9 @@ export default function HomeGrid({ title, single, info }) {
             backgroundPosition: 'center',
             backgroundSize: 'cover',
           }}
+          onClick={onTitleClick}
         >
-          <Text fontWeight={'bold'}>{single.title}</Text>
+          <Text fontWeight={'bold'} >{single.title}</Text>
           <Text fontWeight={'semibold'}>{single.sub1}</Text>
           <Text fontWeight={'semibold'}>{single.sub2}</Text>
           <Text fontWeight={'semibold'}>{single.sub3}</Text>

@@ -108,7 +108,7 @@ export default function Navbar() {
           <HStack  alignItems={'center'} display={flag?{ base: 'none', md: 'flex' }:"flex"}    >
             <Box>
 
-                <Image src='images/lakshlogo1.png' w='40px' objectFit={'cover'} onClick={()=>{navigate('/')}} style={{borderRadius:'20%',marginLeft:'10px'}} />
+                <Image src='/images/lakshlogo1.png' w='40px' objectFit={'cover'} onClick={()=>{navigate('/')}} style={{borderRadius:'20%',marginLeft:'10px'}} />
              
             </Box>
             

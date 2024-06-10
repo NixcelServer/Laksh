@@ -278,9 +278,9 @@ const handleVerifyOTP = async(e) => {
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
-    <Box className="main-content" p={{ base: "10px", md: "20px" }} height = 'auto' mb="0px"  >
-      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "213px", }}>
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7} style={{ height: '250px', overflow: 'hidden', backgroundColor: 'yellow', marginBottom: '40px' }}>
+  <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" bg="gray.200">
+      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto", backgroundColor: 'pink' }}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
               <div className="form-group">
                 <label
@@ -323,32 +323,47 @@ const handleVerifyOTP = async(e) => {
         </div>
       </Box>
 
-      <Box
-        className="main-content"
-        p={{ base: "10px", md: "20px" }}
-        mb="0px"
-        style={{ overflow: "hidden" }}
-      >
-        <div
-          className="card"
-          style={{ padding: "0px", borderRadius: "12px", height: "212px" }}
+      <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px" bg="gray.200" style={{ overflow: "hidden" }}>
+  <div
+    className="card"
+    style={{ padding: "0px", borderRadius: "12px", height: "212px", overflow: "hidden" }}
+  >
+    <Slider {...carouselSettings} style={{ 
+      marginBottom: "0px", 
+      backgroundColor: "yellow", 
+      height: "auto" 
+    }}>
+      {advImages.map((image, index) => (
+        <div 
+          key={index} 
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: 'auto',
+            overflow: 'hidden' // Ensures that the image does not overflow the container
+          }}
         >
-          <div className="card-body" style={{ marginBottom: "0px" }}>
-            <Slider {...carouselSettings}>
-            {advImages.map((image, index) => (
-                <div key={index}>
-                  <img
-                    src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`} // Assuming the API returns image URLs in a 'url' field
-                    alt={`carousel-image-${index}`}
-                    style={{ margin: '0 auto' }}
-                  />
-                </div>
-              ))}
-             
-            </Slider>
-          </div>
+          <img
+            src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`}
+            alt={`carousel-image-${index}`}
+            style={{ 
+              width: '100%', // Ensures the image takes up the entire width of its container
+              height: 'auto', // Ensures the image takes up the entire height of its container
+              objectFit: 'cover', // Ensures that the entire image is visible without cropping, sacrificing aspect ratio if necessary
+              objectPosition: 'center' // Centers the image within its container
+            }}
+          />
         </div>
-      </Box>
+      ))}
+    </Slider>
+  </div>
+</Box>
+
+
+
+
+
 
 
     

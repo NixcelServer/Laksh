@@ -213,31 +213,40 @@ const userString = sessionStorage.getItem('user');
             encCompanyId: encCompanyId
         }));
     }, [encCompanyId]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    
+    const handleSubmit = async (e) => {
+      e.preventDefault();
   
-    console.log(encCompanyId);
-    
+      console.log(encCompanyId);
+      
       // Update productDetails state with the obtained encCompanyId
-    setProductDetails(prevProductDetails => ({
-    ...prevProductDetails,
-    encCompanyId: encCompanyId
-    }));
+      setProductDetails(prevProductDetails => ({
+          ...prevProductDetails,
+          encCompanyId: encCompanyId
+      }));
+  
       // Logic to save changes and continue
       console.log(productDetails);
-      //debugger;
-      const res = axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
-          headers: {
-              'Content-Type': 'multipart/form-data'
-          }
-    
-      });
-      dispatch(getProducts(encCompanyId));
-      //navigate('/');
-      setShowForm(false); // Hide the form after saving
+  
+      try {
+          // Make the POST request using Axios
+          const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          });
+  
+          // Dispatch the getProducts action after the POST request succeeds
+          dispatch(getProducts(encCompanyId));
+  
+          // Hide the form after saving
+          setShowForm(false); 
+      } catch (error) {
+          console.error('Error occurred while saving product:', error);
+          // Handle error (e.g., display error message to the user)
+      }
   };
+  
 
   const handleClosePopup = () => {
     setShowPopup(false);
