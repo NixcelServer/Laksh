@@ -200,7 +200,7 @@ const handleVerifyOTP = () => {
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="black" marginBottom={'40px'}>
     <Box className="main-content" p={{ base: "10px", md: "20px" }} height = 'auto' mb="0px"  >
       <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "213px", }}>
           <div className="card-body" style={{ marginBottom: "0px" }}>

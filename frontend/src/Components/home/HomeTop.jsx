@@ -66,7 +66,7 @@ export default function HomeTop() {
 
   return (
      <Box>
-      <Box className="card-body" mt="60px">
+      <Box className="card-body" mt="60px" bg="black">
         <Carousel
           autoPlay
           infiniteLoop

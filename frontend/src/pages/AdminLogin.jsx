@@ -62,10 +62,10 @@ export default function AdminLogin() {
         justify={'center'}
         backgroundColor={'white'}
         backgroundSize="cover"
-        style={{
-          background:
-            'linear-gradient(109.6deg, rgb(255, 230, 109) 11.2%, rgb(87, 232, 107) 100.2%)'
-        }}
+        // style={{
+        //   background:
+        //     'linear-gradient(109.6deg, rgb(255, 230, 109) 11.2%, rgb(87, 232, 107) 100.2%)'
+        // }}
       >
         <Box p={4}>
   <Flex alignItems="center">
@@ -82,11 +82,13 @@ export default function AdminLogin() {
     </Box>
     <Stack spacing={0} mx={'auto'} maxW={'lg'} py={18} px={6}>
       <Stack align={'center'} mt={4} mb={-4}>
-        <Heading p="10px" color={'Black'} fontSize={'4xl'}>
+        <Heading p="10px" color={'#2ECC71'} fontSize={'4xl'}>
           Login
         </Heading>
       </Stack>
-      <Box rounded={'lg'} boxShadow={'lg'} p={8}>
+      <Box rounded={'lg'}  
+       boxShadow={'xl'} p={8}>
+       {/* boxShadow={'0px 2px 4px gray'} p={8}> */}
         <Stack spacing={4}>
           <FormControl id="email">
             <FormLabel>Email address</FormLabel>
@@ -94,6 +96,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              borderColor="green.200"
             />
           </FormControl>
           <FormControl id="password">
@@ -102,18 +105,19 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(e) => setPass(e.target.value)}
+              borderColor="green.200"
             />
           </FormControl>
           <Stack spacing={10}>
             <Stack direction={{ base: 'column', sm: 'row' }} align={'start'}>
               <Text>Create New Account</Text>
-              <Navlink to={'/sign'} color={'blue.400'}>
+              <Navlink to={'/sign'} color={'#2ECC71'}>
                 SignUp
               </Navlink>
             </Stack>
             <Button
               onClick={onsubmit}
-              bg={'blue.400'}
+              bg={'#2ECC71'}
               color={'white'}
               _hover={{
                 bg: 'blue.500'
