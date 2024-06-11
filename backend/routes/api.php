@@ -151,12 +151,14 @@ Route::post('/product/update-product',[ProductController::class,'updateProduct']
 //get products 
 Route::get('/getproducts/{id}',[ProductController::class,'getProducts']);
 
-
+//category wise product landing page
+Route::get('/categories-with-products',[ProductController::class,'catWithProds']);
 Route::get('/limited-products/{id}', [ProductController::class, 'limitedProducts']);
 
 // check product name
 Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);
 
+Route::get('/checkmethod/{id}',[ProductController::class,'posts']);
 
 // check product name
 Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);

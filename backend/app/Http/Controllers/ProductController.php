@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Date;
 use App\Models\ProductImages;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Models\Post;
+use App\Models\Company;
+
 
 
 class ProductController extends Controller
@@ -85,7 +88,6 @@ class ProductController extends Controller
         return response()->json($prod);
     }
 
-
     public function getProducts($id)
     {
         $products = Product::where('tbl_company_id',EncDecHelper::encDecId($id,'decrypt'))->where('flag','show')->with('images')->get();
@@ -111,16 +113,84 @@ class ProductController extends Controller
         // }
     }
 
+    public function catWithProds()
+    {
+        try {
+            $categories = Category::where('flag', 'show')
+                                  ->inRandomOrder()
+                                  ->take(6)
+                                  ->get();
+    
+            // Fetch limited products for each category
+            $categories->each(function ($category) {
+                $category->encCatId = EncDecHelper::encDecId($category->tbl_cat_id, 'encrypt');
+                $products = $this->limitedProds($category->tbl_cat_id); // Fetch products directly with decrypted ID
+                $category->products = $products;
+                $posts = $this->posts($category->tbl_cat_id);
+                $category->posts = $posts;
+                unset($category->tbl_cat_id, $category->add_by);
+            });
+    
+            return response()->json($categories, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching categories: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function posts($id)
+    {
+        $posts = Post::where('tbl_cat_id', $id)
+                 ->where('flag', 'show')
+                 ->inRandomOrder()
+                 ->take(4)
+                 ->get();
+
+        foreach($posts as $post)
+        {
+            $post->encPostId = EncDecHelper::encDecId($post->tbl_post_id,'encrypt');
+            $post->encCatId = EncDecHelper::encDecId($post->tbl_cat_id,'encrypt');
+            $post->encSubCatId = EncDecHelper::encDecId($post->tbl_sub_cat_id,'encrypt');
+            $post->companyDetails = Company::where('tbl_company_id',$post->tbl_company_id)->first();
+
+            unset($post->tbl_post_id,$post->tbl_cat_id,$post->tbl_sub_cat_id,$post->tbl_company_id,$post->companyDetails->tbl_company_id,$post->companyDetails->tbl_user_id);
+        }
+        return $posts;
+    }
+    
+    public function limitedProds($id)
+        {
+            //  $decCatId = EncDecHelper::encDecId($id,'decrypt');
+            $products = Product::where('tbl_cat_id', $id)
+                ->where('flag', 'show')
+                ->whereNotNull('prod_img_path') // Ensures products have a non-null prod_img_path
+                ->inRandomOrder()
+                ->take(9)
+                ->get();
+
+            foreach($products as $product)
+            {
+                $product->encProdId = EncDecHelper::encDecId($product->tbl_prod_id,'encrypt');
+                $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
+                $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id,'encrypt');
+                unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id);
+            }
+            return $products;
+            // return response()->json("hi");
+        }
+    
     public function limitedProducts($id)
     {
         
          $decCatId = EncDecHelper::encDecId($id,'decrypt');
          $products = Product::where('tbl_cat_id', $decCatId)
-    ->where('flag', 'show')
-    ->whereNotNull('prod_img_path') // Ensures products have a non-null prod_img_path
-    ->inRandomOrder()
-    ->take(9)
-    ->get();
+            ->where('flag', 'show')
+            ->whereNotNull('prod_img_path') // Ensures products have a non-null prod_img_path
+            ->inRandomOrder()
+            ->take(9)
+            ->get();
 
          foreach($products as $product)
          {
@@ -128,7 +198,6 @@ class ProductController extends Controller
             $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
             $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id,'encrypt');
             unset($product->tbl_prod_id,$product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id);
-
          }
         return response()->json($products);
         // return response()->json("hi");
@@ -186,24 +255,24 @@ class ProductController extends Controller
         $files = $request->file('files');
 
         if ($files && is_array($files)) {
-    foreach ($files as $file) {
-        // Get the original filename
-        $fileName = $file->getClientOriginalName();
+        foreach ($files as $file) 
+        {
+            // Get the original filename
+            $fileName = $file->getClientOriginalName();
 
-        // Store the file in the specified directory with the original file name
-        $filePath = $file->storeAs($directory, $fileName);
+            // Store the file in the specified directory with the original file name
+            $filePath = $file->storeAs($directory, $fileName);
 
-        // Create a new record in tbl_prod_img table for each file
-        $prodimg = new ProductImages();
-        $prodimg->tbl_prod_id = $prod->tbl_prod_id;
-        $prodimg->tbl_company_id = $decCompanyId;
-        $prodimg->prod_img_path = $filePath;
-        $prodimg->add_date = Date::now()->toDateString();
-        $prodimg->add_time = Date::now()->toTimeString();
-        $prodimg->save();
+            // Create a new record in tbl_prod_img table for each file
+            $prodimg = new ProductImages();
+            $prodimg->tbl_prod_id = $prod->tbl_prod_id;
+            $prodimg->tbl_company_id = $decCompanyId;
+            $prodimg->prod_img_path = $filePath;
+            $prodimg->add_date = Date::now()->toDateString();
+            $prodimg->add_time = Date::now()->toTimeString();
+            $prodimg->save();
+        }
     }
-}
-
 
         // Delete existing keywords associated with the product
         $prod->keywords()->detach();
@@ -226,7 +295,6 @@ class ProductController extends Controller
 
     public function checkProductName(Request $request,$id)
     {
-       
         $decCompanyId = EncDecHelper::encDecId($id,'decrypt');
         
         $ProductNameExists = Product::where('prod_name',$request->prod_name) ->where('tbl_company_id', $decCompanyId)->where('flag','show')->exists();
@@ -278,8 +346,6 @@ class ProductController extends Controller
             return $product;
             });
 
-            
-            
             // Add subcategory and its products to the response
             $response['subCategories'][] = [
                  'subcategory' =>$subcategory ,
@@ -292,5 +358,4 @@ class ProductController extends Controller
 
         return response()->json($response);
     }
-
 }

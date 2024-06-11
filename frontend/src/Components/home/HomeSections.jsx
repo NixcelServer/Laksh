@@ -9,7 +9,11 @@ import { getSubCategoryWiseProducts } from '../../redux/Product/product.action';
 //import{getUserSubCategoriesAPI } from '../../redux/User/user.api'
 
 export default function HomeSections() {
-  const selectedCategories = useSelector((state) => state.masterData.selectedCategories);
+  const selectedCategories = useSelector((state) => state.productReducer.selectedProducts);
+  console.log("console",selectedCategories)
+  // Ensure selectedCategories.data is an array
+  const categories = selectedCategories && Array.isArray(selectedCategories.data) ? selectedCategories.data : [];
+  console.log("print cats",categories);
   const products = useSelector((state) => state.productReducer.selectedProducts);
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const subCategories = useSelector(state => state.masterData.subCategories);
@@ -40,7 +44,7 @@ export default function HomeSections() {
 
   return (
     <VStack p='10px' spacing={4}>
-      {selectedCategories.map((category) => (
+       {categories.map((category) => (
         <Box 
           key={category.encCatId} 
           width="100%" 
@@ -58,8 +62,9 @@ export default function HomeSections() {
               sub2: "Detail 2", // Example static detail
               sub3: "Detail 3"  // Example static detail
             }}
-            info={products[category.encCatId] || []} // Pass products belonging to the category
+            info={category.products}
             onTitleClick={() => handleCategoryClick(category.encCatId)}
+            posts={category.posts}
           />
            
         </Box>

@@ -15,17 +15,17 @@ import axios from 'axios'
 export default function Home() {
 
   const dispatch = useDispatch();
-  
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
+        const catWiseProducts = await axios.get('http://localhost:8000/api/categories-with-products');
+        dispatch(setSelectedProducts(catWiseProducts));
+
         const categoriesResponse = await axios.get('http://localhost:8000/api/categories');
         const allCategories = categoriesResponse.data;
-  const selectedCategories = allCategories.slice(0, 6);
-  dispatch(setCategories(selectedCategories));
+        const selectedCategories = allCategories.slice(0, 6);
+        dispatch(setCategories(selectedCategories));
 
 
   const productPromises = selectedCategories.map(category =>
@@ -35,13 +35,13 @@ export default function Home() {
 const productsResponses = await Promise.all(productPromises);
 
 // Map responses to categories
-const productsByCategory = productsResponses.reduce((acc, response, index) => {
-  const categoryId = selectedCategories[index].encCatId;
-  acc[categoryId] = response.data;
-  return acc;
-}, {});
+// const productsByCategory = productsResponses.reduce((acc, response, index) => {
+//   const categoryId = selectedCategories[index].encCatId;
+//   acc[categoryId] = response.data;
+//   return acc;
+// }, {});
 
-dispatch(setSelectedProducts(productsByCategory));
+// dispatch(setSelectedProducts(productsByCategory));
         // dispatch(getProducts());
       } catch (error) {
         console.error('Error fetching data:', error);
