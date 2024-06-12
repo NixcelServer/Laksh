@@ -200,77 +200,94 @@ const handleVerifyOTP = () => {
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="black" marginBottom={'40px'}>
-    <Box className="main-content" p={{ base: "10px", md: "20px" }} height = 'auto' mb="0px"  >
-      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "213px", }}>
-          <div className="card-body" style={{ marginBottom: "0px" }}>
-              <div className="form-group">
-                <label
-                  style={{
-                    fontSize: "1rem",
-                    fontStyle: "oblique",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Requirements
-                </label>
-                <input
-                  type="text"
-                  className="form-control text-center"
-                  placeholder="Enter Your Requirements"
-                  style={{
-                    textAlign: "center",
-                    height: "30px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                  }}
-                  value={requirements}
-            onChange={handleRequirementsChange}
-                />
-              </div>
-          </div>
-          <label style={{ fontSize: "0.9rem", marginBottom: "5px" }}>
-            We are here to help!! Discover your needs.
-          </label>
-          <div className="d-grid gap-2">
-            <button
-              className="btn btn-primary"
-              type="submit"
-              style={{ padding: "8px", fontSize: "0.9rem" , backgroundColor:"#9B59B6"}}
-              onClick={onOpen}
+    <Grid  style={{ height: '250px', overflow: 'hidden', backgroundColor: 'black', marginBottom: '40px' ,}}>
+  <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" bg="black">
+  <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div style={{ flex: "1", marginRight: "10px" }}>
+      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto", backgroundColor: 'rgba(0, 0, 0, 0.1)', boxShadow: '0px 8px 30px rgba(0, 198, 168, 0.8)'}}>
+        <div className="card-body" style={{ marginBottom: "0px" }}>
+          <div className="form-group">
+            <label
+              style={{
+                fontSize: "1rem",
+                fontStyle: "oblique",
+                marginBottom: "5px",
+                color:"white",
+              }}
             >
-              Submit Requirement
-            </button>
+              Requirements
+            </label>
+            <input
+              type="text"
+              className="form-control text-center"
+              placeholder="Enter Your Requirements"
+              style={{
+                textAlign: "center",
+                height: "30px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+              value={requirements}
+              onChange={handleRequirementsChange}
+            />
           </div>
         </div>
-      </Box>
-
-      <Box
-        className="main-content"
-        p={{ base: "10px", md: "20px" }}
-        mb="0px"
-        style={{ overflow: "hidden" }}
-      >
-        <div
-          className="card"
-          style={{ padding: "0px", borderRadius: "12px", height: "212px" }}
-        >
-          <div className="card-body" style={{ marginBottom: "0px" }}>
-            <Slider {...carouselSettings}>
+        <label style={{ fontSize: "0.9rem", marginBottom: "5px" ,color:"white"}}>
+          We are here to help!! Discover your needs.
+        </label>
+        <div className="d-grid gap-2">
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{ padding: "8px", fontSize: "0.9rem" , backgroundColor:"#0A9884"}}
+            onClick={onOpen}
+          >
+            Submit Requirement
+          </button>
+        </div>
+      </div>
+    </div>
+    <div style={{ flex: "1", marginLeft: "10px" }}>
+      {/* Second div content goes here */}
+      <div className="card" style={{ padding: "10px", borderRadius: "12px", height: "auto", backgroundColor: 'black' ,boxShadow: '0px 8px 30px rgba(0, 198, 168, 0.8)'}}>
+    <div className="card-body" style={{ marginBottom: "0px", display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <Slider {...carouselSettings} style={{ width: '100%', maxWidth: '400px' }}>
             {advImages.map((image, index) => (
                 <div key={index}>
-                  <img
-                    src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`} // Assuming the API returns image URLs in a 'url' field
-                    alt={`carousel-image-${index}`}
-                    style={{ margin: '0 auto' }}
-                  />
+                    <img  
+                        src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`}
+                        alt={`carousel-image-${index}`}
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            objectFit: 'cover',
+                            borderRadius: '12px',
+                        }}
+                    />
                 </div>
-              ))}
-             
-            </Slider>
-          </div>
-        </div>
-      </Box>
+            ))}
+        </Slider>
+    </div>
+</div>
+
+
+
+    </div>
+  </div>
+</Box>
+
+
+   
+
+   
+
+
+
+
+
+
+
+
 
     
 

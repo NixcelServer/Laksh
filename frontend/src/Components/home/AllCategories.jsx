@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 
 
 const Allcategories = () => {
-
+    const categories = useSelector(state => state.masterData.categories);
 
 
 
@@ -36,12 +37,11 @@ const Allcategories = () => {
                  
                 <div className="card-header d-flex justify-content-between align-items-center" style={{ padding: '10px 5px', marginTop: '-5px', marginBottom: '-5px', marginLeft:'80px' }}>
     <div style={{ display: 'flex', gap: '10px' }}>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
-        <button className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Category</button>
+    {categories && categories.map((category, index) => (
+                        <Link key={index} to={`/categoriess/${category.encCatId}`} className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>
+                          {category.cat_name}
+                        </Link>
+                      ))}
     </div>
 </div>
 

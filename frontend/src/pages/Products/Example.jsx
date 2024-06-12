@@ -1,92 +1,240 @@
 import React, { useState } from 'react';
-import { Box, Text, Flex, Icon, Grid, GridItem, HStack, Link, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, useDisclosure } from '@chakra-ui/react';
-import { MdVerified } from 'react-icons/md';
-import { FiFlag } from 'react-icons/fi';
 
-const ProductBox = ({ countryFlag, title, buyerCountry, details, date, flagLink }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} m={2}>
-      <Flex justify="space-between" align="center" mb={2}>
-        <HStack>
-          <Link href={flagLink} isExternal>
-            <Icon as={FiFlag} />
-          </Link>
-          <Text fontWeight="bold" mr={2}>{title}</Text>
-          <Icon as={MdVerified} color="green.500" onClick={onOpen} cursor="pointer" />
-        </HStack>
-        <Text fontSize="xs" color="gray.400">{date}</Text>
-      </Flex>
-      <Text fontSize="sm" color="gray.500" mb={2}>{buyerCountry}</Text>
-      <Text fontSize="sm">{details}</Text>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay backdropFilter="blur(10px)" />
-        <ModalContent>
-          <ModalHeader>Verified Information</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            This product is verified by our quality team. You can trust the authenticity and quality of this product.
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
-  );
-};  
 
 const Example = () => {
-  const products = [
-    {
-      countryFlag: '🇹🇹',
-      title: 'WANTED: Fruit Juices Like Apple Juice, Orange',
-      buyerCountry: 'Buyer From Trinidad and Tobago',
-      details: 'The buyer would like to receive quotations for - Product Name: Fruit Juices Specifications: Like Apple Juice, Orange, Etc Catalog Required Origin: India Or China',
-      date: 'Jun-04-24',
-      flagLink: 'https://example.com/flag1'
-    },
-    {
-      countryFlag: '🇮🇩',
-      title: 'WANTED: Frozen Fish Like Sardine Fish',
-      buyerCountry: 'Buyer From Indonesia',
-      details: 'Please provide a quotation to the following requirement from importer - Product Name: Frozen Fish Specifications: Type: Sardine Fish Style: Frozen Quantity Required: 1',
-      date: 'Jun-04-24',
-      flagLink: 'https://example.com/flag2'
-    },
-    {
-      countryFlag: '🇷🇴',
-      title: 'WANTED: Yellow Corn',
-      buyerCountry: 'Buyer From Romania',
-      details: 'Please provide a quotation to the following requirement from importer - Product Name: Yellow Corn Specifications: Maturity: 100% Length (cm): 2 Grade 1 Quantity Required: 1',
-      date: 'Jun-04-24',
-      flagLink: 'https://example.com/flag3'
-    },
-    {
-      countryFlag: '🇬🇧',
-      title: 'WANTED: Frozen Seafood Like Groupers Fish, Tuna, Squid',
-      buyerCountry: 'Buyer From United Kingdom',
-      details: 'Please provide a quotation to the following requirement from importer - Product Name: Frozen Seafood Specification: Type 1. Baracudda 2. Kingfish (3-5 ,5-10) 3. Emperor All',
-      date: 'Jun-04-24',
-      flagLink: 'https://example.com/flag4'
+  const [showPassword, setShowPassword] = useState(false);
+  const [name,setname] = useState('')
+  const [countryCode, setCountryCode] = useState('+91');
+  
+  const [email,setEmail] = useState('')
+  const [password,setPass] = useState('')
+  const [mobile,setmob] = useState('')
+  const [emailExists, setEmailExists] = useState(false); // State to track if email exists
+  const [passwordError, setPasswordError] = useState('');
+
+  const dispatch = useDispatch()
+  const {error,isSign} = useSelector((store)=>store.authReducer)
+  const navigate = useNavigate();
+  const toast = useToast()
+  // console.log(error,isSign)
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  };
+
+  const checkExistingEmail = async (email) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/check-existing-email?email=${email}`
+      );
+      setEmailExists(response.data.exists); // Update emailExists state based on API response
+    } catch (error) {
+      console.error('Error:', error);
+      
     }
-  ];
+  };
+
+  const onEmailChange = (e) => {
+    setEmail(e.target.value);
+    // setEmailExists(false); // Reset emailExists state when user changes the email
+    // checkExistingEmail(e.target.value); // Check if the entered email exists
+  };
+
+  
+  const onsubmit = async(e)=>{
+    // const payload ={
+    //   name,
+    //   email,
+    //   password,
+    //   age: 0,
+    //   mobile,
+     
+      
+    // }
+    // console.log(payload);
+    // dispatch(Signin(payload))
+
+    try {
+      e.preventDefault();
+
+      // if (!validatePassword(password)) {
+      //   setPasswordError('Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.');
+      //   toast({
+      //     title: 'Invalid Password',
+      //     description: 'Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.',
+      //     status: 'error',
+      //     duration: 3000,
+      //     isClosable: true,
+      //   });
+      //   return;
+      // }
+        const payload ={
+      name,
+      email,
+      password,
+      age: 0,
+      mobile,
+     
+      
+    }
+    console.log(payload);
+    dispatch(Signin(payload))
+
+      
+      // toast({
+      //   title: 'Account Created Successfully',
+      //   status: 'success',
+      //   duration: 3000,
+      //   isClosable: true,
+      // });
+      // navigate('/'); // Redirect to home page after successful signup
+    } catch (error) {
+      // Handle error
+      console.error('Error:', error.response.data);
+      const errorMessage = error.response.data.message || 'An error occurred';
+      console.log("erroer",errorMessage);
+      toast({
+        title: errorMessage|| 'An error occurred',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+
+  }
+
+  useEffect(()=>{
+    if(error){
+      toast({
+        title: error ,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      dispatch({ type: 'SET_ERROR_FALSE', payload: false }); // Dispatch action to set isSign to false
+      
+    }
+    if(isSign){
+      toast({
+        title: 'Account Created Sucessfully',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
+      
+      dispatch({ type: 'SET_SIGN_FALSE', payload: false }); // Dispatch action to set isSign to false
+      navigate('/login')
+    }
+
+  },[error,isSign])
 
   return (
-    <Box>
-    <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
-      {products.map((product, index) => (
-        <GridItem key={index} colSpan={1}>
-          <ProductBox {...product} />
-        </GridItem>
-      ))}
-    </Grid>
-    </Box>
-  );
-};
+    
+      <ChakraProvider>
+   
+       <Flex
+      minH={'100vh'}
+      // align={'center'}
+      justify={'center'}
+      // backgroundImage="url('https://c4.wallpaperflare.com/wallpaper/311/864/40/minimalism-blue-green-gradient-wallpaper-preview.jpg')"
+      backgroundSize="cover"
+      backgroundColor={'white'}
+      
+      >
+        <Box p={4}>
+        <Flex alignItems="center" 
+       
+        >
+                 <Image src="/images/loginillustration.png" alt="Signup Illustration" style={{width:'50%'}}boxSize={{ base: '50%', sm: '30%' }}/>
+
+      <Stack spacing={3}  mx={'auto'}  py={12} >
+        <Stack align={'center'}>
+          <Heading  pb='10px'  color={'#4197E0'} mb={'-3'} fontSize={'4xl'} textAlign={'center'}>
+            Sign up
+          </Heading>
+    
+        </Stack>
+        <Box
+          rounded={'lg'}
+          bg={'whiteAlpha.700'}
+          boxShadow={'0px 8px 20px rgba(52, 152, 219, 0.8)'} 
+          p={4}
+          >
+          <Stack spacing={2}>
+            <HStack>
+              <Box>
+                <FormControl id="name" isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input type="text" value={name} onChange={(e)=>{setname(e.target.value)}} />
+                </FormControl>
+              </Box>
+             
+            </HStack>
+           
+            <FormControl id="email" isRequired>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" value={email} onChange={onEmailChange} />
+                {emailExists && (
+                  <FormLabel color="red.500">Email already exists</FormLabel>
+                )}
+            </FormControl>
+            <FormControl id="con_password" isRequired>
+              <FormLabel>Mob No </FormLabel>
+              <InputGroup>3
+              <InputLeftElement
+            pointerEvents="none"
+            children={countryCode}
+          />
+          <Input
+            type="number"
+            value={mobile}
+            onChange={(e)=>{setmob(e.target.value)}}
+          />
+              </InputGroup>
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e)=>{setPass(e.target.value)}}/>
+                <InputRightElement h={'full'}>
+                  <Button
+                    variant={'ghost'}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }>
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
+            <Stack spacing={10} pt={2}>
+              <Button
+                onClick={onsubmit}           
+                loadingText="Submitting"
+                size="lg"
+                bg={'blue.400'}
+                color={'white'}
+                _hover={{
+                  bg: 'blue.500',
+                  
+                }}
+                >
+                Sign up
+              </Button>
+            </Stack>
+           
+          </Stack>
+        </Box>
+      </Stack>
+      </Flex>
+      </Box>
+    </Flex>
+    </ChakraProvider>
+    
+  )
+}
 
 export default Example;

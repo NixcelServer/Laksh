@@ -161,6 +161,9 @@ Route::post('/check-product-name/{id}',[ProductController::class,'checkProductNa
 // check product name
 Route::post('/check-product-name/{id}',[ProductController::class,'checkProductName']);
 
+//get product by cat id
+Route::get('/product-by-category/{id}',[ProductController::class,'productByCategory']);
+
 
 //submit requirements routes
 Route::post('/submit-requirement',[PostController::class,'submitRequirement']);
@@ -191,6 +194,8 @@ Route::delete("/adv-imgs/delete/{id}", [UserController::class, "deleteImg"]);
 Route::post('/update-subs-status',[UserController::class,"updateSubStatus"]);
 
 Route::get('/set-lp-imgs',[UserController::class,'setLpImgs']);
+
+Route::get('/user-dash-info/{id}',[UserController::class,'userDashInfo']);
 
 Route::middleware(['preventBackHistory'])->group(function () {
 

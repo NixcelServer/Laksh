@@ -60,7 +60,7 @@ export default function AdminLogin() {
         minH={'100vh'}
         align={'center'}
         justify={'center'}
-        backgroundColor={'white'}
+        backgroundColor={'black'}
         backgroundSize="cover"
         // style={{
         //   background:
@@ -74,7 +74,7 @@ export default function AdminLogin() {
       mr={4} // Reduce the distance between image and login section
     >
       <img
-        src="/images/adminimg"
+        src="/images/loginlogo"
         alt="Signup Illustration"
         style={{ width: '80%', marginBottom: '-4%' }} // Increase the image size
         boxSize={{ base: '50%', sm: '30%' }}
@@ -82,12 +82,12 @@ export default function AdminLogin() {
     </Box>
     <Stack spacing={0} mx={'auto'} maxW={'lg'} py={18} px={6}>
       <Stack align={'center'} mt={4} mb={-4}>
-        <Heading p="10px" color={'#2ECC71'} fontSize={'4xl'}>
+        <Heading p="10px" color={'#00C6A8'} fontSize={'4xl'}>
           Login
         </Heading>
       </Stack>
       <Box rounded={'lg'}  
-       boxShadow={'xl'} p={8}>
+       boxShadow={'xl'} p={8} color={'#00C6A8'}>
        {/* boxShadow={'0px 2px 4px gray'} p={8}> */}
         <Stack spacing={4}>
           <FormControl id="email">
@@ -117,7 +117,7 @@ export default function AdminLogin() {
             </Stack>
             <Button
               onClick={onsubmit}
-              bg={'#2ECC71'}
+              bg={'#00C6A8'}
               color={'white'}
               _hover={{
                 bg: 'blue.500'

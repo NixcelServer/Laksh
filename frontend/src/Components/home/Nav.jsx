@@ -42,6 +42,7 @@ import { Link as NavLink } from 'react-router-dom';
 
  import { IoInformationOutline, IoHelp } from 'react-icons/io5';
  import { CiUser } from "react-icons/ci";
+import { color } from 'framer-motion';
 
 
 
@@ -103,7 +104,11 @@ export default function Navbar() {
         Green- #7FE86C
         Yellow- #4299E1 */}
 
-      <Box  bg="#2ECC71" position="fixed" top={0} left={0} right={0} zIndex={999} >
+{/* <Box bg="rgba(0, 0, 0, 0.5)" position="fixed" top={0} left={0} right={0} zIndex={999}> */}
+{/* <Box  bg={'rgba(255, 255, 255, 0.5)'}position="fixed" top={0} left={0} right={0} zIndex={999}> */}
+<Box  bg={'white'}position="fixed" top={0} left={0} right={0} zIndex={999}>
+
+
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -117,11 +122,11 @@ export default function Navbar() {
           <HStack  alignItems={'center'} display={flag?{ base: 'none', md: 'flex' }:"flex"}    >
             <Box>
 
-                <Image src='images/lakshlogo1.png' w='40px' objectFit={'cover'} onClick={()=>{navigate('/')}} style={{borderRadius:'20%',marginLeft:'10px'}} />
+                <Image src='/images/lakshlogo1.png' w='40px' objectFit={'cover'} onClick={()=>{navigate('/')}} style={{borderRadius:'20%',marginLeft:'10px'}} />
              
             </Box>
             
-                <Heading color={'black '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold', fontFamily:'Poetsen One'  }}>Laksh</Heading>
+                <Heading color={'#002244 '} size={{ md: 'md', lg: 'lg' }} onClick={()=>{navigate('/')}} style={{ fontWeight: 'bold', fontFamily:'Poetsen One'  }}>Laksh</Heading>
 
            
           </HStack>
@@ -157,12 +162,21 @@ export default function Navbar() {
                     type="text"
                     _placeholder={{ opacity: 1, color: 'white' }}
                     placeholder="Enter Product Name"
-                    borderColor={"gray"}
+                    borderColor={"#002244"}
                     fontSize={'14px'}
                     textAlign="center"
-                    color="white"
+                    color="#00C6A8"
                     />
-                    <Button color={"gray"} ml="5px" mr="5px">
+<Button 
+  color={"white"} // This sets the color of the icon
+  ml="5px" 
+  mr="5px" 
+  // style={{ backgroundColor:"rgba(0, 198, 168, 0.7)" }} // This sets the background color
+  style={{ backgroundColor:"#002244" }} // This sets the background color
+
+>
+  {/* Button content */}
+
                     <Search2Icon />
                     </Button>
                 </InputGroup>
@@ -175,26 +189,27 @@ export default function Navbar() {
               spacing={1}
               justifyContent='space-evenly'
               pr='15px'
-              display={{ base: 'none', md: 'flex' }}>
-                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'white' }} onClick={()=>{navigate('/userdashboard')}} style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
+              display={{ base: 'none', md: 'flex' }}
+              style={{color:"#002244"}}>
+                <Button flexDirection={'column'}  size='lg' p='5px' _hover={{ color:'black' }} onClick={()=>{navigate('/userdashboard')}} style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
                      <Icon   as={MdSell} boxSize={4}  /> 
                      <Text  fontWeight={'normal'}>sell</Text>
                 </Button>
-                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'white' }} onClick={()=>{navigate('/myorders')}}style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'black' }} onClick={()=>{navigate('/myorders')}}style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
                      <Icon   as={MdOutlineLocalMall} boxSize={4}  /> 
                      <Text  fontWeight={'normal'}>My Orders</Text>
                 </Button>
 
-                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'white' }} onClick={()=>{navigate('/myorders')}}style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'black' }} onClick={()=>{navigate('/myorders')}}style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
                      <Icon   as={IoHelp} boxSize={4}  /> 
                      <Text  fontWeight={'normal'}>Help</Text>
                 </Button>
                 
-                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'white' }} style={{ fontSize: '14px', backgroundColor: 'transparent' }}   >
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'black' }} style={{ fontSize: '14px', backgroundColor: 'transparent' }}   >
                      <Icon   as={MdOutlineMessage} boxSize={4} /> 
                      <Text  fontWeight={'normal'}>Message</Text>
                 </Button>
-                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'white' }}  style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
+                <Button flexDirection={'column'} size='lg' p='5px' _hover={{ color:'black' }}  style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >
                 <Icon as={IoInformationOutline} boxSize={4} />
                      <Text  fontWeight={'normal'}>About us</Text>
                 </Button>
@@ -203,7 +218,7 @@ export default function Navbar() {
             <Menu>
           
 
-            <MenuButton as={Link} to="#" style={{ boxShadow: 'none', flexDirection: 'column', display: 'flex', alignItems: 'center', padding: '0px', fontSize: '14px',marginRight:'10px', marginBottom: '25px', _hover: { color: 'white' },color:'black' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user">
+            <MenuButton as={Link} to="#" style={{ boxShadow: 'none', flexDirection: 'column', display: 'flex', alignItems: 'center', padding: '0px', fontSize: '14px',marginRight:'10px', marginBottom: '25px', _hover: { color: 'white' },color:'#002244' }} className="nav-link dropdown-toggle nav-link-lg nav-link-user">
             
   <Icon as={FaUserCircle} boxSize={27} className="user-img-radious-style" /> {/* Adjust size as needed */}
   {/* <Text fontWeight={'bold'}>login</Text> */}

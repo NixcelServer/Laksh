@@ -16,6 +16,16 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+
+    protected $postController;
+    protected $productController;
+
+    public function __construct(ProductController $productController, PostController $postController)
+    {
+        $this->productController = $productController;
+        $this->postController = $postController;
+    }
+
     //add advertisment 
     public function addAdvImages(Request $request)
     {   
@@ -134,6 +144,33 @@ public static function setLpImgs()
  
     $imgs = LandingPageImage::where('display','yes')->where('flag','show')->get();
     return response()->json($imgs,200);
+}
+
+public function userDashInfo($id)
+{
+     // Call the getBuyleads method from the PostController
+     $buyLeadsResponse = $this->postController->getBuyleads($id);
+    
+     // Decode the JSON response to access the buy leads
+     $buyLeads = json_decode($buyLeadsResponse->getContent());
+ 
+     // Count the number of buy leads
+     $buyLeadsCount = count($buyLeads);
+
+     $products = $this->productController->getProducts($id);
+     
+    //  $products = json_decode($getProductsResponse->getContent());
+
+      $productsCount = $products->count();
+     // Return the count as a JSON response
+
+     $response = [
+        'buyLeadsCount' => $buyLeadsCount,
+        'productsCount' => $productsCount
+    ];
+     return response()->json($response,200);
+
+
 }
 
 }

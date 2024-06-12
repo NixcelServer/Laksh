@@ -1,24 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getCategories, getKeywords, getSubCategories, getUOM } from '../../redux/Admin/admin.action';
+import Slider from 'react-slick';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
 
+
 const ProductDetailsPage = () => {
+  
+
+    const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
+  const { encSubCatId, encProdId } = useParams();
+  const [productQuantity, setProductQuantity] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
   const [productName, setProductName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
-  const [selectedUnit, setSelectedUnit] = useState('');
+ 
   const [productPrice, setProductPrice] = useState('');
   const [productDescription, setProductDescription] = useState('');
-  const [productQuantity, setProductQuantity] = useState('');
+ 
   const [packingDetails, setPackingDetails] = useState('');
   const [otherSpecifications, setOtherSpecifications] = useState('');
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [uoms, setUoms] = useState([]);
+ 
 
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
+
+  
+  
+  const productsBySubCategory = useSelector(state => state.productReducer.productsBySubCategory);
+  const categories = useSelector(state => state.masterData.categories);
+  const subCategories = useSelector(state => state.masterData.subCategories);
+  const keywords = useSelector(state => state.masterData.keywords);
+
+  const uoms = useSelector(state => state.masterData.uom);
+  
+  useEffect(() => {
+     
+    dispatch(getCategories());
+    dispatch(getSubCategories());
+    dispatch(getKeywords());
+    dispatch(getUOM());
+
+  }, []);
 
   const onOpen = () => setShowModal(true);
   const onClose = () => {
@@ -34,14 +59,69 @@ const ProductDetailsPage = () => {
     setOtherSpecifications('');
   }
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    // Update filteredSubCategories based on selected category
+    let product = null;
+
+    // Iterate over each object in the subCategories array
+    productsBySubCategory.subCategories.forEach(subCategoryObj => {
+      // Check if the subCategoryObj has the desired encSubCatId
+      if (subCategoryObj.subcategory.encSubCatId === encSubCatId) {
+        // If found, iterate over the products array of that subcategory
+        subCategoryObj.products.forEach(productObj => {
+          // Check if the productObj has the desired encProdId
+          if (productObj.encProdId === encProdId) {
+            // If found, assign the product object to the 'product' variable
+            product = productObj;
+          }
+        });
+      }
+    });
+    
+    if (!product) {
+      // Handle case when product is not found
+      return <div>Product not found</div>;
+    }
+    
+ 
+  
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+
+
+ 
+
+  const categoryNameFromId = (encCatId) => {
+    const category = categories.find(cat => cat.encCatId === encCatId);
+    return category ? category.cat_name : 'Category not found';
+  };
+
+  const subCategoryNameFromId = (encSubCatId) => {
+    const subCategory = subCategories.find(subCat =>subCat.encSubCatId === encSubCatId);
+    return subCategory ? subCategory.sub_cat_name : 'Sub-Category not found';
+  }
+
+  const uomNameFromId = (encUomId) => {
+    const uom = uoms.find(uom =>uom.encUomId === encUomId);
+    return uom ? uom.unit_name : 'Uom not found';
+  }
+
+  const keywordsNameFromId = (encKeywords) => {
+    const keywordNames = encKeywords.map(encKeywordId => {
+      const keyword = keywords.find(keyword => keyword.encKeywordId === encKeywordId);
+      return keyword ? keyword.keyword_name : 'Unknown'; // Return 'Unknown' if no match found
+  });
+
+  return keywordNames.join(', '); // Return comma-separated keyword names
+
   }
 
   const checkSessionAndSubmit = () => {
     // Add your form submission logic here
   }
+
+
 
   return (
     <div
@@ -51,7 +131,6 @@ const ProductDetailsPage = () => {
         alignItems: 'center',
         height: '100vh', // Full viewport height to center vertically
         padding: '20px', // Padding to ensure space around the card
-        position: 'relative', // Make the parent container relative for absolute positioning of the button
       }}
     >
       <div
@@ -68,11 +147,39 @@ const ProductDetailsPage = () => {
         <div className="row">
           <div className="col-lg-6" style={{ padding: '20px' }}>
             <div style={{ marginTop: '30px', marginLeft: '20px', maxWidth: '400px' }}>
-              <img
-                src="https://via.placeholder.com/400x200"
-                alt="Product Preview"
-                style={{ width: '100%', height: '200px' }}
-              />
+            {product.image_paths && product.image_paths.length === 1 ? (
+  <img 
+    src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
+    alt="Product Preview" 
+    style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
+  />
+) : product.image_paths && product.image_paths.length > 1 ? (
+  <Slider
+    dots
+    infinite
+    speed={500}
+    slidesToShow={1}
+    slidesToScroll={1}
+    autoplay
+    autoplaySpeed={3000}
+  >
+    {product.image_paths.map((prod_img_path, imgIndex) => (
+      <div key={imgIndex}>
+        <img 
+          src={`http://127.0.0.1:8000/storage/${prod_img_path}`} 
+          alt={`Product Preview ${imgIndex + 1}`} 
+          style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
+        />
+      </div>
+    ))}
+  </Slider>
+) : (
+  <img 
+    src="images/default_image.jpg" // replace with the actual path to your default image
+    alt="Default Product Preview" 
+    style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
+  />
+)}
             </div>
           </div>
           <div className="col-lg-6" style={{ padding: '10px' }}>
@@ -87,26 +194,17 @@ const ProductDetailsPage = () => {
                   marginBottom: '10px',
                 }}
               >
-                Product Name
+                 {product.prod_name}
               </h3>
               <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Description:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                <span style={{ fontWeight: 'bold' }}>Description:</span> {product.prod_description}
               </p>
-              <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Category:</span> Sample Category
-              </p>
-              <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>SubCategory:</span> Sample SubCategory
-              </p>
-              <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Keywords:</span> Keyword1, Keyword2, Keyword3
-              </p>
-              <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Price:</span> $50
-              </p>
-              <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}>
-                <span style={{ fontWeight: 'bold' }}>Unit Of Measurement:</span> Sample UOM
-              </p>
+             <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Category:</span> {categoryNameFromId(product.encCatId)} </p>
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>SubCategory:</span> {subCategoryNameFromId(product.encSubCatId)} </p>
+          {product.display_price === 'yes' && (
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Price:</span> {product.prod_price || '$50'}</p>
+        )}
+          <p style={{ fontSize: '14px', lineHeight: '1.4', marginBottom: '5px' }}><span style={{ fontWeight: 'bold' }}>Unit Of Measurement:</span> {uomNameFromId(product.encUomId)}</p>
             </div>
           </div>
           <button
@@ -120,8 +218,8 @@ const ProductDetailsPage = () => {
               alignItems: 'center',
               padding: '2px 3px',
               fontSize: '12px', // Reduce text size
-            }}    
-            onClick={onOpen}
+            }}
+            onClick={toggleModal}
           >
             <i className="fas fa-info-circle" style={{ fontSize: '14px', marginRight: '5px' }}></i> {/* Keep icon size larger */}
             Enquire Now
@@ -147,10 +245,10 @@ const ProductDetailsPage = () => {
     <ModalCloseButton _focus={{ border: "none" }} _hover={{ bg: "none" }} />
     <ModalBody>
         <div style={{ flex: '1 1 48%' }}>
-          <label style={{fontWeight:'bold'}}>Product Name</label>
+          <label style={{fontWeight:'bold'}}>{product.prod_name}</label>
         </div>
         <div style={{ flex: '1 1 48%' }}>
-          <label>Product Description:</label>
+          <label>{product.prod_description}</label>
         </div>
         
         
@@ -189,8 +287,8 @@ const ProductDetailsPage = () => {
           <textarea
             className="form-control"
             placeholder="Enter Requirement Details"
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
+           // value={productDescription}
+           // onChange={(e) => setProductDescription(e.target.value)}
             style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
 
           />
@@ -220,6 +318,7 @@ const ProductDetailsPage = () => {
     </ModalFooter>
   </ModalContent>
 </Modal>
+
 
     </div>
   );

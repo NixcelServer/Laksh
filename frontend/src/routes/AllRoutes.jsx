@@ -31,6 +31,7 @@ import AdminTemplateKeywords from "../pages/AdminTemplate/AdminTemplateKeywords"
 import AdminTemplateUOM from "../pages/AdminTemplate/AdminTemplateUOM";
 import Product from "../pages/Products/Product";
 import AddProduct from "../pages/Products/AddProduct";
+import AdminProducts from "../pages/AdminTemplate/AdminProduct";
 
 import SellerLeftMenu from "../pages/Seller/SellerLeftMenu";
 import CompanySetup from "../pages/Company/CompanySetup";
@@ -49,10 +50,11 @@ import AdminAd from "../pages/AdminTemplate/AdminAdvertisement";
 import RequireAuth from "../utils/RequireAuth";
 import UserAdApproval from "../pages/AdminTemplate/UserAdApproval";
 import SignUp from "../Components/home/SignUp";
+import SignUpPage from "../pages/User/signup";
 import CategoryPage from "../Components/home/HomeCategories";
-import ProductDetailsPage from "../pages/Products/ProductDetailsPage";
 import Allcategories from "../Components/home/AllCategories";
-import AdminProducts from "../pages/AdminTemplate/AdminProduct";
+import ProductDetailsPage from "../pages/Products/ProductDetailsPage";
+
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
 
@@ -84,6 +86,8 @@ export default function AllRoutes() {
               </>
             }
           />
+
+
 
           <Route
             path="/admintemplatemaincontent"
@@ -162,110 +166,90 @@ export default function AllRoutes() {
 
         <Route element={<RequireAuth allowedRoles={["buyer"]} />}>
 
-        <Route
-          path="/userdashboard"
-          element={
-            <>
-              <UserNavbar />
-              <UserDashboard />
-            </>
-          }
-        />
+          <Route
+            path="/userdashboard"
+            element={
+              <>
+                <UserNavbar />
+                <UserDashboard />
+              </>
+            }
+          />
 
-<Route
-          path="/products"
-          element={
-            <>
-              <UserNavbar />
-              <Product />
+          <Route
+            path="/products"
+            element={
+              <>
+                <UserNavbar />
+                <Product />
 
-            </>
-          }
-        />
+              </>
+            }
+          />
 
-        <Route
-          path="/product/add-product"
-          element={
-            <>
-              <UserNavbar />
-              <AddProduct />
+          <Route
+            path="/product/add-product"
+            element={
+              <>
+                <UserNavbar />
+                <AddProduct />
 
-            </>
-          }
-        />
+              </>
+            }
+          />
 
-        <Route path="/product/update-product"
-          element={
-            <>
-              <UpdateProduct />
-              <UserNavbar />
-            </>
-          }
-        />
+          <Route path="/product/update-product"
+            element={
+              <>
+                <UpdateProduct />
+                <UserNavbar />
+              </>
+            }
+          />
 
-        <Route
-          path="/buylead"
-          element={
-            <>
-              <UserNavbar />
-              <BuyLead />
-            </>
-          }
-        />
+          <Route
+            path="/buylead"
+            element={
+              <>
+                <UserNavbar />
+                <BuyLead />
+              </>
+            }
+          />
 
 
-        <Route
-          path="/companysetup"
-          element={
-            <>
-              <UserNavbar />
-              <CompanySetup />
-            </>
-          }
-        />
+          <Route
+            path="/companysetup"
+            element={
+              <>
+                <UserNavbar />
+                <CompanySetup />
+              </>
+            }
+          />
 
-        <Route
-          path="/myorders"
-          element={
-            <>
-              <UserNavbar />
-              <MyOrder />
-            </>
-          }
-        />
+          <Route
+            path="/myorders"
+            element={
+              <>
+                <UserNavbar />
+                <MyOrder />
+              </>
+            }
+          />
 
-<Route
-          path="/categoriess"
-          element={
-            <>
-              
-              <CategoryPage />
-            </>
-          }
-        />
+          <Route
+            path="/userad"
+            element={
+              <>
+                <UserNavbar />
+                <UserAd />
+              </>
+            }
+          />
 
-<Route
-          path="/productdetails"
-          element={
-            <>
-              
-              <ProductDetailsPage />
-            </>
-          }
-        />
-
-        <Route
-          path="/userad"
-          element={
-            <>
-              <UserNavbar />
-              <UserAd />
-            </>
-          }
-        />
-        
         </Route>
-        
+
 
         <Route path={"/AdminAlertPage"} element={<AdminAlertPage />} />
         <Route path={"/AdminMainTemplate"} element={<AdminMainTemplate />} />
@@ -278,13 +262,13 @@ export default function AllRoutes() {
 
 
         <Route
-            path="/signup"
-            element={
-              <>
-                <SignUp />
-              </>
-            }
-          />
+          path="/signup"
+          element={
+            <>
+              <SignUpPage />
+            </>
+          }
+        />
 
         <Route
           path="/example"
@@ -303,7 +287,7 @@ export default function AllRoutes() {
 
 
 
-        
+
 
         <Route
           path="/usernavbar"
@@ -317,17 +301,7 @@ export default function AllRoutes() {
 
 
 
-        
 
-<Route
-          path="/allcategories"
-          element={
-            <>
-              <Allcategories/>
-              
-            </>
-          }
-        />
 
         <Route
           path="/adminad"
@@ -375,6 +349,38 @@ export default function AllRoutes() {
             </>
           } />
         </Route>
+
+        <Route
+          path="/categoriess/:encCatId"
+          element={
+            <>
+
+              <CategoryPage />
+            </>
+          }
+        />
+
+        <Route
+          path="/allcategories"
+          element={
+            <>
+              <Allcategories />
+
+
+            </>
+          }
+        />
+
+        <Route
+          path="/product-details/:encSubCatId/:encProdId"
+          element={
+            <>
+              <ProductDetailsPage />
+
+
+            </>
+          }
+        />
 
       </Routes>
     </>

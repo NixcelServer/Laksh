@@ -22,7 +22,7 @@ function App() {
   location.pathname === "/admintemplatecategories" ||
   location.pathname === "/adv-images-update" ||
   location.pathname === "/sign" ||
-  location.pathname === "/example" ||
+  // location.pathname === "/example" ||
   
   location.pathname.startsWith("/subcategories/") ||
   location.pathname === "/admintemplateuom" ||

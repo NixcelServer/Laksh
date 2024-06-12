@@ -1,32 +1,54 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useParams } from 'react-router-dom'; // Import Link from react-router-dom
+import { getSubCategoryWiseProducts } from '../../redux/Product/product.action';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CategoryPage = () => {
   const [viewAllClicked, setViewAllClicked] = useState(false);
   const [showAdditionalImages, setShowAdditionalImages] = useState(false);
   const [showSubcategories, setShowSubcategories] = useState(false);
+  const [viewMoreSubCategoryIndex, setViewMoreSubCategoryIndex] = useState(null);
   const [showPharmaceuticalsProducts, setShowPharmaceuticalsProducts] = useState(false);
   const [showChemicalsProducts, setShowChemicalsProducts] = useState(false); // New state for Chemicals
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [showProductDetails, setShowProductDetails] = useState(false);
+  const { encCatId } = useParams();
+  const dispatch = useDispatch();
+  
+  console.log("encCat",encCatId);
+  const productsBySubCategory = useSelector(state => state.productReducer.productsBySubCategory);
+  
+
+  useEffect(() => {
+    const getCategoryDetails = async () => {
+      if (encCatId) {
+        try {
+          // Dispatch the action to fetch products by subcategory
+          await dispatch(getSubCategoryWiseProducts(encCatId));
+        } catch (error) {
+          console.error('Error fetching category details:', error);
+          // Handle error: show error message to the user
+        }
+      }
+    };
+  
+    getCategoryDetails();
+  }, [dispatch, encCatId]); // Add dispatch and encCatId to the dependency array
 
   const handleProductDetails = () => {
     setShowProductDetails(true);
   };
 
-  const handleViewAllClick = () => {
-    setViewAllClicked(true);
-    setShowAdditionalImages(true);
-  };
-
-  const handleShowAllClick = () => {
-    setShowAllProducts(true);
+ 
+  const handleShowAllClick = (index) => {
+    setViewMoreSubCategoryIndex(index);
   };
 
   const handleHideAllClick = () => {
-    setShowAdditionalImages(false);
-    setShowAllProducts(false);
+    setViewMoreSubCategoryIndex(null);
   };
+  
 
   const handleCategoryClick = () => {
     setShowSubcategories(true);
@@ -44,29 +66,19 @@ const CategoryPage = () => {
     setShowAllProducts(false);
   };
 
-  const handlePharmaceuticalsClick = () => {
-    setShowPharmaceuticalsProducts(!showPharmaceuticalsProducts);
-    setShowSubcategories(true);
-    setShowAdditionalImages(false);
-    setShowChemicalsProducts(false); // Ensure Chemicals are hidden
-  };
 
-  const handleChemicalsClick = () => {
-    setShowChemicalsProducts(true);
-    setShowSubcategories(true);
-    setShowAdditionalImages(false);
-    setShowPharmaceuticalsProducts(false); // Ensure Pharmaceuticals are hidden
-  };
+
+ 
 
   return (
-    <div className="main-content" style={{ position:'absolute',margin: '100px auto', maxWidth: '1300px', padding: '0 15px', backgroundColor: 'white' }}>
+    <div className="main-content" style={{ position: 'absolute', margin: '100px auto', maxWidth: '1300px', padding: '0 15px', backgroundColor: 'white' }}>
       <section className="section">
         <div className="section-body">
           <div className="row">
             <div className="col-12">
               <div className="card">
                 <div className="card-header d-flex justify-content-between align-items-center">
-                  <h4
+                  {/* <h4
                     style={{
                       fontFamily: 'Arial, sans-serif',
                       fontSize: '24px',
@@ -78,252 +90,83 @@ const CategoryPage = () => {
                     }}
                     onMouseOver={(e) => e.target.style.color = '#3366ff'}
                     onMouseOut={(e) => e.target.style.color = '#3498DB'}
-                  >
-                    Explore our Vibrant Categories!
-                  </h4>
-                  <Link to="/allcategories" className="btn btn-primary" style={{backgroundColor:'#A569BD'}}>Explore More Categories</Link>
-                </div>
-                <div className="card-body">
-                  {!showPharmaceuticalsProducts && !showChemicalsProducts && (
-                    <>
-                      <div className="mb-2 text-left" onClick={handlePharmaceuticalsClick} style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>Pharmaceuticals</div>
-                      <div className="mb-2 text-left" onClick={handleChemicalsClick} style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>Chemicals</div>
-                    </>
-                  )}
-
-                  {showSubcategories && (
-                    <div>
-                <div className="mb-2 text-left" style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>Pharmaceuticals</div>
-
-                      {showPharmaceuticalsProducts && (
-                        <div>
-                          <div className="mb-2 text-left" style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>Medicines</div>
-                          <div className="row">
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 1</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" onClick={handleProductDetails} />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 2</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 2" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 3</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 3" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 4</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 4" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 5</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 5" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 6</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 6" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {showAllProducts && (
-                            <div className="row">
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 11</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 11" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 12</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 12" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 13</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 13" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 14</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 14" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 15</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 15" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 16</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 16" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {showChemicalsProducts && (
-                        
-                        <div>
-               <div className="mb-2 text-left" style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>Chemicals</div>
-
-                          <div className="mb-2 text-left" style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>Chemical Equipments</div>
-                          <div className="row">
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 1</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 1" className="img-fluid" onClick={handleProductDetails} />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 2</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 2" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 3</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 3" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 4</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 4" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 5</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 5" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-12 col-md-3 col-lg-2">
-                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                <div style={{ marginRight: '10px' }}>
-                                  <div className="mb-2 text-muted">Product 6</div>
-                                  <img src="assets/img/image-gallery/1.png" alt="Product 6" className="img-fluid" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {showAllProducts && (
-                            <div className="row">
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 11</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 11" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 12</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 12" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 13</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 13" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 14</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 14" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 15</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 15" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-3 col-lg-2">
-                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
-                                  <div style={{ marginRight: '10px' }}>
-                                    <div className="mb-2 text-muted">Product 16</div>
-                                    <img src="assets/img/image-gallery/1.png" alt="Product 16" className="img-fluid" />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                  > */}
+                     {productsBySubCategory && productsBySubCategory.subCategories && (
+                    <div className="mb-2 text-left" style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                      {productsBySubCategory.cat_name}
                     </div>
                   )}
-                  <div className="text-center mt-4">
-                    {!showAllProducts && (showPharmaceuticalsProducts || showChemicalsProducts) && (
-                      <button className="btn btn-primary" onClick={handleShowAllClick}>Show All</button>
-                    )}
-                    {showAllProducts && (
-                      <button className="btn btn-primary" onClick={handleHideAllClick}>Hide All</button>
-                    )}
+                  {/* </h4> */}
+                  <Link to="/allcategories" className="btn btn-primary" style={{ backgroundColor: '#A569BD' }}>Explore More Categories</Link>
+                </div>
+                <div className="card-body">
+                  {/* {productsBySubCategory && productsBySubCategory.subCategories && (
+                    <div className="mb-2 text-left" style={{ color: '#A569BD', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                      {productsBySubCategory.cat_name}
+                    </div>
+                  )} */}
+                  <div>
+                    {productsBySubCategory && productsBySubCategory.subCategories && productsBySubCategory.subCategories.map((subCategory, index) => (
+                      <div key={index}>
+                        <div className="mb-2 text-left" style={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                          {subCategory.subcategory.sub_cat_name}
+                        </div>
+                        <div className="row">
+                          {(viewMoreSubCategoryIndex === index ? subCategory.products : subCategory.products.slice(0, 6)).map((product, prodIndex) => (
+                            <div className="col-12 col-md-3 col-lg-2" key={prodIndex}>
+                              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto' }}>
+                                <div style={{ marginRight: '10px' }}>
+                                <Link to={`/product-details/${product.encSubCatId}/${product.encProdId}`}>
+                                  <img
+                                    src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`}
+                                    alt={product.prod_name}
+                                    className="img-fluid"
+                                    style={{
+                                      width: '200px',
+                                      height: '250px',
+                                      objectFit: 'cover'
+                                    }}
+                                    onClick={() => handleProductDetails(product.encProdId)}
+                                    onError={(e) => {
+                                      console.error(e);
+                                      e.target.src = 'http://127.0.0.1:8000/storage/default.png';
+                                    }}
+                                  />
+                                  <div className="mb-2" style={{ fontWeight: 'bold' }}>{product.prod_name}</div>
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {viewMoreSubCategoryIndex !== index && subCategory.products.length > 6 && (
+                          <div className="text-right mt-4">
+                          <span
+                            style={{ cursor: 'pointer', color: '#3498DB' }}
+                            onClick={() => handleShowAllClick(index)}
+                            onMouseOver={(e) => e.target.style.color = '#3366ff'}
+                            onMouseOut={(e) => e.target.style.color = '#3498DB'}
+                          >
+                            + View More
+                          </span>
+                        </div>
+                        )}
+                        {viewMoreSubCategoryIndex === index && (
+                           <div className="text-right mt-4">
+                           <span
+                             style={{ cursor: 'pointer', color: '#3498DB' }}
+                             onClick={handleHideAllClick}
+                             onMouseOver={(e) => e.target.style.color = '#3366ff'}
+                             onMouseOut={(e) => e.target.style.color = '#3498DB'}
+                           >
+                             - View Less
+                           </span>
+                         </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
+
                   {showProductDetails && (
                     <div>
                       <h3>Product Details</h3>
@@ -331,12 +174,6 @@ const CategoryPage = () => {
                       <button className="btn btn-primary" onClick={() => setShowProductDetails(false)}>Back</button>
                     </div>
                   )}
-                  {!showAllProducts && (showPharmaceuticalsProducts || showChemicalsProducts) && (
-                    <div className="text-center mt-4">
-                      <button className="btn btn-primary" style={{ position: 'absolute', bottom: '10px', right: '10px' }} onClick={handleGoBackClick}>Go Back</button>
-                    </div>
-                  )}
-                  
                 </div>
               </div>
             </div>
@@ -345,6 +182,7 @@ const CategoryPage = () => {
       </section>
     </div>
   );
+  
 };
 
 export default CategoryPage;
