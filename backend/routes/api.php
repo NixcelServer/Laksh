@@ -166,6 +166,9 @@ Route::post('/check-product-name/{id}',[ProductController::class,'checkProductNa
 //get product by cat id
 Route::get('/product-by-category/{id}',[ProductController::class,'productByCategory']);
 
+//get prod id
+Route::get('/get-prod-details/{id}',[ProductController::class,'getProdDetails']);
+
 
 //submit requirements routes
 Route::post('/submit-requirement',[PostController::class,'submitRequirement']);

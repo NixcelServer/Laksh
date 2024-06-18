@@ -24,6 +24,7 @@ function App() {
   location.pathname === "/sign" ||
   location.pathname === "/example" ||
   
+
   location.pathname.startsWith("/subcategories/") ||
   location.pathname === "/admintemplateuom" ||
   location.pathname === "/adminad" ||
@@ -44,6 +45,9 @@ function App() {
       location.pathname === "/admintemplatenavbar" ||
       location.pathname === "/admintemplatecategories" ||
       location.pathname.startsWith("/subcategories/") ||
+      location.pathname.startsWith("/categoriess/") ||
+      location.pathname.startsWith("/product-details/") ||
+      location.pathname === "/allcategories" ||
       location.pathname === "/admintemplatekeywords" ||
       location.pathname === "/admintemplateuom" ||
       location.pathname === "/admintemplatemaincontent" ||
@@ -59,17 +63,9 @@ function App() {
       location.pathname === "/userad" ||
       location.pathname === "/example" ||
       location.pathname === "/adminad" ||
-
-    
-
-     
       location.pathname === "/products" ||
       location.pathname === "/product/add-product" ||
       location.pathname === "/product/update-product" ||
-     
-      
-
-     
       location.pathname === "/sell"? (
        
         false

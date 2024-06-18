@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'; // Import Link from react-ro
 import { getSubCategoryWiseProducts } from '../../redux/Product/product.action';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { baseURL } from '../../utils/variables';
 
 const CategoryPage = () => {
   const [viewAllClicked, setViewAllClicked] = useState(false);
@@ -34,7 +35,7 @@ const CategoryPage = () => {
     };
   
     getCategoryDetails();
-  }, [dispatch, encCatId]); // Add dispatch and encCatId to the dependency array
+  }, [ encCatId]); // Add dispatch and encCatId to the dependency array
 
   const handleProductDetails = () => {
     setShowProductDetails(true);
@@ -118,7 +119,7 @@ const CategoryPage = () => {
                                 <div style={{ marginRight: '10px' }}>
                                 <Link to={`/product-details/${product.encSubCatId}/${product.encProdId}`}>
                                   <img
-                                    src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`}
+                                    src={`${baseURL}storage/app/${product.prod_img_path}`}
                                     alt={product.prod_name}
                                     className="img-fluid"
                                     style={{
@@ -129,7 +130,7 @@ const CategoryPage = () => {
                                     onClick={() => handleProductDetails(product.encProdId)}
                                     onError={(e) => {
                                       console.error(e);
-                                      e.target.src = 'http://127.0.0.1:8000/storage/default.png';
+                                      e.target.src = `${baseURL}storage/app/default.png`;
                                     }}
                                   />
                                   <div className="mb-2" style={{ fontWeight: 'bold' }}>{product.prod_name}</div>
@@ -167,13 +168,13 @@ const CategoryPage = () => {
                     ))}
                   </div>
 
-                  {showProductDetails && (
+                  {/* {showProductDetails && (
                     <div>
                       <h3>Product Details</h3>
                       <p>Details of the selected product will be shown here.</p>
                       <button className="btn btn-primary" onClick={() => setShowProductDetails(false)}>Back</button>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

@@ -15,6 +15,9 @@ import axios from 'axios';
 import { useToast } from '@chakra-ui/react'; // Import useToast from Chakra UI
 import { useNavigate } from 'react-router-dom';
 import countrydata from '../../CountryState.json';
+import { baseURL } from '../../utils/variables';
+
+
 const CompanySetup = () => {
   const [formData, setFormData] = useState({});
   const [isNameValid, setIsNameValid] = useState(true);
@@ -133,7 +136,7 @@ const CompanySetup = () => {
       const encCompanyId = user.encCompanyId;
       console.log("encCompanyID:",encCompanyId);
       
-      const response = await axios.post(`http://127.0.0.1:8000/api/check-company-name/${encCompanyId}`, { c_name: value });
+      const response = await axios.post(`${baseURL}api/check-company-name/${encCompanyId}`, { c_name: value });
       if (response.status === 200) {
         const exists = response.data; // Define exists here
 
@@ -164,7 +167,7 @@ const checkCINNo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-cin-no/${encCompanyId}`, { c_cin_no: value });
+    const response = await axios.post(`${baseURL}api/check-cin-no/${encCompanyId}`, { c_cin_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -195,7 +198,7 @@ const checkTANNo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-tan-no/${encCompanyId}`, { c_tan_no: value });
+    const response = await axios.post(`${baseURL}api/check-tan-no/${encCompanyId}`, { c_tan_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -226,7 +229,7 @@ const checkIECNo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-iec-no/${encCompanyId}`, { c_iec: value });
+    const response = await axios.post(`${baseURL}api/check-iec-no/${encCompanyId}`, { c_iec: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -257,7 +260,7 @@ const checkMOBNo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-mobile-no/${encCompanyId}`, { c_mobile_no: value });
+    const response = await axios.post(`${baseURL}api/check-mobile-no/${encCompanyId}`, { c_mobile_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -288,7 +291,7 @@ const checkALTMOBNo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-alt-mobile-no/${encCompanyId}`, { c_alt_mobile_no: value });
+    const response = await axios.post(`${baseURL}api/check-alt-mobile-no/${encCompanyId}`, { c_alt_mobile_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -319,7 +322,7 @@ const checkLANDLINENo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-landline-no/${encCompanyId}`, { c_landline_no: value });
+    const response = await axios.post(`${baseURL}api/check-landline-no/${encCompanyId}`, { c_landline_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -350,7 +353,7 @@ const checkALTLANDLINENo = async (e) => {
     const encCompanyId = user.encCompanyId;
     console.log("encCompanyID:",encCompanyId);
     
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-alt-landline-no/${encCompanyId}`, { c_alt_landline_no: value });
+    const response = await axios.post(`${baseURL}api/check-alt-landline-no/${encCompanyId}`, { c_alt_landline_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
 
@@ -389,7 +392,7 @@ const checkACCNo = async (e) => {
       // If it doesn't match the pattern, set an error message
       setACCNoError('ACC No must be 12 digits long');
     } else {
-    const response = await axios.post(`http://127.0.0.1:8000/api/check-acc-no/${encCompanyId}`, { acc_no: value });
+    const response = await axios.post(`${baseURL}api/check-acc-no/${encCompanyId}`, { acc_no: value });
     if (response.status === 200) {
       const exists = response.data; // Define exists here
       
@@ -527,7 +530,7 @@ const checkIFSC = (e) => {
     
   
       // Send the POST request to the backend API
-      const response = await axios.post('http://localhost:8000/api/registeryourcompany', formDataWithEncUserId,{
+      const response = await axios.post(`${baseURL}api/registeryourcompany`, formDataWithEncUserId,{
         headers: {'Content-Type': 'multipart/form-data'}
       });
     
@@ -568,7 +571,7 @@ const checkIFSC = (e) => {
      const userString = sessionStorage.getItem('user');
       const user = JSON.parse(userString);
       const encCompanyId = user.encCompanyId;
-       const response = await axios.get(`http://127.0.0.1:8000/api/companydetails/${encCompanyId}`);
+       const response = await axios.get(`${baseURL}api/companydetails/${encCompanyId}`);
        if (response.status === 200) {
          const companyDetails = response.data;
          console.log(response.data);

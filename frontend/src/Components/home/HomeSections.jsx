@@ -57,10 +57,10 @@ export default function HomeSections() {
             title={category.cat_name} 
             single={{
               img: category.cat_img_path, // Category image
-              title: "Category Highlight", // Example static title
-              sub1: "Detail 1", // Example static detail
-              sub2: "Detail 2", // Example static detail
-              sub3: "Detail 3"  // Example static detail
+              title: "", // Example static title
+              sub1: "", // Example static detail
+              sub2: "", // Example static detail
+              sub3: ""  // Example static detail
             }}
             info={category.products}
             onTitleClick={() => handleCategoryClick(category.encCatId)}

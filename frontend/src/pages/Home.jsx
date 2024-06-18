@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCategories, setCategories } from '../redux/Admin/admin.action'
 import { getProducts, setSelectedProducts } from '../redux/Product/product.action'
 import axios from 'axios'
+import { baseURL } from '../utils/variables'
 
 
 export default function Home() {
@@ -19,17 +20,17 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const catWiseProducts = await axios.get('http://localhost:8000/api/categories-with-products');
+        const catWiseProducts = await axios.get(`${baseURL}api/categories-with-products`);
         dispatch(setSelectedProducts(catWiseProducts));
 
-        const categoriesResponse = await axios.get('http://localhost:8000/api/categories');
+        const categoriesResponse = await axios.get(`${baseURL}api/categories`);
         const allCategories = categoriesResponse.data;
         const selectedCategories = allCategories.slice(0, 6);
         dispatch(setCategories(selectedCategories));
 
 
   const productPromises = selectedCategories.map(category =>
-    axios.get('http://localhost:8000/api/limited-products/' + category.encCatId)
+    axios.get(`${baseURL}api/limited-products/${category.encCatId}`)
   );
 //console.log(productPromises);
 const productsResponses = await Promise.all(productPromises);

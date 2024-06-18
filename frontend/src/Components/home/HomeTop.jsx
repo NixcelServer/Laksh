@@ -18,6 +18,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { baseURL } from "../../utils/variables";
 
 export default function HomeTop() {
   const { isLogin } = useSelector((store) => store.authReducer);
@@ -38,7 +39,7 @@ export default function HomeTop() {
   }, [isLogin]);
 
   const getLpImages = async() => {
-    const res = await axios.get(`http://127.0.0.1:8000/api/set-lp-imgs`)
+    const res = await axios.get(`${baseURL}api/set-lp-imgs`)
 
     if (res.status === 200) {
         console.log('Data submitted successfully:', res.data);
@@ -60,7 +61,7 @@ export default function HomeTop() {
   ];
 
   const imagesToDisplay = lpImages.length > 0 ? lpImages.map(img => ({
-    src: `http://127.0.0.1:8000/storage/${img.lp_img_path}`,
+    src: `${baseURL}storage/app/${img.lp_img_path}`,
     alt: "Slide image" // Adjust as necessary if you have alt text in your backend
   })) : defaultImages;
 

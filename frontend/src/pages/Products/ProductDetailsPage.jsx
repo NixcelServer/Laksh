@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { getCategories, getKeywords, getSubCategories, getUOM } from '../../redux/Admin/admin.action';
 import Slider from 'react-slick';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
+import { baseURL } from '../../utils/variables';
+import axios from 'axios';
 
 
 const ProductDetailsPage = () => {
@@ -24,6 +26,7 @@ const ProductDetailsPage = () => {
   const [packingDetails, setPackingDetails] = useState('');
   const [otherSpecifications, setOtherSpecifications] = useState('');
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
+  const [product,setProduct] = useState(null);
  
 
 
@@ -42,9 +45,21 @@ const ProductDetailsPage = () => {
     dispatch(getSubCategories());
     dispatch(getKeywords());
     dispatch(getUOM());
+    console.log("in use effect",encProdId)
+    getProd(encProdId);
 
   }, []);
 
+  const getProd = async (encProdId) => {
+    try {
+    //  const res = await axios.get(`${baseURL}api/get-prod-details/${encProdId}`);//http://127.0.0.1:8000
+      const res = await axios.get(`http://127.0.0.1:8000/api/get-prod-details/${encProdId}`);
+      setProduct(res.data);
+      console.log(res.data);
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+    }
+  };
   const onOpen = () => setShowModal(true);
   const onClose = () => {
     setShowModal(false);
@@ -59,25 +74,28 @@ const ProductDetailsPage = () => {
     setOtherSpecifications('');
   }
 
-    let product = null;
+    // let product = null;
 
     // Iterate over each object in the subCategories array
-    productsBySubCategory.subCategories.forEach(subCategoryObj => {
-      // Check if the subCategoryObj has the desired encSubCatId
-      if (subCategoryObj.subcategory.encSubCatId === encSubCatId) {
-        // If found, iterate over the products array of that subcategory
-        subCategoryObj.products.forEach(productObj => {
-          // Check if the productObj has the desired encProdId
-          if (productObj.encProdId === encProdId) {
-            // If found, assign the product object to the 'product' variable
-            product = productObj;
-          }
-        });
-      }
-    });
+    // productsBySubCategory.subCategories.forEach(subCategoryObj => {
+    //   // Check if the subCategoryObj has the desired encSubCatId
+    //   if (subCategoryObj.subcategory.encSubCatId === encSubCatId) {
+    //     // If found, iterate over the products array of that subcategory
+        
+    //     subCategoryObj.products.forEach(productObj => {
+    //       // Check if the productObj has the desired encProdId
+    //       if (productObj.encProdId === encProdId) {
+    //         // If found, assign the product object to the 'product' variable
+    //         product = productObj;
+    //         console.log("product");
+    //       }
+    //     });
+    //   }
+    // });
     
     if (!product) {
       // Handle case when product is not found
+      console.log("product not found")
       return <div>Product not found</div>;
     }
     
@@ -149,7 +167,7 @@ const ProductDetailsPage = () => {
             <div style={{ marginTop: '30px', marginLeft: '20px', maxWidth: '400px' }}>
             {product.image_paths && product.image_paths.length === 1 ? (
   <img 
-    src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
+    src={`${baseURL}storage/app/${product.image_paths[0]}`} 
     alt="Product Preview" 
     style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
   />
@@ -166,7 +184,7 @@ const ProductDetailsPage = () => {
     {product.image_paths.map((prod_img_path, imgIndex) => (
       <div key={imgIndex}>
         <img 
-          src={`http://127.0.0.1:8000/storage/${prod_img_path}`} 
+          src={`${baseURL}storage/app/${prod_img_path}`} 
           alt={`Product Preview ${imgIndex + 1}`} 
           style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
         />

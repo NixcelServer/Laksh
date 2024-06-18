@@ -5,7 +5,7 @@ import axios from "axios";
 import { FcUpload } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import { RiAdvertisementLine } from "react-icons/ri";
-
+import { baseURL } from "../../utils/variables";
 
 const AdminAd = () => {
 
@@ -36,7 +36,7 @@ const AdminAd = () => {
     // const fetchUploadedImages = async (encCompanyId) => {
     //   console.log(encCompanyId);
     //   // try {
-    //   //   const response = await axios.get('http://127.0.0.1:8000/api/get-adv-img');
+    //   //   const response = await axios.get('${baseURL}api/get-adv-img');
     //   //   if (response.status === 200) {
     //   //     setUploadedImages(response.data.images); // Assuming your API returns images in this format
     //   //   } else {
@@ -55,7 +55,7 @@ const AdminAd = () => {
         formData.append('image', file);
         formData.append('encUserId', encUserId);
 
-        const response = await axios.post('http://127.0.0.1:8000/api/add-landing-pg-img', formData, {
+        const response = await axios.post(`${baseURL}api/add-landing-pg-img`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -99,7 +99,7 @@ const AdminAd = () => {
       const user = JSON.parse(userString);
       const encUserId = user.encUserId;
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/get-lp-imgs?encUserId=${encUserId}`);
+      const response = await axios.get(`${baseURL}api/get-lp-imgs?encUserId=${encUserId}`);
 
       if (response.status === 200) {
         setUploadedImages(response.data.images);
@@ -119,7 +119,7 @@ const AdminAd = () => {
    
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/selected-lp-images', {
+      const response = await axios.post(`${baseURL}api/selected-lp-images`, {
         selectedImageIds
       });
       if (response.status === 200) {
@@ -177,7 +177,7 @@ const AdminAd = () => {
     try {
 
 
-      const response = await axios.delete(`http://127.0.0.1:8000/api/landing-pg-imgs/delete/${image.encLpImgId}/${encUserId}`);
+      const response = await axios.delete(`${baseURL}api/landing-pg-imgs/delete/${image.encLpImgId}/${encUserId}`);
       console.log("response", response)
       setShowDeleteConfirmation(false);
       setShowCannotDeleteConfirmation(false);
@@ -242,7 +242,7 @@ const AdminAd = () => {
 
   // const handleSubmit = async () => {
   //   try {
-  //     const response = await axios.post('http://127.0.0.1:8000/api/your-endpoint', {
+  //     const response = await axios.post('${baseURL}api/your-endpoint', {
   //       selectedImageIds
   //     });
   //     if (response.status === 200) {
@@ -375,7 +375,7 @@ const AdminAd = () => {
                                 }}
                               >
                                 <img
-                                  src={`http://127.0.0.1:8000/storage/${image.lp_img_path}`}
+                                  src={`${baseURL}storage/app/${image.lp_img_path}`}
                                   alt={`Uploaded ${index + 1}`}
                                   className="imagecheck-image"
                                   style={{

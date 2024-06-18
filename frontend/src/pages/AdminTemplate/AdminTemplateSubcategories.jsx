@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSubCategory, getCategories, getSubCategories } from '../../redux/Admin/admin.action';
 import axios from 'axios';
+import { baseURL } from '../../utils/variables';
 
 const AdminTemplateSubcategories = () => {
 
@@ -71,7 +72,7 @@ const AdminTemplateSubcategories = () => {
             };
 
             // Perform delete operation using encKeywordId and encUserId
-            const response = await axios.delete(`http://127.0.0.1:8000/api/sub-categories/${subCategory.encSubCatId}`, { data: payload });
+            const response = await axios.delete(`${baseURL}api/sub-categories/${subCategory.encSubCatId}`, { data: payload });
             //console.log("Keyword deleted successfully:", response.data);
 
             // Refetch keywords after deletion
@@ -113,7 +114,7 @@ const AdminTemplateSubcategories = () => {
 
             //console.log("in try block");
 
-            // const response = await axios.post("http://127.0.0.1:8000/api/sub-categories", payload);
+            // const response = await axios.post("${baseURL}api/sub-categories", payload);
             await dispatch(addSubCategory(payload));
             // console.log("Category added successfully:", response.data);
 

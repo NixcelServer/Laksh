@@ -49,7 +49,7 @@ const location = useLocation();
 
   const checkExistingEmail = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/check-existing-email?email=${email}`);
+      const response = await axios.get(`${baseURL}api/check-existing-email?email=${email}`);
       setEmailExists(response.data.exists); // Update emailExists state based on API response
     } catch (error) {
       console.error('Error:', error);

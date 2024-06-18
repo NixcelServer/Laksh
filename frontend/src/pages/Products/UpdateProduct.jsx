@@ -11,6 +11,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { RiImageAddLine } from "react-icons/ri";
 import { Carousel } from "react-responsive-carousel";
+import { baseURL } from "../../utils/variables";
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
 
@@ -118,7 +119,7 @@ useEffect(() => {
     const reader = new FileReader();
 
     // if (productDetails.files) {
-    //     setPhotoPreview(`http://127.0.0.1:8000/storage/${productDetails.file}`);
+    //     setPhotoPreview(`${baseURL}storage/app/${productDetails.file}`);
     //   } else {
     //     setPhotoPreview(null);
     //   }
@@ -300,7 +301,7 @@ const userString = sessionStorage.getItem('user');
       console.log("submit",productDetails);
       
       //debugger;
-      axios.post("http://127.0.0.1:8000/api/product/update-product", {
+      axios.post(`${baseURL}api/product/update-product`, {
         ...productDetails,
         keywords: selectedKeys // Ensure keywords are updated
     }, {
@@ -375,7 +376,7 @@ const userString = sessionStorage.getItem('user');
         encUserId
       };
   
-      const response = await axios.delete(`http://127.0.0.1:8000/api/product/${product.encProdId}`, { data: payload }); 
+      const response = await axios.delete(`${baseURL}api/product/${product.encProdId}`, { data: payload }); 
       dispatch(getProducts(encCompanyId));     
       // dispatch(getCategories());
     } catch (error) {
@@ -450,7 +451,7 @@ const userString = sessionStorage.getItem('user');
         {photoPreviews.map((preview, index) => (
           <div key={index}>
             <img
-              src={preview.startsWith('data:') ? preview : `http://127.0.0.1:8000/storage/${preview}`}
+              src={preview.startsWith('data:') ? preview : `${baseURL}storage/app/${preview}`}
               alt={`Photo Preview ${index + 1}`}
               style={{
                 width: "300px",

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { baseURL } from '../../utils/variables';
 
 const UserAdApproval = () => {
 
@@ -11,7 +12,7 @@ const UserAdApproval = () => {
     },[]);
 
     const fetchPendingAdv = async() =>{
-        const res = await axios.get(`http://127.0.0.1:8000/api/get-pending-adv-imgs`);
+        const res = await axios.get(`${baseURL}api/get-pending-adv-imgs`);
         setPendingAdvs(res.data);
        
 
@@ -23,7 +24,7 @@ const UserAdApproval = () => {
             // const user = JSON.parse(userString);
             // const encUserId = user.encUserId;
             console.log(id);
-         await axios.get(`http://127.0.0.1:8000/api/approve-advertisement/${id}`,  {
+         await axios.get(`${baseURL}api/approve-advertisement/${id}`,  {
             
           });
           setPendingAdvs(pendingAdvs.filter(adv => adv.encAdvImgId !== id)); // Remove approved advertisement from list
@@ -38,7 +39,7 @@ const UserAdApproval = () => {
             // const user = JSON.parse(userString);
             // const encUserId = user.encUserId;
             console.log(id);
-         await axios.get(`http://127.0.0.1:8000/api/reject-advertisement/${id}`,  {
+         await axios.get(`${baseURL}api/reject-advertisement/${id}`,  {
             
           });
           setPendingAdvs(pendingAdvs.filter(adv => adv.encAdvImgId !== id)); // Remove approved advertisement from list
@@ -98,7 +99,7 @@ const UserAdApproval = () => {
 >
   {/* Image in top half */}
   <div style={{ flex: 1 }}> {/* Takes up half of the card's height */}
-    <img src={`http://127.0.0.1:8000/storage/${adv.adv_img_path}`} alt="Company Image" style={{ width: '400px', height: '220px' }} />
+    <img src={`${baseURL}storage/app/${adv.adv_img_path}`} alt="Company Image" style={{ width: '400px', height: '220px' }} />
   </div>
   
   {/* Company info and buttons in bottom half */}

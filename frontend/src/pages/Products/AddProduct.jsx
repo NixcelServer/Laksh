@@ -20,6 +20,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { RiImageAddLine } from "react-icons/ri";
 import { IoArrowRedoOutline } from "react-icons/io5";
+import { baseURL } from "../../utils/variables";
 
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
@@ -57,7 +58,11 @@ const AddProduct = () => {
   // const categories = useSelector(state => state.adminReducer.categories);
   // console.log("in categoreis",categories);
   const [errors, setErrors] = useState({}); // State for validation errors
-
+  //const [error, setError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  const [subCategoryError, setSubCategoryError] = useState('');
+  const [unitError, setUnitError] = useState('');
+  const [minOrderQtyError, setMinOrderQtyError] = useState('');
   const [productDetails, setProductDetails] = useState({
     encCompanyId: "",
     prodName: "",
@@ -89,21 +94,71 @@ const AddProduct = () => {
   console.log("pro", products);
 
   //filtered out the sub categories based on category selected
+  // const handleCategoryChange = (e) => {
+  //   const selectedCategory = e.target.value;
+  //   console.log("selected category", selectedCategory);
+  //   setProductDetails({ ...productDetails, prodCat: selectedCategory });
+  //   // Filter subcategories based on the selected category
+  //   const filteredSubcategories = subCategories.filter(
+  //     (subCategory) => subCategory.encCatId === selectedCategory
+  //   );
+  //   console.log("filtered sub cat", filteredSubcategories);
+  //   setFilteredSubCategories(filteredSubcategories);
+  // };
+
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
-    console.log("selected category", selectedCategory);
+    console.log('selected category', selectedCategory);
     setProductDetails({ ...productDetails, prodCat: selectedCategory });
+    setCategoryError(''); 
+    //setCategoryError('');// Clear any existing error when user changes the category
+
     // Filter subcategories based on the selected category
     const filteredSubcategories = subCategories.filter(
       (subCategory) => subCategory.encCatId === selectedCategory
     );
-    console.log("filtered sub cat", filteredSubcategories);
+    console.log('filtered sub cat', filteredSubcategories);
     setFilteredSubCategories(filteredSubcategories);
   };
+
+  const validateCategory = () => {
+    if (!productDetails.prodCat) {
+      setCategoryError('Please select a category.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateSubcategory = () => {
+    if (!productDetails.prodSubCat) {
+      setSubCategoryError('Please select a subcategory.');
+      return false;
+    }
+    return true;
+  };
+
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (validateCategory()) {
+  //     // Submit form or perform your desired action
+  //     console.log('Form submitted successfully with category:', productDetails.prodCat);
+  //   }
+  // };
+
 
   const handleUomChange = (e) => {
     const selectedUom = e.target.value;
     setProductDetails({ ...productDetails, prodUOM: selectedUom });
+    setUnitError('');
+  };
+
+  const validateUnit = () => {
+    if (!productDetails.prodUOM) {
+      setUnitError('Please select a unit.');
+      return false;
+    }
+    return true;
   };
 
   const handleChange = (selected) => {
@@ -206,7 +261,7 @@ const AddProduct = () => {
     console.log(productDetails);
     //debugger;
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/product/store",
+      `${baseURL}api/product/store`,
       productDetails,
       {
         headers: {
@@ -235,6 +290,17 @@ const AddProduct = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    
+    if (!validateCategory() || !validateSubcategory()) {
+      return;
+    }
+    if (!validateUnit()) {
+      return;
+    }
+
+    if (!validateMinOrderQty()) {
+      return;
+    }
     console.log(encCompanyId);
 
     // Update productDetails state with the obtained encCompanyId
@@ -248,7 +314,7 @@ const AddProduct = () => {
     console.log(productDetails);
    
     const res = axios.post(
-      "http://127.0.0.1:8000/api/product/store",
+      `${baseURL}api/product/store`,
       productDetails,
       {
         headers: {
@@ -311,7 +377,7 @@ const AddProduct = () => {
       };
 
       const response = await axios.delete(
-        `http://127.0.0.1:8000/api/product/${product.encProdId}`,
+        `${baseURL}api/product/${product.encProdId}`,
         { data: payload }
       );
       dispatch(getProducts(encCompanyId));
@@ -351,7 +417,7 @@ const AddProduct = () => {
   const [isProductNameAvailable, setIsProductNameAvailable] = useState(true);
   const checkProductName = async (productName) => {
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/check-product-name/${encCompanyId}`, {
+      const response = await axios.post(`${baseURL}api/check-product-name/${encCompanyId}`, {
         prod_name: productName
       });
       setIsProductNameAvailable(!response.data);
@@ -374,6 +440,28 @@ const AddProduct = () => {
      setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const handleMinOrderQtyChange = (e) => {
+    const minOrderQty = e.target.value;
+    console.log('Minimum Order Quantity', minOrderQty);
+    setProductDetails({ ...productDetails, minOrderQty: minOrderQty });
+    
+    setMinOrderQtyError(''); // Clear any existing error when user changes the minimum order quantity
+  };
+
+  const validateMinOrderQty = () => {
+    const minOrderQty = productDetails.minOrderQty;
+    if (!minOrderQty) {
+      setMinOrderQtyError('Please enter the minimum order quantity.');
+      return false;
+    }
+    if (isNaN(minOrderQty) || parseInt(minOrderQty) <= 0) {
+      setMinOrderQtyError('Minimum order quantity must be a valid number greater than 0.');
+      return false;
+    }
+    return true;
+  };
+
 
 
   return (
@@ -582,6 +670,7 @@ const AddProduct = () => {
                                       </option>
                                     ))}
                                   </select>
+                                  {categoryError && <div className="error" style={{ color: 'red' }}>{categoryError}</div>}
                                 </div>
 
                                 <div
@@ -649,6 +738,7 @@ const AddProduct = () => {
                                         <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
                                     ))}
                                     </select>
+                                    {unitError && <div className="error" style={{ color: 'red' }}>{unitError}</div>}
                                     </div>
                                   </div>
                                     {/* )} */}
@@ -689,8 +779,9 @@ const AddProduct = () => {
                                           padding: "2px",
                                         }} // Reduced height and width
                                         name="units"
-                                        onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
-                                        
+                                       // onChange={(e) => setProductDetails({ ...productDetails, minOrderQty: e.target.value })}
+                                       value={productDetails.minOrderQty}
+                                       onChange={handleMinOrderQtyChange}
                                       />
                                       <span
                                         style={{
@@ -700,16 +791,7 @@ const AddProduct = () => {
                                       >
                                         Unit/-
                                       </span>
-                                      {/* <select
-                                        className="form-control"
-                                        style={{
-                                          height: "30px",
-                                          width: "calc(60%)",
-                                          fontSize: "12px",
-                                          padding: "2px",
-                                        }} // Reduced height and width
-                                      > */}
-                                          <select
+                                      <select
                                       className="form-control"
                                       style={{ height: "40px" }}
                                       name="unit"
@@ -722,8 +804,10 @@ const AddProduct = () => {
                                         <option key={uom.encUomId} value={uom.encUomId}>{uom.unit_name}</option>
                                     ))}
                                     </select>
+                                    {unitError && <div className="error" style={{ color: 'red' }}>{unitError}</div>}
                                       {/* </select> */}
                                     </div>
+                                    {minOrderQtyError && <div className="error" style={{ color: 'red' }}>{minOrderQtyError}</div>}  
                                   </div>
                                 </div>
                               </div>
@@ -765,12 +849,13 @@ const AddProduct = () => {
                                     className="form-control"
                                     style={{ height: "40px"}}
                                     name="subcategory"
-                                    onChange={(e) =>
+                                    onChange={(e) =>{
                                       setProductDetails({
                                         ...productDetails,
-                                        prodSubCat: e.target.value,
-                                      })
-                                    }
+                                        prodSubCat: e.target.value
+                                      });
+                                      setSubCategoryError(''); // Clear any existing subcategory error
+                                    }}
                                   >
                                     <option value="">Select Subcategory</option>
                                     {filteredSubCategories.map(
@@ -784,6 +869,7 @@ const AddProduct = () => {
                                       )
                                     )}
                                   </select>
+                                  {subCategoryError && <div className="error" style={{ color: 'red' }}>{subCategoryError}</div>}
                                 </div>
 
                                 <div className="form-group" style={{ marginBottom: "16px" }}>
@@ -957,17 +1043,6 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
-
-          {/* <div className="modal-body">
-                Are you sure you want to delete {categoryToDelete && categoryToDelete.cat_name}?
-            </div> */}
-          {/* <div className="modal-footer">
-               
-                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}
-                style={{ marginRight: "8px", color: 'black', backgroundColor: 'transparent', borderColor: 'transparent' }}                                                >
-                    Delete
-                </button>
-            </div> */}
         </div>
       </div>
     </div>

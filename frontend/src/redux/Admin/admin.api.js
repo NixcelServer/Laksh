@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseURL } from "../../utils/variables";
 
 export const getCategoriesAPI = async() => {
-    const res = await axios.get("http://127.0.0.1:8000/api/categories");
+    const res = await axios.get(`${baseURL}api/categories`);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));
@@ -10,7 +10,7 @@ export const getCategoriesAPI = async() => {
 }
 
 export const addCategoryAPI = async(payload) => {
-    const res = await axios.post('http://127.0.0.1:8000/api/categories', payload, {
+    const res = await axios.post(`${baseURL}api/categories`, payload, {
       headers: {
           'Content-Type': 'multipart/form-data'
       }
@@ -21,7 +21,7 @@ export const addCategoryAPI = async(payload) => {
 }
 
 export const updateCategoryAPI = async(payload) => {
-  const res = await axios.post('http://127.0.0.1:8000/api/categories/update', payload, {
+  const res = await axios.post(`${baseURL}api/categories/update`, payload, {
     headers: {
         'Content-Type': 'multipart/form-data'
     }
@@ -32,7 +32,7 @@ export const updateCategoryAPI = async(payload) => {
 }
 
 export const getSubCategoriesAPI = async() => {
-  const res = await axios.get("http://127.0.0.1:8000/api/sub-categories");
+  const res = await axios.get(`${baseURL}api/sub-categories`);
   
   //const categories = res.data;
   //   dispatch(getCategories(categories));
@@ -40,7 +40,7 @@ export const getSubCategoriesAPI = async() => {
 }
 
 export const addSubCategoryAPI = async(payload) => {
-  const res = await axios.post("http://127.0.0.1:8000/api/sub-categories", payload);
+  const res = await axios.post(`${baseURL}api/sub-categories`, payload);
   
   //const categories = res.data;
   //   dispatch(getCategories(categories));
@@ -49,7 +49,7 @@ export const addSubCategoryAPI = async(payload) => {
 
 
 export const addKeywordAPI = async(payload) => {
-    const res = await axios.post("http://127.0.0.1:8000/api/keywords", payload);
+    const res = await axios.post(`${baseURL}api/keywords`, payload);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));
@@ -57,7 +57,7 @@ export const addKeywordAPI = async(payload) => {
 }
 
 export const getKeywordsAPI = async() => {
-    const res = await axios.get("http://127.0.0.1:8000/api/keywords");
+    const res = await axios.get(`${baseURL}api/keywords`);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));
@@ -65,7 +65,7 @@ export const getKeywordsAPI = async() => {
 }
 
 export const getUOMAPI = async() => {
-    const res = await axios.get("http://127.0.0.1:8000/api/unit-of-measurements");
+    const res = await axios.get(`${baseURL}api/unit-of-measurements`);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));
@@ -73,7 +73,7 @@ export const getUOMAPI = async() => {
 }
 
 export const addUOMAPI = async(payload) => {
-    const res = await axios.post("http://127.0.0.1:8000/api/unit-of-measurements", payload);
+    const res = await axios.post(`${baseURL}api/unit-of-measurements`, payload);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));

@@ -9,6 +9,7 @@ import { getCategories, getSubCategories,getKeywords,getUOM  } from '../../redux
 import { getProducts } from "../../redux/Product/product.action";
 import { Link, useNavigate } from "react-router-dom";
 import Slider from 'react-slick';
+import { baseURL } from "../../utils/variables";
 
 // import { getKeywords } from '../../redux/Admin/Keywords/keyword.action';
 // import { getUOM } from '../../redux/Admin/UOM/uom.action';
@@ -192,7 +193,7 @@ encCompanyId: encCompanyId
   // Logic to save changes and continue
   console.log(productDetails);
   //debugger;
-  const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+  const res = await axios.post(`${baseURL}api/product/store`, productDetails, {
       headers: {
           'Content-Type': 'multipart/form-data'
       }
@@ -230,7 +231,7 @@ const userString = sessionStorage.getItem('user');
   
       try {
           // Make the POST request using Axios
-          const res = await axios.post("http://127.0.0.1:8000/api/product/store", productDetails, {
+          const res = await axios.post(`${baseURL}api/product/store`, productDetails, {
               headers: {
                   'Content-Type': 'multipart/form-data'
               }
@@ -304,7 +305,7 @@ const userString = sessionStorage.getItem('user');
         encUserId
       };
   
-      const response = await axios.delete(`http://127.0.0.1:8000/api/product/${product.encProdId}`, { data: payload }); 
+      const response = await axios.delete(`${baseURL}api/product/${product.encProdId}`, { data: payload }); 
       dispatch(getProducts(encCompanyId));     
       // dispatch(getCategories());
     } catch (error) {
@@ -592,7 +593,7 @@ const userString = sessionStorage.getItem('user');
   <div style={{ marginTop: '30px', marginLeft:'20px', maxWidth: '400px' }}>
   {product.image_paths && product.image_paths.length === 1 ? (
   <img 
-    src={`http://127.0.0.1:8000/storage/${product.image_paths[0]}`} 
+    src={`${baseURL}storage/app/${product.image_paths[0]}`} 
     alt="Product Preview" 
     style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
   />
@@ -609,7 +610,7 @@ const userString = sessionStorage.getItem('user');
     {product.image_paths.map((prod_img_path, imgIndex) => (
       <div key={imgIndex}>
         <img 
-          src={`http://127.0.0.1:8000/storage/${prod_img_path}`} 
+          src={`${baseURL}storage/app/${prod_img_path}`} 
           alt={`Product Preview ${imgIndex + 1}`} 
           style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
         />

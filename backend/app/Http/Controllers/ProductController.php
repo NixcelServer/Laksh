@@ -358,4 +358,23 @@ class ProductController extends Controller
 
         return response()->json($response);
     }
+
+    public function getProdDetails($id)
+    {
+        // Fetch product details using the encProdId
+        $product = Product::where('tbl_prod_id', EncDecHelper::encDecId($id,'decrypt'))->first();
+
+        if ($product) {
+            $product->encProdId = $id;
+            $product->encCompanyId = EncDecHelper::encDecId($product->tbl_company_id,'encrypt');
+            $product->encCatId = EncDecHelper::encDecId($product->tbl_cat_id,'encrypt');
+            $product->encSubCatId = EncDecHelper::encDecId($product->tbl_sub_cat_id,'encrypt');
+            $product->encUomId = EncDecHelper::encDecId($product->tbl_uom_id,'encrypt');
+            $product->image_paths = $product->images->pluck('prod_img_path');
+            unset($product->tbl_company_id,$product->tbl_cat_id,$product->tbl_sub_cat_id,$product->tbl_uom_id,$product->tbl_prod_id,$product->images);
+            return response()->json($product);
+        } else {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+    }
 }

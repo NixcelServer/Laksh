@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import feather from 'feather-icons';
 import axios from 'axios';
+import { baseURL } from '../../utils/variables';
 
 const AdminTemplateDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -11,7 +12,7 @@ const AdminTemplateDashboard = () => {
         const fetchDashboardData = async () => {
           try {
              
-              const response = await axios.get('http://127.0.0.1:8000/api/dashcontents');
+              const response = await axios.get(`${baseURL}api/dashcontents`);
               setDashboardData(response.data); // Set state with the parsed data
           } catch (error) {
               console.error('Error fetching dashboard data:', error);

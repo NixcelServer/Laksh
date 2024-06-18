@@ -1,7 +1,9 @@
 import axios from "axios";
+import { baseURL } from "../../utils/variables";
+
 
 export const getProductsAPI = async(payload) => {
-    const res = await axios.get(`http://127.0.0.1:8000/api/getproducts/${payload}`);
+    const res = await axios.get(`${baseURL}api/getproducts/${payload}`);
     
     //const categories = res.data;
     //   dispatch(getCategories(categories));
@@ -9,7 +11,7 @@ export const getProductsAPI = async(payload) => {
 }
 
 export const getAllProductsAPI = async(payload) => {
-  const res = await axios.get(`http://127.0.0.1:8000/api/getallproducts`);
+  const res = await axios.get(`${baseURL}api/getallproducts`);
   
   //const categories = res.data;
   //   dispatch(getCategories(categories));
@@ -17,6 +19,6 @@ export const getAllProductsAPI = async(payload) => {
 }
 
 export const getSubCatWiseProdAPI = async(encCatId) => {
-  const res = await axios.get(`http://127.0.0.1:8000/api/product-by-category/${encCatId}`);
+  const res = await axios.get(`${baseURL}api/product-by-category/${encCatId}`);
   return res.data;
 }

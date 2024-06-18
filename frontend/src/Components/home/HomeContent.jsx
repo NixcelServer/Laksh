@@ -24,6 +24,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
+import { baseURL } from "../../utils/variables";
 
 
 
@@ -47,6 +48,11 @@ const SubmitRequirement = () => {
   const[productQuantity,setProductQuantity]=useState('');
   const[otherSpecifications,setOtherSpecifications] = useState('');
   const[packingDetails,setPackingDetails] = useState('');
+  const [productNameError, setProductNameError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  //const [subCategoryError, setSubCategoryError] = useState('');
+  const [minOrderQtyError, setMinOrderQtyError] = useState('');
+  const [unitError, setUnitError] = useState('');
   //const [isOpen, setIsOpen] = useState(false);
   
   
@@ -61,7 +67,7 @@ const SubmitRequirement = () => {
   
   const fetchImages = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/display-adv-images'); // Adjust the API endpoint as necessary
+      const response = await axios.get(`${baseURL}api/display-adv-images`); // Adjust the API endpoint as necessary
       dispatch(setImages(response.data)); // Ensure you have a setImages action to store the images in the Redux store
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -116,10 +122,12 @@ const SubmitRequirement = () => {
     const selectedCategory = e.target.value;
     console.log("selected category",selectedCategory)
     setSelectedCategory(selectedCategory);
+    setCategoryError(""); // Clear the error message when a category is selected
     // Filter subcategories based on the selected category
     const filteredSubcategories = subcategories.filter(subCategory => subCategory.encCatId === selectedCategory);
     console.log("filtered sub cat", filteredSubcategories);
     setFilteredSubCategories(filteredSubcategories);
+
 };
   
   const handleRequirementsChange = (event) => {
@@ -133,6 +141,8 @@ const SubmitRequirement = () => {
     const userString = sessionStorage.getItem('user');
     const user = JSON.parse(userString);
     const encCompanyId = user.encCompanyId;
+
+    
 
     const formData = {
       productName: productName,
@@ -149,7 +159,8 @@ const SubmitRequirement = () => {
     //dispatch(submitRequirement(formData));
   console.log("form data",formData);
       
-    const response = await axios.post('http://127.0.0.1:8000/api/submit-requirement', formData);
+ 
+    const response = await axios.post(`${baseURL}api/submit-requirement`, formData);
 
     console.log('Response:', response);
 
@@ -188,7 +199,7 @@ const postWithEmail = async () => {
     //dispatch(submitRequirement(formData));
   console.log("form data",formData);
       
-    const response = await axios.post('http://127.0.0.1:8000/api/submit-requirement-email', formData);
+    const response = await axios.post(`${baseURL}api/submit-requirement-email`, formData);
 
     console.log('Response:', response);
 
@@ -210,6 +221,32 @@ const postWithEmail = async () => {
 
 const checkSessionAndSubmit = () => {
   const userString = sessionStorage.getItem('user');
+
+  if (!productName.trim()) {
+    setProductNameError("Product Name is required");
+    return; // Stop form submission if validation fails
+  }
+
+  if (!selectedCategory) {
+    setCategoryError("Please select a category");
+    return; // Stop form submission if validation fails
+  }
+
+  // if (!selectedSubcategory) {
+  //   setSubCategoryError("Please select a subcategory");
+  //   return; // Stop form submission if validation fails
+  // }
+
+  if (!productQuantity) {
+    setMinOrderQtyError("Please enter the product quantity");
+    return; // Stop form submission if validation fails
+  }
+
+  if (!selectedUnit) {
+    setUnitError("Please select a unit");
+    return; // Stop form submission if validation fails
+  }
+
   if (userString) {
     handleSubmit();
   } else {
@@ -219,6 +256,13 @@ const checkSessionAndSubmit = () => {
   }
 };
 
+// const handleMinOrderQtyChange = (e) => {
+//   const minOrderQty = e.target.value;
+//   console.log('Minimum Order Quantity', minOrderQty);
+//   setProductDetails({ ...productDetails, minOrderQty: minOrderQty });
+  
+//   setMinOrderQtyError(''); // Clear any existing error when user changes the minimum order quantity
+// };
 
 
 const [emailEntered, setEmailEntered] = useState(false);
@@ -275,11 +319,21 @@ const handleVerifyOTP = async(e) => {
   handlePopupClose();
 };
 
+const handleProductNameChange = (e) => {
+  const value = e.target.value;
+  console.log('Product Name', value);
+  setProductName(value);
+  setProductNameError(''); // Clear any existing error when user changes the product name
+};
+
+
+
+
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7} style={{ height: '250px', overflow: 'hidden', marginBottom: '40px' }}>
-  <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" >
+    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
+    <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" >
       <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto" }}>
           <div className="card-body" style={{ marginBottom: "0px" }}>
               <div className="form-group">
@@ -345,7 +399,7 @@ const handleVerifyOTP = async(e) => {
           }}
         >
           <img
-            src={`http://127.0.0.1:8000/storage/${image.adv_img_path}`}
+            src={`${baseURL}storage/app/${image.adv_img_path}`}
             alt={`carousel-image-${index}`}
             style={{ 
               width: '100%', // Ensures the image takes up the entire width of its container
@@ -359,11 +413,6 @@ const handleVerifyOTP = async(e) => {
     </Slider>
   </div>
 </Box>
-
-
-
-
-
 
 
     
@@ -396,21 +445,21 @@ const handleVerifyOTP = async(e) => {
                             style={{ height: "30px", width: "90%" ,fontSize:"12px",padding:"2px" }} // Reduced height and width
                             name="productName"
                             value={productName}
-                            onChange={(e) => setProductName(e.target.value)}
+                            onChange={handleProductNameChange}
+                            //onChange={(e) => setProductName(e.target.value)}
                         />
+                        {productNameError && <div className="error" style={{ color: 'red' }}>{productNameError}</div>}
                     </div>
-                    <div style={{ flex: 1 }}>
-    <label>Requirement Details:</label>
-    <textarea
-        className="form-control"
-        rows="2"
-        style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
-        onChange={(e) => setProductDescription(e.target.value)}
-    ></textarea>
-</div>
-
+                    <div style={{ flex: 1 }}>   
+                    <label>Requirement Details:</label>
+                    <textarea
+                        className="form-control"
+                        rows="2"
+                        style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
+                        onChange={(e) => setProductDescription(e.target.value)}
+                    ></textarea>
                 </div>
-
+                 </div>
                 <div className="form-group" style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                     <div style={{ flex: 1 }}>
                         <label>Category:</label>
@@ -426,6 +475,7 @@ const handleVerifyOTP = async(e) => {
                                 <option key={category.encCatId} value={category.encCatId}>{category.cat_name}</option>
                             ))}
                         </select>
+                        {categoryError && <div className="error" style={{ color: 'red' }}>{categoryError}</div>}
                     </div>
 
                     <div style={{ flex: 1 }}>
@@ -435,13 +485,17 @@ const handleVerifyOTP = async(e) => {
                             style={{ height: "30px", width: "90%",fontSize:"12px",padding:"2px" }} // Reduced height and width
                             name="subcategory"
                             value={selectedSubcategory}
-                            onChange={(e) => setSelectedSubcategory(e.target.value)}
+                            onChange={(e) => {setSelectedSubcategory(e.target.value);
+                              // setSubCategoryError(''); // Clear any existing subcategory error
+                              }}
                         >
+                          
                             <option value="">Select Subcategory</option>
                             {filteredSubCategories.map(subCategory => (
                                 <option key={subCategory.encSubCatId} value={subCategory.encSubCatId}>{subCategory.sub_cat_name}</option>
                             ))}
                         </select>
+                        {/* {subCategoryError && <div className="error" style={{ color: 'red' }}>{subCategoryError}</div>} */}
                     </div>
                 </div>
 
@@ -455,7 +509,9 @@ const handleVerifyOTP = async(e) => {
                                 style={{ height: "30px", width: "calc(25%)",fontSize:"12px",padding:"2px" }} // Reduced height and width
                                 name="Prod_qty"
                                 value={productQuantity}
-                                onChange={(e) => setProductQuantity(e.target.value)}
+                                onChange={(e) =>{ setProductQuantity(e.target.value);
+                                  setMinOrderQtyError('');
+                                }}
                             />
                             <span style={{ marginLeft: "5px" }}>unit/-</span> 
                             <select
@@ -463,14 +519,19 @@ const handleVerifyOTP = async(e) => {
                                 style={{ height: "30px", width: "45%",fontSize:"12px",padding:"2px" }} // Reduced height and width
                                 name="unit"
                                 value={selectedUnit}
-                                onChange={(e) => setSelectedUnit(e.target.value)}
+                                onChange={(e) => {setSelectedUnit(e.target.value);
+                                  setUnitError('');
+                                }}
                             >
                                 <option value="">Select Unit</option>
                                 {uoms.map(unit => (
                                     <option key={unit.encUomId} value={unit.encUomId}>{unit.unit_name}</option>
                                 ))}
                             </select>
+                            {unitError && <div className="error" style={{ color: 'red' }}>{unitError}</div>}
                         </div>
+                        
+                        {minOrderQtyError && <div className="error" style={{ color: 'red' }}>{minOrderQtyError}</div>}  
                     </div>
                     <div style={{ flex: 1 }}>
                         <label>Specifications if any:</label>

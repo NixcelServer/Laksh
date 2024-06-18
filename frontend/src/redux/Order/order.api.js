@@ -1,9 +1,11 @@
 
 import axios from "axios";
+import { baseURL } from "../../utils/variables";
+
 
 export const getOrdersAPI = async(payload) => {
    
-    const res = await axios.get(`http://127.0.0.1:8000/api/my-orders/${payload}`);
+    const res = await axios.get(`${baseURL}api/my-orders/${payload}`);
 
     
     
@@ -13,7 +15,7 @@ export const getOrdersAPI = async(payload) => {
 }
 
 export const getBuyleadsAPI = async(encCompanyId) => {
-  const res = await axios.get(`http://127.0.0.1:8000/api/buyleads/${encCompanyId}`);
+  const res = await axios.get(`${baseURL}api/buyleads/${encCompanyId}`);
   return res.data;
 }
 

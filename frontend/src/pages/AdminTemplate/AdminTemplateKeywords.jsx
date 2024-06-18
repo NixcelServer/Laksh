@@ -3,6 +3,7 @@ import feather from 'feather-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addKeyword, getKeywords } from '../../redux/Admin/admin.action';
 import axios from 'axios';
+import { baseURL } from '../../utils/variables';
 
 const Keywords = () => {
     const [keywordName, setNewKeywordName] = useState("");
@@ -91,7 +92,7 @@ const Keywords = () => {
           };
       
           // Perform delete operation using encKeywordId and encUserId
-          const response = await axios.delete(`http://127.0.0.1:8000/api/keywords/${keyword.encKeywordId}`, { data: payload });      
+          const response = await axios.delete(`${baseURL}api/keywords/${keyword.encKeywordId}`, { data: payload });      
           //console.log("Keyword deleted successfully:", response.data);
           
           // Refetch keywords after deletion
@@ -129,7 +130,7 @@ const Keywords = () => {
             await dispatch(addKeyword(payload));
             console.log("keyword added");
             
-           // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+           // const response = await axios.post("${baseURL}api/categories", payload);
             dispatch(getKeywords());
             console.log("update redux");
             // console.log("keyword added successfully:", response.data);

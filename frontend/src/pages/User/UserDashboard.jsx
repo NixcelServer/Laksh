@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import feather from 'feather-icons';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { baseURL } from '../../utils/variables';
 
 const UserDashboard = () => {
 
@@ -18,7 +19,7 @@ const UserDashboard = () => {
 
     const fetchDashboardDetails = async(encCompanyId) => {
       console.log("fetch dashboard details",encCompanyId);
-      const res = await axios.get(`http://127.0.0.1:8000/api/user-dash-info/${encCompanyId}`);
+      const res = await axios.get(`${baseURL}api/user-dash-info/${encCompanyId}`);
       console.log(res.data);
       setBuyleadsCount(res.data.buyLeadsCount);
       // Access the productsCount property from the response data

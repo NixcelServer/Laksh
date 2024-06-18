@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link } from 'react-router-dom';
+import { baseURL } from "../../utils/variables";
 
 // export default function HomeGridItems({ img, tittle, sub1, sub2, sub3 }) {
 //   return <Box boxShadow='md' rounded='md' bg='white'>
@@ -24,7 +25,7 @@ import { Link } from 'react-router-dom';
 const HomeGridItems = ({ product }) => (
   <Link to={`/product-details/${product.encSubCatId}/${product.encProdId}`}>
     <Box borderWidth="1px" borderRadius="lg" overflow="hidden" width="250px" height="120px" display="flex" alignItems="center" >
-      <Image src={`http://127.0.0.1:8000/storage/${product.prod_img_path}`} alt={product.prod_name} width="150px" height="120px" objectFit="cover" />
+      <Image src={`${baseURL}storage/app/${product.prod_img_path}`} alt={product.prod_name} width="150px" height="120px" objectFit="cover" />
       <Box p="6" flex="1" ml="2">
       <Text fontWeight="bold" textTransform="uppercase" fontSize="s" noOfLines={3}>
       {product.prod_name}

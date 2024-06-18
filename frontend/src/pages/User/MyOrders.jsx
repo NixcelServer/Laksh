@@ -18,6 +18,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { getOrders } from '../../redux/Order/order.action';
 import { getCategories, getSubCategories, getUOM } from "../../redux/Admin/admin.action";
+import { baseURL } from '../../utils/variables';
 //import { useDispatch,useSelector } from "react-redux";
 
 
@@ -83,7 +84,7 @@ const MyOrder = () => {
         const user = JSON.parse(userString);
         const encCompanyId = user.encCompanyId;
         // Make an API call to close the requirement
-        axios.delete(`http://127.0.0.1:8000/api/delete-order/${encPostId}`)
+        axios.delete(`${baseURL}api/delete-order/${encPostId}`)
             .then(() => {
                 // If the request is successful, update the state to reflect the closed requirement
                 const updatedOrders = orders.filter(order => order.encPostId !== encPostId);
@@ -165,7 +166,7 @@ const MyOrder = () => {
         //   encPostId: encPostId,
         //   }));
         //Make an API call to update the order
-        axios.post(`http://127.0.0.1:8000/api/update-order/`, orderDetails)
+        axios.post(`${baseURL}api/update-order/`, orderDetails)
             .then(() => {
                 console.log('Requirement updated successfully');
                 // You may want to fetch the updated orders from the server again or update the local state here

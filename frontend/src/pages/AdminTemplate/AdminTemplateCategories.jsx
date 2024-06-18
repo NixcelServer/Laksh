@@ -7,6 +7,7 @@ import { HiOutlineViewGridAdd } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
 import { MdOutlineAssignment, MdDeleteOutline, MdDoneAll } from "react-icons/md";
 import axios from 'axios';
+import { baseURL } from '../../utils/variables';
 
 const Categories = () => {
     const categories = useSelector(state => state.masterData.categories);
@@ -102,7 +103,7 @@ const Categories = () => {
     const viewCategory = (category) => {
         console.log("view cat" , category);
         setCategoryToUpdate(category)
-        setPhotoPreview(`http://127.0.0.1:8000/storage/${category.cat_img_path}`);
+        setPhotoPreview(`${baseURL}storage/app/${category.cat_img_path}`);
         setUpdateCategoryDetails({...updateCategoryDetails,categoryName:category.cat_name,encCatId:category.encCatId})
         setShowUpdateCategoryModal(true)
     }
@@ -132,7 +133,7 @@ const Categories = () => {
                 encUserId
             };
 
-            const response = await axios.delete(`http://127.0.0.1:8000/api/categories/${category.encCatId}`, { data: payload });
+            const response = await axios.delete(`${baseURL}api/categories/${category.encCatId}`, { data: payload });
             dispatch(getCategories());
         } catch (error) {
             console.error("Error deleting keyword:", error);

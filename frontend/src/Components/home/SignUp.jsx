@@ -1,3 +1,4 @@
+import { baseURL } from '../../utils/variables';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +22,7 @@ const SignUp = () => {
     console.log(email);
     try{
       setStep(2); // Move to the OTP step
-      const response = await axios.post('http://localhost:8000/api/send-otp', { email });
+      const response = await axios.post(`${baseURL}api/send-otp`, { email });
       
       console.log(response);
     }catch(error){
@@ -37,7 +38,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
         const payload = { email, otp };
-        const response = await axios.post('http://localhost:8000/api/verify-otp', payload);
+        const response = await axios.post(`${baseURL}api/verify-otp`, payload);
 
         if (response.status === 200) {
             toast({
@@ -54,15 +55,13 @@ const SignUp = () => {
     }
 };
 
-  
-
   const styles = {
     app: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      backgroundColor: '#002D62',
+      backgroundColor: '#E0FFFF',
       fontSize: '14px',
       padding: '10px',
     },
@@ -76,13 +75,14 @@ const SignUp = () => {
     
     container: {
       display: 'flex',
-      maxWidth: '900px',
+      maxWidth: '300px',
       width: '100%',
       backgroundColor: 'white',
       borderRadius: '8px',
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
       overflow: 'hidden',
       marginTop: '5%',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
       flexDirection: 'row',
       '@media (max-width: 768px)': {
         flexDirection: 'column',
@@ -96,6 +96,7 @@ const SignUp = () => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+     
     },
     
     input: {
@@ -108,46 +109,55 @@ const SignUp = () => {
     },
     
     button: {
-      padding: '0.75rem',
+      padding: '0.5rem', // Adjusted padding
       fontSize: '1rem',
       color: 'white',
-      backgroundColor: '#00a82d',
+      
+      backgroundColor: '#034694',
       border: 'none',
+      
       borderRadius: '4px',
       cursor: 'pointer',
-      width: '50%',
-      background: 'linear-gradient(114.9deg, rgb(34, 34, 34) 8.3%, rgb(0, 40, 60) 41.6%, rgb(0, 143, 213) 93.4%)',
-      '@media (max-width: 480px)': {
-        width: '100%', // Make button full width on small screens
-      },
+      width: 'auto', // Reduced width
+      height: 'auto', // Adjusted height
+      // background: 'linear-gradient(114.9deg, rgb(34, 34, 34) 8.3%, rgb(0, 40, 60) 41.6%, rgb(0, 143, 213) 93.4%)',
+      // '@media (max-width: 480px)': {
+      //   width: '80%', // Make button wider on small screens but less than 100%
+      // },
+      '&:hover': {
+        
+    backgroundColor: '#034694',
+    color: 'white',
+      }
     },
     
-    imageContainer: {
-      flex: '1',
-      backgroundColor: '#5499C7',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     
-    image: {
-      marginTop: '20px',
-      width: '100%',
-      height: 'auto',
-      maxWidth: '300px',
-      borderRadius: '10%',
-    },
+    // imageContainer: {
+    //   flex: '1',
+    //   backgroundColor: '#5499C7',
+    //   display: 'flex',
+    //   flexDirection: 'column',
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
+    // },
     
-    imageText: {
-      marginBottom: '1px',
-      marginTop: '10px',
-      color: 'black',
-      fontSize: '1.5rem',
-      textAlign: 'center',
-      width: '250px',
-      lineHeight: '1px'
-    },
+    // image: {
+    //   marginTop: '20px',
+    //   width: '100%',
+    //   height: 'auto',
+    //   maxWidth: '300px',
+    //   borderRadius: '10%',
+    // },
+    
+    // imageText: {
+    //   marginBottom: '1px',
+    //   marginTop: '10px',
+    //   color: 'black',
+    //   fontSize: '1.5rem',
+    //   textAlign: 'center',
+    //   width: '250px',
+    //   lineHeight: '1px'
+    // },
     
     heading: {
       marginBottom: '0.5rem',
@@ -188,7 +198,7 @@ const SignUp = () => {
         <div style={styles.formContainer}>
           {step === 1 && (
             <form onSubmit={handleEmailSubmit} style={{ width: '100%' }}>
-              <img src='images/signuplogo.png' style={{ marginTop: '-50px', width: '20%', height: '25%', margin: '0 auto', marginBottom: '3%' }} />
+              <img src='images/signuplogo.png' style={{ marginTop: '-50px', width: '40%', height: '25%', margin: '0 auto', marginBottom: '3%' }} />
               <h2 style={styles.heading}>Sign up for free</h2>
               <p style={styles.text}>Remember everything in one place</p>
               <div>
@@ -234,9 +244,7 @@ const SignUp = () => {
                     width: '100%',
                     maxWidth: '180px',
                   }}
-                  
                 />
-                {errorMessage && <Text color="red.500">{errorMessage}</Text>}
               </div>
               <button type="submit" style={styles.button}>
                 Verify OTP
@@ -247,7 +255,7 @@ const SignUp = () => {
             </form>
           )}
         </div>
-        <div style={styles.imageContainer}>
+        {/* <div style={styles.imageContainer}>
           <div style={styles.imageText}>
             <h6 style={{ color: 'black' }}>Chem-Fact</h6>
             <p style={{ fontSize: '16px', fontFamily: 'serif', color: 'white' }}>A Company that manufactures products that are used as input to the production of another more complexed products.</p>
@@ -257,10 +265,11 @@ const SignUp = () => {
             alt="Evernote"
             style={styles.image}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
 };
 
 export default SignUp;
+

@@ -3,6 +3,7 @@ import feather from 'feather-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUOM, getUOM } from '../../redux/Admin/admin.action';
 import axios from 'axios';
+import { baseURL } from '../../utils/variables';
 
 const UOM = () => {
     const [uomName, setNewUOMName] = useState("");
@@ -90,7 +91,7 @@ const UOM = () => {
             };
 
             // Perform delete operation using encKeywordId and encUserId
-            const response = await axios.delete(`http://127.0.0.1:8000/api/unit-of-measurements/${uom.encUomId}`, { data: payload });
+            const response = await axios.delete(`${baseURL}api/unit-of-measurements/${uom.encUomId}`, { data: payload });
             //console.log("Keyword deleted successfully:", response.data);
 
             // Refetch keywords after deletion
@@ -128,7 +129,7 @@ const UOM = () => {
             await dispatch(addUOM(payload));
             console.log("category added");
 
-            // const response = await axios.post("http://127.0.0.1:8000/api/categories", payload);
+            // const response = await axios.post("${baseURL}api/categories", payload);
             dispatch(getUOM());
             console.log("update redux");
             // console.log("Category added successfully:", response.data);
