@@ -112,6 +112,10 @@ const AdminTemplateNavbar = () => {
               </li>
               <li className="">
                 {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
+                {/* <Link to="/product-ad" className=""> <i data-feather="layers" /><span>Products</span></Link> */}
+              </li>
+              <li className="">
+                {/* If you want to give feather icon to this use <i data-feather="mail" /> after className */}
                 <Link to="/adminad" className=""><RiAdvertisementLine /><span>Landing Page Images</span></Link>
               </li>
               <li className="">

@@ -4,12 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addKeyword, getKeywords } from '../../redux/Admin/admin.action';
 import axios from 'axios';
 import { baseURL } from '../../utils/variables';
+import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+import 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-responsive';
+import 'datatables.net-buttons';
 
 const Keywords = () => {
     const [keywordName, setNewKeywordName] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [keywordToDelete, setKeywordToDelete] = useState(null);
     const [showAddKeywordModal, setShowAddKeywordModal] = useState(false);
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const dispatch = useDispatch();
     const keywords = useSelector(state => state.masterData.keywords);
@@ -19,45 +26,28 @@ const Keywords = () => {
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
-        const loadScripts = async () => {
-            // Wait for getKeywords to complete
-            await dispatch(getKeywords());
+        if (keywords.length > 0) {
+          setDataLoaded(true);
+        }
+      }, [keywords]);
 
-            const script1 = document.createElement('script');
-            script1.src = '/assets/bundles/datatables/datatables.min.js';
-            script1.async = true;
-            document.body.appendChild(script1);
+      useEffect(() => {
+        if (dataLoaded) {
+          $(document).ready(function () {
+            if (!$.fn.DataTable.isDataTable('#example1')) {
+              $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+               // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+              }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }
+          });
+        }
+      }, [dataLoaded]);
 
-            const script2 = document.createElement('script');
-            script2.src = '/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-            script2.async = true;
-            document.body.appendChild(script2);
 
-            const script3 = document.createElement('script');
-            script3.src = '/assets/bundles/jquery-ui/jquery-ui.min.js';
-            script3.async = true;
-            document.body.appendChild(script3);
-
-            const script4 = document.createElement('script');
-            script4.src = '/assets/js/page/datatables.js';
-            script4.async = true;
-            document.body.appendChild(script4);
-
-            // Initialize Feather icons
-            feather.replace();
-
-            // Cleanup function to remove the scripts when the component unmounts
-            return () => {
-                document.body.removeChild(script1);
-                document.body.removeChild(script2);
-                document.body.removeChild(script3);
-                document.body.removeChild(script4);
-            };
-        };
-
-        loadScripts();
-    }, [dispatch]);// Empty dependency array means this effect runs only once after the component mounts
-
+   
     const handleDelete = async(keyword) => {
         if(keyword.keywordCount > 0){
             setKeywordToDelete(keyword);
@@ -96,7 +86,24 @@ const Keywords = () => {
           //console.log("Keyword deleted successfully:", response.data);
           
           // Refetch keywords after deletion
-          dispatch(getKeywords());
+          if ($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+
+         dispatch(getKeywords()).then(() => {
+            setDataLoaded(false);
+            
+
+            // Reinitialize DataTable with updated data
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            feather.replace(); // Reinitialize Feather icons if used
+        });
+        
         } catch (error) {
           console.error("Error deleting keyword:", error);
         }
@@ -127,15 +134,27 @@ const Keywords = () => {
           
             console.log("in try block");
             
-            await dispatch(addKeyword(payload));
+            const res = await axios.post(`${baseURL}api/keywords`, payload);
             console.log("keyword added");
+
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+             dispatch(getKeywords()).then(() => {
+                setDataLoaded(false);
+                setNewKeywordName('');
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
             
-           // const response = await axios.post("${baseURL}api/categories", payload);
-            dispatch(getKeywords());
-            console.log("update redux");
-            // console.log("keyword added successfully:", response.data);
-      
-           // fetchCategories();
             closeButtonRef.current.click();
            
             
@@ -144,8 +163,6 @@ const Keywords = () => {
             console.error("Error adding keyword:", error);
            // setError(error.message); // Set error state
           }
-
-
 
     };
     
@@ -184,17 +201,16 @@ const Keywords = () => {
                                         <h4>Keywords</h4>
                                     </div>
                                     <div className="card-body">
-                                        <div className="table-responsive">
-                                            <table className="table table-striped table-hover" id="save-stage" style={{width: '100%'}}>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Sr. No.</th>
-                                                        <th>Keyword</th>
-                                                        <th>Action</th>
-                                                    
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                    <div className="table-responsive">
+                                        <table id="example1" className="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                                                 {keywords.map((keyword, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
@@ -217,7 +233,14 @@ const Keywords = () => {
                             </tr>
                           ))}
                                                 </tbody>
-                                            </table>
+                    <tfoot>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </tfoot>
+                  </table>
                                         </div>
                                     </div>
                                 </div>

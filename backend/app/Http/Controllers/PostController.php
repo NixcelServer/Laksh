@@ -194,6 +194,9 @@ class PostController extends Controller
 
         $post = new Post;
         $post->tbl_company_id = $company->tbl_company_id;
+        if($request->encProdId){
+            $post->tbl_prod_id = EncDecHelper::encDecId($request->encProdId,'decrypt');
+        }
         $post->prod_name = $request->productName;
         $post->prod_qty = $request->productQty;
         $post->tbl_uom_id = EncDecHelper::encDecId($request->encUomId,'decrypt');
@@ -209,7 +212,16 @@ class PostController extends Controller
 
         $companyDetails = Company::where('tbl_company_id',$post->tbl_company_id)->first();
 
-        // Assuming you have saved the product already as $post
+       
+    
+        if($request->encProdId){
+            
+            $product = Product::where('tbl_prod_id',EncDecHelper::encDecId($request->encProdId,'decrypt'))->first();
+            $company = Company::where('tbl_company_id',$product->tbl_company_id)->first();
+            $emails = User::where('tbl_user_id',$company->tbl_user_id)->pluck('u_email')->toArray();
+            EmailHelper::sendEmail($emails,$companyDetails,$post);
+        }else{
+             // Assuming you have saved the product already as $post
         $categoryId = $post->tbl_cat_id;
 
 
@@ -221,9 +233,9 @@ class PostController extends Controller
 
        // Collect the emails from the related users
         $emails = $companies->pluck('user.u_email')->toArray();
-    
-
-        EmailHelper::sendEmail($emails,$companyDetails,$post);
+            EmailHelper::sendEmail($emails,$companyDetails,$post);
+        }
+        
 
 
         return response()->json(['message' => 'Requirement posted successfully'], 200);

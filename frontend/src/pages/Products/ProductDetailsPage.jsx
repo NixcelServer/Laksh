@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCategories, getKeywords, getSubCategories, getUOM } from '../../redux/Admin/admin.action';
 import Slider from 'react-slick';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, Center } from "@chakra-ui/react";
 import { baseURL } from '../../utils/variables';
 import axios from 'axios';
 
@@ -27,7 +27,14 @@ const ProductDetailsPage = () => {
   const [otherSpecifications, setOtherSpecifications] = useState('');
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [product,setProduct] = useState(null);
- 
+  const [showPopup, setShowPopup] = useState(false);
+  const [emailEntered, setEmailEntered] = useState(false);
+
+const [email, setEmail] = useState('');
+const [otp, setOtp] = useState('');
+const handleEmailChange = (event) => {
+  setEmail(event.target.value);
+};
 
 
   
@@ -53,7 +60,7 @@ const ProductDetailsPage = () => {
   const getProd = async (encProdId) => {
     try {
     //  const res = await axios.get(`${baseURL}api/get-prod-details/${encProdId}`);//http://127.0.0.1:8000
-      const res = await axios.get(`http://127.0.0.1:8000/api/get-prod-details/${encProdId}`);
+      const res = await axios.get(`${baseURL}api/get-prod-details/${encProdId}`);
       setProduct(res.data);
       console.log(res.data);
     } catch (error) {
@@ -137,9 +144,100 @@ const ProductDetailsPage = () => {
 
   const checkSessionAndSubmit = () => {
     // Add your form submission logic here
+    const userString = sessionStorage.getItem('user');
+
+    if (userString) {
+      handleSubmit();
+    } else {
+      
+      setShowPopup(true);
+      
+    }
   }
 
+  const handleEmailSubmit = async(e) => {
+    console.log(email);
+    e.preventDefault();
+    const response = await axios.post(`${baseURL}api/send-otp`, { email });
+    // Add logic to submit email (e.g., send OTP)
+    setEmailEntered(true); // Set email entered flag to true
+  };
 
+  const handleOtpChange = (event) => {
+    setOtp(event.target.value);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setEmail(''); // Reset email field
+    setOtp(''); // Reset OTP field
+    setEmailEntered(false); // Reset email entered flag
+  };
+
+  const handleVerifyOTP = async(e) => {
+    // Add logic to verify OTP
+    e.preventDefault();
+      try {
+          const payload = { email, otp };
+          const response = await axios.post(`${baseURL}api/verify-otp`, payload);
+  
+          if (response.status === 200) {
+            postWithEmail();
+              toast({
+                  title: 'Requirement Posted!',
+                  status: 'success',
+                  duration: 3000,
+                  isClosable: true,
+              });
+              
+              // navigate('/sign', { state: { email } });
+          }
+      } catch (error) {
+          // const errorMessage = error.response?.data?.error || 'An error occurred while verifying the OTP. Please try again.';
+          // setErrorMessage(errorMessage);
+      }
+    // After successful verification, you can close the modal
+    handlePopupClose();
+  };
+
+  const postWithEmail = async () => {
+ 
+    try {
+  
+      console.log("in post email")
+  
+      const formData = {
+        encProdId:encProdId,
+        productName: product.prod_name,
+        productQty: productQuantity,
+        encCatId: product.encCatId,
+        encSubCatId: product.encSubCatId,
+        encUomId: selectedUnit,
+        otherSpecifications:  otherSpecifications,
+
+        emailId: email, // Include encCompanyId in formData
+      };
+      //dispatch(submitRequirement(formData));
+    console.log("form data",formData);
+        
+      // const response = await axios.post(`http://127.0.0.1:8000/api/submit-requirement-email`, formData);
+  
+      console.log('Response:', response);
+  
+      console.log('Response:', response);
+  
+      if (response.status === 200) {
+        onClose();
+        console.log('Form submitted successfully');
+        // Assuming success message is returned from the server
+        console.log('Success message:', response.data.message);
+      } else {
+        console.error('Form submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
 
   return (
     <div
@@ -184,7 +282,7 @@ const ProductDetailsPage = () => {
     {product.image_paths.map((prod_img_path, imgIndex) => (
       <div key={imgIndex}>
         <img 
-          src={`${baseURL}storage/app/${prod_img_path}`} 
+          src={`${baseURL}public/${prod_img_path}`} 
           alt={`Product Preview ${imgIndex + 1}`} 
           style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
         />
@@ -305,8 +403,8 @@ const ProductDetailsPage = () => {
           <textarea
             className="form-control"
             placeholder="Enter Requirement Details"
-           // value={productDescription}
-           // onChange={(e) => setProductDescription(e.target.value)}
+            value={otherSpecifications}
+           onChange={(e) => setOtherSpecifications(e.target.value)}
             style={{ height: "auto", maxHeight: "50px", width: "90%", padding: "2px", fontSize: "12px", overflowY: "auto" }} // Reduced height and width
 
           />
@@ -336,6 +434,55 @@ const ProductDetailsPage = () => {
     </ModalFooter>
   </ModalContent>
 </Modal>
+
+<Modal isOpen={showPopup} onClose={handlePopupClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader textAlign="center" fontWeight="bold" fontSize="xl" color="black#9f98e9" borderRadius="20px 20px 0 0" backgroundColor="#b4e998" borderBottomWidth="1px" pb="2">
+            Success!
+          </ModalHeader>
+          <ModalCloseButton _focus={{ border: "none" }} _hover={{ bg: "none" }} />
+          <ModalBody>
+            {emailEntered ? (
+              <div>
+                <Center>
+                  <p>Enter OTP sent to {email}</p>
+                </Center>
+                <div className="form-group">
+                  <label>OTP:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={handleOtpChange}
+                  />
+                </div>
+                <Center>
+                <Button colorScheme="blue" onClick={handleVerifyOTP} style={{marginTop:'10px',width:'80px',height:'30px',padding:'px'}}>Verify OTP</Button>
+                </Center>
+              </div>
+            ) : (
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+<Center>
+  <Button colorScheme="blue" onClick={handleEmailSubmit} style={{marginTop:'20px',marginBottom:'-30px',width:'80px',height:'30px'}}>Submit</Button>
+</Center>
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            {/* <Button colorScheme="blue" onClick={handlePopupClose}>Close</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
 
     </div>

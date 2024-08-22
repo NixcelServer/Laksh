@@ -16,6 +16,7 @@ import Login from "../pages/Login";
 
 import AdminTemplateDashboard from "../pages/AdminTemplate/AdminTemplateDashboard";
 
+
 import AdminLogin from "../pages/AdminLogin";
 
 
@@ -52,6 +53,8 @@ import SignUp from "../Components/home/SignUp";
 import CategoryPage from "../Components/home/HomeCategories";
 import Allcategories from "../Components/home/AllCategories";
 import ProductDetailsPage from "../pages/Products/ProductDetailsPage";
+import AdminProduct from "../pages/AdminTemplate/AdminProducts";
+import ExampleNavbar from "../pages/AdminTemplate/ExampleNavbar";
 
 
 // import AdvertisementSlider from "../Components/home/Advertisement";
@@ -95,7 +98,17 @@ export default function AllRoutes() {
               </>
             }
           />
+           <Route
+            path="/product-ad"
+            element={
+              <>
 
+                <AdminTemplateNavbar />
+                <AdminProduct/>
+
+              </>
+            }
+          />
           <Route
             path="/admintemplatecategories"
             element={
@@ -109,7 +122,7 @@ export default function AllRoutes() {
 
           <Route
 
-            path="/subcategories/:encCatId"
+            path="/subcategories"
             element={
               <>
                 <AdminTemplateNavbar />
@@ -153,6 +166,15 @@ export default function AllRoutes() {
             element={
               <>
                 <AdminTemplateNavbar />
+              </>
+            }
+          />
+
+<Route
+            path="/examplenavbar"
+            element={
+              <>
+                <ExampleNavbar />
               </>
             }
           />

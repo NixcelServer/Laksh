@@ -12,6 +12,8 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Post;
 use App\Models\Company;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 
 
@@ -19,74 +21,135 @@ class ProductController extends Controller
 {
     //
     public function storeProduct(Request $request)
-    {
-        $decCompanyId = EncDecHelper::encDecId($request->encCompanyId, 'decrypt');
-        $prod = new Product;
-        $prod->tbl_company_id = $decCompanyId;
-        $prod->prod_name = $request->prodName;
-        $prod->prod_description = $request->prodDescription;
-        $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat, 'decrypt');
-        $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat, 'decrypt');
-        $prod->prod_price = $request->prodPrice;
-        $prod->tbl_uom_id = EncDecHelper::encDecId($request->prodUOM, 'decrypt');
-        $prod->prod_min_order_qty = $request->minOrderQty;
-        $prod->add_date = Date::now()->toDateString();
-        $prod->add_time = Date::now()->toTimeString();
-        $prod->display_price = $request->input('display_price', 'yes');
+{
+    // Decrypt company ID from the request
+    $decCompanyId = EncDecHelper::encDecId($request->encCompanyId, 'decrypt');
 
-        // Assuming $request->file('files') returns an array of files
-        $files = $request->file('files');
+    // Create a new Product instance and populate its attributes
+    $prod = new Product;
+    $prod->tbl_company_id = $decCompanyId;
+    $prod->prod_name = $request->prodName;
+    $prod->prod_description = $request->prodDescription;
+    $prod->tbl_cat_id = EncDecHelper::encDecId($request->prodCat, 'decrypt');
+    $prod->tbl_sub_cat_id = EncDecHelper::encDecId($request->prodSubCat, 'decrypt');
+    $prod->prod_price = $request->prodPrice;
+    $prod->tbl_uom_id = EncDecHelper::encDecId($request->prodUOM, 'decrypt');
+    $prod->prod_min_order_qty = $request->minOrderQty;
+    $prod->add_date = now()->toDateString();
+    $prod->add_time = now()->toTimeString();
+    $prod->display_price = $request->input('display_price', 'yes');
 
-        if ($files && count($files) > 0) {
-            // Get the original filename of the first file
-            $firstFile = $files[0];
-            $firstFileName = $firstFile->getClientOriginalName();
+    // Save the first image in the $prod record
+    // if ($request->hasFile('files') && count($request->file('files')) > 0) {
+    //     $firstFile = $request->file('files')[0];
+    //     $firstFileName = $firstFile->getClientOriginalName();
 
-            // Store the first file in the specified directory with the original file name
-            $directory = $decCompanyId . '/products';
-            $firstFilePath = $firstFile->storeAs($directory, $firstFileName);
+    //     // Specify the directory within the public path
+    //     $directory = $decCompanyId . '/products';
 
-            // Store the first image path in prod_img_path
-            $prod->prod_img_path = $firstFilePath;
-        }
+    //     // Ensure directory exists with correct permissions
+    //     $path = public_path($directory);
+    //     if (!File::exists($path)) {
+    //         File::makeDirectory($path, 0755, true); // Ensure directory is writable
+    //     }
 
+    //     // Move the first file to the public directory with its original name
+    //     $firstFile->move($path, $firstFileName);
+
+    //     // Store the file path in the $prod record
+    //     $prod->prod_img_path = $directory . '/' . $firstFileName;
+
+
+    // }
+    if ($request->hasFile('files') && count($request->file('files')) > 0) {
+
+        $firstFile = $request->file('files')[0];
+        $firstFileName = $firstFile->getClientOriginalName();
+
+        // Specify the directory within the public path
+        $directory = $decCompanyId . '/products';
+        $prod->prod_img_path = $directory . '/' . $firstFileName;
         $prod->save();
 
-        // Save each image in the ProductImages table
-        if ($files) {
-            foreach ($files as $file) {
-                // Get the original filename
-                $fileName = $file->getClientOriginalName();
+        foreach ($request->file('files') as $file) {
+            $fileName = $file->getClientOriginalName();
 
-                // Store the file in the specified directory with the original file name
-                $filePath = $file->storeAs($directory, $fileName);
+            // Specify the directory within the public path
+            $directory = $decCompanyId . '/products';
 
-                // Create a new record in tbl_prod_img table for each file
-                $prodimg = new ProductImages();
-                $prodimg->tbl_prod_id = $prod->tbl_prod_id;
-                $prodimg->tbl_company_id = $decCompanyId;
-                $prodimg->prod_img_path = $filePath;
-                $prodimg->add_date = Date::now()->toDateString();
-                $prodimg->add_time = Date::now()->toTimeString();
-                $prodimg->save();
+            // Ensure directory exists with correct permissions
+            $path = public_path($directory);
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true); // Ensure directory is writable
             }
-        }
 
-        foreach ($request->keywords as $encKeywordId) {
-            // Decrypt the keyword ID
-            $decKeywordId = EncDecHelper::encDecId($encKeywordId, 'decrypt');
-            
-            // Create a new record in tbl_prod_keywords using the ProductKeywords model
-            $productKeyword = new ProductKeyword();
-            $productKeyword->tbl_prod_id = $prod->tbl_prod_id; // Assuming you have stored the product already and it has an ID
-            $productKeyword->tbl_keyword_id = $decKeywordId;
-            $productKeyword->add_date = Date::now()->toDateString();
-            $productKeyword->add_time = Date::now()->toTimeString();
-            $productKeyword->save();
-        }
+            // Move each file to the public directory with its original name
+            $file->move($path, $fileName);
 
-        return response()->json($prod);
+            // Store the file path in the database table for ProductImages
+            $prodimg = new ProductImages();
+            $prodimg->tbl_prod_id = $prod->tbl_prod_id;
+            $prodimg->tbl_company_id = $decCompanyId;
+            $prodimg->prod_img_path = $directory . '/' . $fileName;
+            $prodimg->add_date = now()->toDateString();
+            $prodimg->add_time = now()->toTimeString();
+            $prodimg->save();
+        }
     }
+
+    // Save the $prod record
+    $prod->save();
+
+    
+
+    // Save each additional image in the ProductImages table
+    // $files = $request->file('files');
+    // if ($files) {
+    //     foreach ($files as $file) {
+    //         // Get the original filename
+    //         $fileName = $file->getClientOriginalName();
+        
+    //         // Specify the directory within the public path
+    //         $directory = $decCompanyId . '/products';
+        
+    //         // Ensure directory exists with correct permissions
+    //         $path = public_path($directory);
+    //         if (!File::exists($path)) {
+    //             File::makeDirectory($path, 0755, true); // Ensure directory is writable
+    //         }
+        
+    //         // Move the file to the public directory with its original name
+    //         $file->move($path, $fileName); // Use $file instead of $firstFile
+        
+    //         // Store the file path in the database table for ProductImages
+    //         $prodimg = new ProductImages();
+    //         $prodimg->tbl_prod_id = $prod->tbl_prod_id;
+    //         $prodimg->tbl_company_id = $decCompanyId;
+    //         $prodimg->prod_img_path = $directory . '/' . $fileName;
+    //         $prodimg->add_date = now()->toDateString();
+    //         $prodimg->add_time = now()->toTimeString();
+    //         $prodimg->save();
+    //     }
+    // }
+
+    // Handle keywords and other data as needed
+    foreach ($request->keywords as $encKeywordId) {
+        // Decrypt the keyword ID
+        $decKeywordId = EncDecHelper::encDecId($encKeywordId, 'decrypt');
+        
+        // Create a new record in tbl_prod_keywords using the ProductKeywords model
+        $productKeyword = new ProductKeyword();
+        $productKeyword->tbl_prod_id = $prod->tbl_prod_id; // Assuming you have stored the product already and it has an ID
+        $productKeyword->tbl_keyword_id = $decKeywordId;
+        $productKeyword->add_date = Date::now()->toDateString();
+        $productKeyword->add_time = Date::now()->toTimeString();
+        $productKeyword->save();
+    }
+
+    // Return JSON response with the $prod object
+    return response()->json($prod);
+}
+
 
     public function getProducts($id)
     {

@@ -277,6 +277,9 @@ export default function Navbar() {
       {username}
     </MenuItem>
     <hr style={{ margin: '5px 0' }} /> {/* Horizontal line */}
+    <MenuItem as={Link} to="/companysetup" icon={<FaCog />}>
+      Company Setup
+    </MenuItem>
     <MenuItem as={Link} to="#" icon={<FaCog />}>
       Settings
     </MenuItem>

@@ -4,12 +4,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addUOM, getUOM } from '../../redux/Admin/admin.action';
 import axios from 'axios';
 import { baseURL } from '../../utils/variables';
+import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+import 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-responsive';
+import 'datatables.net-buttons';
 
 const UOM = () => {
     const [uomName, setNewUOMName] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [UOMToDelete, setUOMToDelete] = useState(null);
     const [showAddUOMModal, setShowAddUOMModal] = useState(false);
+    const [dataLoaded, setDataLoaded] = useState(false);
+
     const dispatch = useDispatch();
     const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const uoms = useSelector(state => state.masterData.uom);
@@ -18,46 +26,29 @@ const UOM = () => {
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
+        dispatch(getUOM());
+      }, [dispatch]);
 
-        const loadScripts = async () => {
-
-            await dispatch(getUOM());
-            const script1 = document.createElement('script');
-            script1.src = 'assets/bundles/datatables/datatables.min.js';
-            script1.async = true;
-            document.body.appendChild(script1);
-
-            const script2 = document.createElement('script');
-            script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-            script2.async = true;
-            document.body.appendChild(script2);
-
-            const script3 = document.createElement('script');
-            script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
-            script3.async = true;
-            document.body.appendChild(script3);
-
-            const script4 = document.createElement('script');
-            script4.src = 'assets/js/page/datatables.js';
-            script4.async = true;
-            document.body.appendChild(script4);
-
-            // Initialize Feather icons
-            feather.replace();
-
-            // Cleanup function to remove the scripts when the component unmounts
-            return () => {
-                document.body.removeChild(script1);
-                document.body.removeChild(script2);
-                document.body.removeChild(script3);
-                document.body.removeChild(script4);
-            };
+    useEffect(() => {
+        if (uoms.length > 0) {
+            setDataLoaded(true);
         }
+    }, [uoms]);
 
-        loadScripts();
-
-    }, []); // Empty dependency array means this effect runs only once after the component mounts
-
+    useEffect(() => {
+        if (dataLoaded) {
+            $(document).ready(function () {
+                if (!$.fn.DataTable.isDataTable('#example1')) {
+                    $("#example1").DataTable({
+                        "responsive": true,
+                        "lengthChange": false,
+                        "autoWidth": false,
+                        // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                }
+            });
+        }
+    }, [dataLoaded]);
     const handleDelete = async (uom) => {
         console.log(uom);
         if (uom.uomCount > 0) {
@@ -94,8 +85,22 @@ const UOM = () => {
             const response = await axios.delete(`${baseURL}api/unit-of-measurements/${uom.encUomId}`, { data: payload });
             //console.log("Keyword deleted successfully:", response.data);
 
-            // Refetch keywords after deletion
-            dispatch(getUOM());
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+             dispatch(getUOM()).then(() => {
+                setDataLoaded(false);
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
         } catch (error) {
             console.error("Error deleting keyword:", error);
         }
@@ -126,13 +131,27 @@ const UOM = () => {
 
             console.log("in try block");
 
-            await dispatch(addUOM(payload));
+            const res = await axios.post(`${baseURL}api/unit-of-measurements`, payload);
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+             dispatch(getUOM()).then(() => {
+                setDataLoaded(false);
+                setNewUOMName('');
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
             console.log("category added");
 
-            // const response = await axios.post("${baseURL}api/categories", payload);
-            dispatch(getUOM());
-            console.log("update redux");
-            // console.log("Category added successfully:", response.data);
+          
 
             // fetchCategories();
             closeButtonRef.current.click();
@@ -154,7 +173,7 @@ const UOM = () => {
             <div className="main-content">
                 <section className="section">
                     <div className="section-body">
-                        
+
 
                         <div className="row">
                             <div className="col-12">
@@ -184,13 +203,12 @@ const UOM = () => {
                                     </div>
                                     <div className="card-body">
                                         <div className="table-responsive">
-                                            <table className="table table-striped table-hover" id="save-stage" style={{ width: '100%' }}>
+                                            <table id="example1" className="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th>Sr. No.</th>
-                                                        <th>Unit of Measurement</th>
+                                                        <th>Sr No</th>
+                                                        <th>Name</th>
                                                         <th>Action</th>
-
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -213,6 +231,13 @@ const UOM = () => {
                                                         </tr>
                                                     ))}
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Sr No</th>
+                                                        <th>Name</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -224,46 +249,46 @@ const UOM = () => {
 
                 {/* Cannot Delete confirmation modal */}
                 <div
-                className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
-                id="cannotDeleteConfirmationModal"
-                tabIndex="-1"
-                role="dialog"
-                aria-labelledby="cannotDeleteConfirmationModalLabel"
-                aria-hidden={!showCannotDeleteConfirmation}
-                style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
-            >
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
-                                Cannot Delete
-                            </h5>
-                            <button
-                                type="button"
-                                className="close"
-                                onClick={handleOK}
-                                aria-label="Close"
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            Unable to delete the Unit of Measurement '{UOMToDelete && UOMToDelete.uom_name}' at the moment. It appears that this Unit of Measurement has been assigned.
+                    className={`modal fade ${showCannotDeleteConfirmation ? "show" : ""}`}
+                    id="cannotDeleteConfirmationModal"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="cannotDeleteConfirmationModalLabel"
+                    aria-hidden={!showCannotDeleteConfirmation}
+                    style={{ display: showCannotDeleteConfirmation ? "block" : "none" }}
+                >
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="cannotDeleteConfirmationModalLabel">
+                                    Cannot Delete
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    onClick={handleOK}
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                Unable to delete the Unit of Measurement '{UOMToDelete && UOMToDelete.uom_name}' at the moment. It appears that this Unit of Measurement has been assigned.
 
-                        </div>
-                        <div className="modal-footer">
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={handleOK}
-                            >
-                                Ok
-                            </button>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleOK}
+                                >
+                                    Ok
+                                </button>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
                 {/* Delete confirmation modal */}
 
@@ -378,93 +403,7 @@ const UOM = () => {
             </div>
 
             {/* SIDEBAR */}
-            <div className="settingSidebar">
-                <a href="javascript:void(0)" className="settingPanelToggle"> <i className="fa fa-spin fa-cog" />
-                </a>
-                <div className="settingSidebar-body ps-container ps-theme-default">
-                    <div className=" fade show active">
-                        <div className="setting-panel-header">Setting Panel
-                        </div>
-                        <div className="p-15 border-bottom">
-                            <h6 className="font-medium m-b-10">Select Layout</h6>
-                            <div className="selectgroup layout-color w-50">
-                                <label className="selectgroup-item">
-                                    <input type="radio" name="value" defaultValue={1} className="selectgroup-input-radio select-layout" defaultChecked />
-                                    <span className="selectgroup-button">Light</span>
-                                </label>
-                                <label className="selectgroup-item">
-                                    <input type="radio" name="value" defaultValue={2} className="selectgroup-input-radio select-layout" />
-                                    <span className="selectgroup-button">Dark</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="p-15 border-bottom">
-                            <h6 className="font-medium m-b-10">Sidebar Color</h6>
-                            <div className="selectgroup selectgroup-pills sidebar-color">
-                                <label className="selectgroup-item">
-                                    <input type="radio" name="icon-input" defaultValue={1} className="selectgroup-input select-sidebar" />
-                                    <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Light Sidebar"><i className="fas fa-sun" /></span>
-                                </label>
-                                <label className="selectgroup-item">
-                                    <input type="radio" name="icon-input" defaultValue={2} className="selectgroup-input select-sidebar" defaultChecked />
-                                    <span className="selectgroup-button selectgroup-button-icon" data-toggle="tooltip" data-original-title="Dark Sidebar"><i className="fas fa-moon" /></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="p-15 border-bottom">
-                            <h6 className="font-medium m-b-10">Color Theme</h6>
-                            <div className="theme-setting-options">
-                                <ul className="choose-theme list-unstyled mb-0">
-                                    <li title="white" className="active">
-                                        <div className="white" />
-                                    </li>
-                                    <li title="cyan">
-                                        <div className="cyan" />
-                                    </li>
-                                    <li title="black">
-                                        <div className="black" />
-                                    </li>
-                                    <li title="purple">
-                                        <div className="purple" />
-                                    </li>
-                                    <li title="orange">
-                                        <div className="orange" />
-                                    </li>
-                                    <li title="green">
-                                        <div className="green" />
-                                    </li>
-                                    <li title="red">
-                                        <div className="red" />
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="p-15 border-bottom">
-                            <div className="theme-setting-options">
-                                <label className="m-b-0">
-                                    <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="mini_sidebar_setting" />
-                                    <span className="custom-switch-indicator" />
-                                    <span className="control-label p-l-10">Mini Sidebar</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="p-15 border-bottom">
-                            <div className="theme-setting-options">
-                                <label className="m-b-0">
-                                    <input type="checkbox" name="custom-switch-checkbox" className="custom-switch-input" id="sticky_header_setting" />
-                                    <span className="custom-switch-indicator" />
-                                    <span className="control-label p-l-10">Sticky Header</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele">
-                            <a href="#" className="btn btn-icon icon-left btn-primary btn-restore-theme">
-                                <i className="fas fa-undo" /> Restore Default
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     );
 };

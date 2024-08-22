@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import feather from 'feather-icons';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSubCategory, getCategories, getSubCategories } from '../../redux/Admin/admin.action';
 import axios from 'axios';
 import { baseURL } from '../../utils/variables';
+import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+import 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-responsive';
+import 'datatables.net-buttons';
 
 const AdminTemplateSubcategories = () => {
-
 
     const dispatch = useDispatch();
     const [subcategory, setSubcategory] = useState('');
@@ -15,9 +20,13 @@ const AdminTemplateSubcategories = () => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showAddsubCategoryModal, setShowAddsubCategoryModal] = useState(false);
     const [subCategoryName, setNewsubCategoryName] = useState("");
+    const [dataLoaded, setDataLoaded] = useState(false);
+    const location = useLocation();
+  const { encCatId } = location.state || {};
 
 
-    const { encCatId } = useParams();
+
+    // const { encCatId } = useParams();
     console.log("in assign  subcat", encCatId);
 
 
@@ -36,7 +45,29 @@ const AdminTemplateSubcategories = () => {
     // Log the matching category (optional)
     //console.log(matchingCategory);
 
+    useEffect(() => {
+        if (filteredSubCats.length > 0) {
+          setDataLoaded(true);
+        }
+      }, [filteredSubCats]);
+
+      useEffect(() => {
+        if (dataLoaded) {
+          $(document).ready(function () {
+            if (!$.fn.DataTable.isDataTable('#example1')) {
+              $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+               // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+              }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }
+          });
+        }
+      }, [dataLoaded]);
+
     const handleDelete = async (subCategory) => {
+
         if (subCategory.prodCount > 0) {
             setSubCategoryToDelete(subCategory);
             setShowCannotDeleteConfirmation(true);
@@ -62,111 +93,84 @@ const AdminTemplateSubcategories = () => {
     const handleConfirmDelete = async () => {
         const subCategory = subCategoryToDelete;
         try {
+    
             const userString = sessionStorage.getItem('user');
             const user = JSON.parse(userString);
             const encUserId = user.encUserId;
-
-            // Include both encUserId and encKeywordId in the payload
-            const payload = {
-                encUserId
-            };
-
-            // Perform delete operation using encKeywordId and encUserId
+    
+            const payload = { encUserId };
+    
             const response = await axios.delete(`${baseURL}api/sub-categories/${subCategory.encSubCatId}`, { data: payload });
-            //console.log("Keyword deleted successfully:", response.data);
-
-            // Refetch keywords after deletion
-            dispatch(getSubCategories());
-            dispatch(getCategories());
+    
+            // Destroy the existing DataTable before re-fetching data
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+            // Re-fetch categories and reinitialize DataTable
+            await dispatch(getCategories());
+            dispatch(getSubCategories()).then(() => {
+                setDataLoaded(false);
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
+    
+    
         } catch (error) {
-            console.error("Error deleting keyword:", error);
+            console.error("Error deleting subcategory:", error);
+        } finally {
+            setShowDeleteConfirmation(false);
         }
-        //dispatch(getCategories(updatedCategories));
-        setShowDeleteConfirmation(false);
-
     };
-
+    
     const closeButtonRef = useRef(null);
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Perform form submission logic here
-        // console.log('Category:', encCatId);
-        // console.log('Subcategory:', subcategory);
-
+    
+        // Extract user info from session
         const userString = sessionStorage.getItem('user');
-        // Parse the user object from the string format stored in sessionStorage
         const user = JSON.parse(userString);
-
-        // Retrieve the encUserId from the user object
         const encUserId = user.encUserId;
-        const subCategoryName = subcategory;
-
-        // console.log(encUserId);
-
-        const payload = {
-            subCategoryName, encUserId, encCatId
-        }
-        // console.log("payload",payload);
-
+    
+        // Prepare payload
+        const payload = { subCategoryName: subcategory, encUserId, encCatId };
+    
         try {
-
-            //console.log("in try block");
-
-            // const response = await axios.post("${baseURL}api/sub-categories", payload);
-            await dispatch(addSubCategory(payload));
-            // console.log("Category added successfully:", response.data);
-
-            //fetchSubCategories();
-            //closeButtonRef.current.click();
-
-            dispatch(getSubCategories());
-
-        } catch (error) {
-            console.error("Error adding category:", error);
-            // setError(error.message); // Set error state
-        }
-
-        // Reset form fields
-
-        setSubcategory('');
-    };
-
-    useEffect(() => {
-
-        const loadScripts = async () => {
-            console.log("hello");
+            // Send POST request
+            await axios.post(`${baseURL}api/sub-categories`, payload);
+    
+            // Destroy and reinitialize DataTable
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+             dispatch(getSubCategories());
+    
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
             feather.replace();
-            await dispatch(getCategories());
-            await dispatch(getSubCategories());
-
-            const script1 = document.createElement('script');
-            script1.src = '/assets/bundles/datatables/datatables.min.js';
-            script1.async = true;
-            document.body.appendChild(script1);
-
-            const script2 = document.createElement('script');
-            script2.src = '/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-            script2.async = true;
-            document.body.appendChild(script2);
-
-            const script3 = document.createElement('script');
-            script3.src = '/assets/bundles/jquery-ui/jquery-ui.min.js';
-            script3.async = true;
-            document.body.appendChild(script3);
-
-            const script4 = document.createElement('script');
-            script4.src = '/assets/js/page/datatables.js';
-            script4.async = true;
-            document.body.appendChild(script4);
-
+    
+            // Close modal and reset form
+            closeButtonRef.current.click();
+            setSubcategory('');
+        } catch (error) {
+            console.error("Error adding subcategory:", error);
         }
-
-        loadScripts();
-
-
-    }, []); // Empty dependency array means this effect runs only once after the component mounts
+    };
+    
+   
     const matchingCategory = categories.find(category => category.encCatId === encCatId);
 
     const handleSaveChanges = async (event) => {
@@ -204,18 +208,19 @@ const AdminTemplateSubcategories = () => {
                                 <div className="row" style={{ paddingRight: '0', paddingTop: '3%', width: '100%', marginLeft: '3px', marginTop: '-5%' }}>
                                     <div className="col-xl-4 col-lg-8 col-md-8 col-sm-8 col-xs-12" style={{ paddingRight: '0', paddingTop: '3%', width: '150%', marginLeft: '3px' }}>
                                         <div className="card-content" style={{ marginBottom: '6%' }}>
-                                            <h5 className="font-15" style={{ marginBottom: '6%', marginTop: '1%', color: '#A569BD' }}>Assign Subcategory</h5>
-                                            {/* Start of Assign Subcategory Form */}
+                                        <h5 className="font-15" style={{ marginBottom: '6%', marginTop: '1%', color: '#A569BD', textAlign: 'left' }}>Assign Subcategory</h5>
+                                        {/* Start of Assign Subcategory Form */}
                                             <form>
 
-                                                <div className="form-group" style={{ marginBottom: '-2%' }}>
-                                                    <label htmlFor="category" style={{ textAlign: 'left', display: 'inline-block', display: 'inline-block', fontSize: '15px' }}>Category :</label>
-                                                    <span style={{ display: 'inline-block' }}>{matchingCategory && matchingCategory.cat_name}</span>
-                                                </div>
+                                            <div className="form-group" style={{ marginBottom: '-2%', textAlign: 'left' }}>
+                                                <label htmlFor="category" style={{ fontSize: '15px' }}>Category :</label>
+                                                <span>{matchingCategory && matchingCategory.cat_name}</span>
+                                            </div>
+
 
 
                                                 <div className="form-group">
-                                                    <label htmlFor="subcategory" style={{ textAlign: 'left', display: 'block', marginTop: '4%' }}>Subcategory Name</label>
+                                                    <label htmlFor="subcategory" style={{ textAlign: 'left', display: 'block', marginTop: '4%', fontSize: '15px' }}>Subcategory Name</label>
                                                     <input type="text" className="form-control" id="subcategory" style={{ width: "200px" }} placeholder="Enter subcategory name" value={subcategory}
                                                         onChange={(e) => setSubcategory(e.target.value)} />
 
@@ -224,7 +229,7 @@ const AdminTemplateSubcategories = () => {
                                                 {/* Additional form fields can be added here as needed */}
                                                 <div style={{ textAlign: 'left' }}>
                                                     <button type="submit" className="btn btn-primary" onClick={handleSubmit}
-                                                        style={{ float: 'left', height: '25px', padding: '0' }}>Assign Subcategory</button>
+                                                        style={{ float: 'left', height: '25px', padding: '3px' }}>Assign Subcategory</button>
                                                 </div>
                                             </form>
                                             {/* End of Assign Subcategory Form */}
@@ -237,17 +242,16 @@ const AdminTemplateSubcategories = () => {
                                     </div>
                                 </div>
                                 <div className="card-body">
-                                    <div className="table-responsive">
-                                        <table className="table table-striped table-hover" id="save-stage" style={{ width: '100%' }}>
-                                            <thead>
-                                                <tr>
-                                                    <th>Sr. No.</th>
-                                                    <th>Sub Category</th>
-                                                    <th>Action</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                <div className="table-responsive">
+                                        <table id="example1" className="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                                                 {filteredSubCats.map((subCategory, index) => (
                                                     <tr >
                                                         <td>{index + 1}</td>
@@ -266,8 +270,15 @@ const AdminTemplateSubcategories = () => {
                                                     </tr>
                                                 ))}
                                             </tbody>
-                                        </table>
-                                    </div>
+                    <tfoot>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                                        </div>
                                 </div>
                             </div>
                         </div>

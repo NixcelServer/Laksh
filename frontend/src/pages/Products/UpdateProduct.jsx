@@ -451,7 +451,7 @@ const userString = sessionStorage.getItem('user');
         {photoPreviews.map((preview, index) => (
           <div key={index}>
             <img
-              src={preview.startsWith('data:') ? preview : `${baseURL}storage/app/${preview}`}
+              src={preview.startsWith('data:') ? preview : `${baseURL}public/${preview}`}
               alt={`Photo Preview ${index + 1}`}
               style={{
                 width: "300px",

@@ -593,7 +593,7 @@ const userString = sessionStorage.getItem('user');
   <div style={{ marginTop: '30px', marginLeft:'20px', maxWidth: '400px' }}>
   {product.image_paths && product.image_paths.length === 1 ? (
   <img 
-    src={`${baseURL}storage/app/${product.image_paths[0]}`} 
+    src={`${baseURL}public/${product.image_paths[0]}`} 
     alt="Product Preview" 
     style={{ width: '100%', height: '200px', marginBottom: '10px' }} 
   />
@@ -610,7 +610,7 @@ const userString = sessionStorage.getItem('user');
     {product.image_paths.map((prod_img_path, imgIndex) => (
       <div key={imgIndex}>
         <img 
-          src={`${baseURL}storage/app/${prod_img_path}`} 
+          src={`${baseURL}public/${prod_img_path}`} 
           alt={`Product Preview ${imgIndex + 1}`} 
           style={{ width: '100%', height: '200px', marginBottom: '10px', padding: '2px' }} 
         />

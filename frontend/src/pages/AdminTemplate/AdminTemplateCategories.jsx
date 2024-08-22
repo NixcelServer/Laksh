@@ -8,12 +8,23 @@ import { IoEyeOutline } from "react-icons/io5";
 import { MdOutlineAssignment, MdDeleteOutline, MdDoneAll } from "react-icons/md";
 import axios from 'axios';
 import { baseURL } from '../../utils/variables';
+import Swal from 'sweetalert2';
+
+
+import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+import 'datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-responsive';
+import 'datatables.net-buttons';
+
 
 const Categories = () => {
     const categories = useSelector(state => state.masterData.categories);
     const subCategories = useSelector(state => state.masterData.subCategories);
-
-    const [categoryName, setNewCategoryName] = useState("");
+    const [dataLoaded, setDataLoaded] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [categoryName, setNewCategoryName] = useState('');
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showCannotDeleteConfirmation, setShowCannotDeleteConfirmation] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
@@ -43,62 +54,60 @@ const Categories = () => {
     const closeButtonRef = useRef(null);
 
     useEffect(() => {
+        dispatch(getCategories()).then(() => setLoading(false)); // Set loading to false once the data is fetched
+    }, [dispatch]);
 
-        const loadScripts = async () => {
-
-            await dispatch(getCategories())
-            dispatch(getSubCategories());
-
-
-
-            const script1 = document.createElement('script');
-            script1.src = 'assets/bundles/datatables/datatables.min.js';
-            script1.async = true;
-            document.body.appendChild(script1);
-
-            const script2 = document.createElement('script');
-            script2.src = 'assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js';
-            script2.async = true;
-            document.body.appendChild(script2);
-
-            const script3 = document.createElement('script');
-            script3.src = 'assets/bundles/jquery-ui/jquery-ui.min.js';
-            script3.async = true;
-            document.body.appendChild(script3);
-
-            const script4 = document.createElement('script');
-            script4.src = 'assets/js/page/datatables.js';
-            script4.async = true;
-            document.body.appendChild(script4);
-
-            // Initialize Feather icons
-            feather.replace();
-
-
-            // Cleanup function to remove the scripts when the component unmounts
-            return () => {
-                document.body.removeChild(script1);
-                document.body.removeChild(script2);
-                document.body.removeChild(script3);
-                document.body.removeChild(script4);
-            };
+    useEffect(() => {
+        if (categories.length > 0) {
+          setDataLoaded(true);
         }
-        loadScripts();
+      }, [categories]);
 
-    }, []); // Empty dependency array means this effect runs only once after the component mounts
+      useEffect(() => {
+        if (!loading) {
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        }
+        setLoading(true);
+    }, [loading, categories]);
 
-
+  
     const handleDelete = async (category) => {
         const subcategoriesAssigned = subCategories.some(subCategory => subCategory.encCatId === category.encCatId);
-
+    
         if (subcategoriesAssigned) {
-            setCategoryToDelete(category);
-            setShowCannotDeleteConfirmation(true);
+            Swal.fire({
+                icon: 'error',
+                title: 'Cannot Delete',
+                text: 'This category has subcategories assigned to it and cannot be deleted.',
+                confirmButtonText: 'OK'
+            });
         } else {
-            setCategoryToDelete(category);
-            setShowDeleteConfirmation(true);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleConfirmDelete(category);
+                }
+            });
         }
     };
+    
+
+    
 
     const viewCategory = (category) => {
         console.log("view cat" , category);
@@ -110,7 +119,9 @@ const Categories = () => {
 
     const handleAssign = (category) => {
         const encCatId = category.encCatId;
-        navigate(`/subcategories/${encCatId}`);
+        navigate(`/subcategories`, {
+            state: { encCatId } // Passing encCatId in state
+        });
     };
 
     const handleCancelDelete = () => {
@@ -134,7 +145,24 @@ const Categories = () => {
             };
 
             const response = await axios.delete(`${baseURL}api/categories/${category.encCatId}`, { data: payload });
-            dispatch(getCategories());
+            
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+            // Fetch updated categories and reinitialize DataTable
+            dispatch(getCategories()).then(() => {
+                setLoading(false);
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
         } catch (error) {
             console.error("Error deleting keyword:", error);
         }
@@ -236,91 +264,61 @@ const Categories = () => {
 
     const handleSaveChanges = async (event) => {
         event.preventDefault();
-
+    
         const userString = sessionStorage.getItem('user');
         const user = JSON.parse(userString);
         const encUserId = user.encUserId;
-
-        console.log("catDetails", categoryDetails);
-
-        setCategoryDetails(prevProductDetails => ({
-            ...prevProductDetails,
-            encUserId: encUserId
-        }));
-        const payload = {
-            categoryName, encUserId, categoryDetails
+    
+        const formData = new FormData();
+        formData.append('categoryName', categoryDetails.categoryName);
+        formData.append('encUserId', encUserId);
+    
+        if (categoryDetails.file) {
+            formData.append('file', categoryDetails.file);
         }
-        console.log("payload", payload);
-        console.log("catDetails", categoryDetails);
-
+    
         try {
-            await dispatch(addCategory(categoryDetails));
-            dispatch(getCategories());
-            setCategoryDetails(prevProductDetails => ({
-                ...prevProductDetails,
+            const res = await axios.post(`${baseURL}api/categories`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            // Reset state after successful save
+            setCategoryDetails({
                 categoryName: '',
                 file: null,
-            }));
+            });
+    
+            setShowAddCategoryModal(false);
+    
+            // Destroy existing DataTable before fetching new data
+            if ($.fn.DataTable.isDataTable('#example1')) {
+                $('#example1').DataTable().destroy();
+            }
+    
+            // Fetch updated categories and reinitialize DataTable
+            dispatch(getCategories()).then(() => {
+                setLoading(false);
+    
+                // Reinitialize DataTable with updated data
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+                feather.replace(); // Reinitialize Feather icons if used
+            });
+    
             setPhotoPreview(null);
             closeButtonRef.current.click();
-            // setNewCategoryName = "";
-            // Reinitialize Feather Icons after adding a new category
-
-            feather.replace();
-
+            console.log("close button clicked");
         } catch (error) {
             console.error("Error adding category:", error);
         }
     };
-
-    const categoryRows = categories.map((category, index) => (
-        <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{category.cat_name} ({category.countOfSubCat})</td>
-            <td>
-                <button
-                    type="button"
-                    className=""
-                    style={{
-                        margintop: "100px", marginLeft: '5px',
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: isHovered ? 'blue' : 'inherit',
-                        padding: 0
-                    }}
-
-                    onClick={() => viewCategory(category)}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    <IoEyeOutline style={{ fontSize: "20px" }} />
-                    {/* view */}
-                </button>
-
-                <button
-                    type="button"
-                    className=""
-                    style={{ margintop: "100px", marginLeft: '5px' }}
-                    onClick={() => handleAssign(category)}
-                >
-                    <MdOutlineAssignment style={{ fontSize: "20px" }} />
-                    {/* Assign */}
-                </button>
-
-                <button
-                    type="button"
-                    className=""
-                    style={{ margintop: "100px", marginLeft: '5px' }}
-                    onClick={() => handleDelete(category)}
-                >
-                    <MdDeleteOutline style={{ fontSize: "20px" }} />
-                    {/* delete */}
-                </button>
-            </td>
-        </tr>
-    ));
-
+    
 
 
     return (
@@ -364,18 +362,71 @@ const Categories = () => {
                                     </div>
                                     <div className="card-body">
                                         <div className="table-responsive">
-                                            <table className="table table-striped table-hover" id="save-stage" style={{ width: '100%' }}>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Sr. No.</th>
-                                                        <th>Category</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {categoryRows}
-                                                </tbody>
-                                            </table>
+                                        <table id="example1" className="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories && categories.map((item, index) => (
+                        <tr key={item.id}>
+                          <td>{index + 1}</td>
+                          <td>{item.cat_name} ({item.countOfSubCat})</td>
+                          <td>
+                          <button
+                    type="button"
+                    className=""
+                    style={{
+                        margintop: "100px", marginLeft: '5px',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: isHovered ? 'blue' : 'inherit',
+                        padding: 0
+                    }}
+
+                    onClick={() => viewCategory(item)}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    <IoEyeOutline style={{ fontSize: "20px" }} />
+                    {/* view */}
+                </button>
+
+                <button
+                    type="button"
+                    className=""
+                    style={{ margintop: "100px", marginLeft: '5px' }}
+                    onClick={() => handleAssign(item)}
+                >
+                    <MdOutlineAssignment style={{ fontSize: "20px" }} />
+                    {/* Assign */}
+                </button>
+
+                <button
+                    type="button"
+                    className=""
+                    style={{ margintop: "100px", marginLeft: '5px' }}
+                    onClick={() => handleDelete(item)}
+                >
+                    <MdDeleteOutline style={{ fontSize: "20px" }} />
+                    {/* delete */}
+                </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Sr No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                      </tr>
+                    </tfoot>
+                  </table>
                                         </div>
                                     </div>
                                 </div>
@@ -482,7 +533,7 @@ const Categories = () => {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-
+                        
 
                             <div className="modal-body">
                                 <div className="form-group" style={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>

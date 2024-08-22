@@ -77,16 +77,17 @@ const SubmitRequirement = () => {
   //const orders = useSelector(state => state.orders);
 
   // Carousel settings
+  
+
   const carouselSettings = {
-    dots: false,
-    infinite: true,
+    dots: true,
+    infinite: false, // Disable infinite loop
     speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true, // Enable autosliding
-    autoplaySpeed: 2000, // Set autoslide speed in milliseconds
-    arrows: false, // Hide navigation arrows
+    slidesToShow: 1, // Show one slide at a time
+    slidesToScroll: 1, // Scroll one slide at a time
+    adaptiveHeight: true,
   };
+  
 
  
   // State for modal
@@ -284,7 +285,7 @@ const handleEmailChange = (event) => {
 const handleEmailSubmit = async(e) => {
   console.log(email);
   e.preventDefault();
-  const response = await axios.post('http://localhost:8000/api/send-otp', { email });
+  const response = await axios.post(`${baseURL}api/send-otp`, { email });
   // Add logic to submit email (e.g., send OTP)
   setEmailEntered(true); // Set email entered flag to true
 };
@@ -332,87 +333,95 @@ const handleProductNameChange = (e) => {
 
 
   return (
-    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7}  height = '250px' overflow="hidden"bg="white" marginBottom={'40px'}>
-    <Box className="main-content" p={{ base: "10px", md: "20px" }} height='auto' mb="0px" >
-      <div className="card" style={{ padding: "10px", borderRadius: "12px" ,height: "auto" }}>
-          <div className="card-body" style={{ marginBottom: "0px" }}>
+    <>
+<Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={7} overflow="hidden" bg="white" marginBottom="0px">         {/* Box 1 */}
+<Box className="main-content" p={{ base: "10px", md: "20px" }} mb="-310px" style={{ minHeight: "auto" }}>
+
+          <div className="card" style={{ padding: "10px", borderRadius: "12px" }}>
+            <div className="card-body">
               <div className="form-group">
-                <label
-                  style={{
-                    fontSize: "1rem",
-                    fontStyle: "oblique",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Requirements
-                </label>
+                <label style={{ fontSize: "1rem", fontStyle: "oblique", marginBottom: "5px" }}>Requirements</label>
                 <input
                   type="text"
                   className="form-control text-center"
                   placeholder="Enter Your Requirements"
-                  style={{
-                    textAlign: "center",
-                    height: "30px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                  }}
+                  style={{ textAlign: "center", height: "30px", borderRadius: "5px", border: "1px solid #ccc" }}
                   value={requirements}
-            onChange={handleRequirementsChange}
+                  onChange={handleRequirementsChange}
                 />
               </div>
+            </div>
+            <label style={{ fontSize: "0.9rem", marginBottom: "5px" }}>We are here to help!! Discover your needs.</label>
+            <div className="d-grid gap-2">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                style={{ padding: "8px", fontSize: "0.9rem", backgroundColor: "#9B59B6" }}
+                onClick={onOpen}
+              >
+                Submit Requirement
+              </button>
+            </div>
           </div>
-          <label style={{ fontSize: "0.9rem", marginBottom: "5px" }}>
-            We are here to help!! Discover your needs.
-          </label>
-          <div className="d-grid gap-2">
-            <button
-              className="btn btn-primary"
-              type="submit"
-              style={{ padding: "8px", fontSize: "0.9rem" , backgroundColor:"#9B59B6"}}
-              onClick={onOpen}
-            >
-              Submit Requirement
-            </button>
-          </div>
-        </div>
-      </Box>
+        </Box>
+  
+        {/* Box 2 */}
+        <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="-310px" style={{ overflow: "hidden", minHeight: "auto" }}>
 
-      <Box className="main-content" p={{ base: "10px", md: "20px" }} mb="0px"  style={{ overflow: "hidden" }}>
-  <div
-    className="card"
-    style={{ padding: "0px", borderRadius: "12px", height: "212px", overflow: "hidden" }}
-  >
-    <Slider {...carouselSettings} style={{ 
-      marginBottom: "0px", 
-      
-      height: "auto" 
-    }}>
-      {advImages.map((image, index) => (
-        <div 
-          key={index} 
-          style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: 'auto',
-            overflow: 'hidden' // Ensures that the image does not overflow the container
-          }}
-        >
-          <img
-            src={`${baseURL}storage/app/${image.adv_img_path}`}
-            alt={`carousel-image-${index}`}
-            style={{ 
-              width: '100%', // Ensures the image takes up the entire width of its container
-              height: 'auto', // Ensures the image takes up the entire height of its container
-              objectFit: 'cover', // Ensures that the entire image is visible without cropping, sacrificing aspect ratio if necessary
-              objectPosition: 'center' // Centers the image within its container
+  <div className="card" style={{ borderRadius: "12px", overflow: "hidden" }}>
+    {advImages.length > 0 ? (
+      <Slider {...carouselSettings} style={{ marginBottom: "0px", height: "auto", maxHeight: "217px" }}>
+        {advImages.map((image, index) => (
+          <div
+            key={index}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 'auto',
+              overflow: 'hidden',
+              maxHeight: '200px' // Adjust this value to control the max height of the images
             }}
-          />
-        </div>
-      ))}
-    </Slider>
+          >
+            <img
+              src={`${baseURL}storage/app/${image.adv_img_path}`}
+              alt={`carousel-image-${index}`}
+              style={{
+                maxWidth: '100%', // Ensure the image does not exceed its container width
+                maxHeight: '100%', // Ensure the image does not exceed its container height
+                objectFit: 'contain', // Ensure the image fits within its container
+                objectPosition: 'center',
+              }}
+            />
+          </div>
+        ))}
+      </Slider>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'auto',
+          overflow: 'hidden',
+          maxHeight: '200px' // Adjust this value to control the max height of the images
+        }}
+      >
+        <img
+          src="images/adv3.png" // Replace with the path to your default image
+          alt="default-carousel-image"
+          style={{
+            maxWidth: '100%', // Ensure the image does not exceed its container width
+            maxHeight: '100%', // Ensure the image does not exceed its container height
+            objectFit: 'contain', // Ensure the image fits within its container
+            objectPosition: 'center',
+          }}
+        />
+      </div>
+    )}
   </div>
 </Box>
+</Grid>
 
 
     
@@ -642,7 +651,8 @@ const handleProductNameChange = (e) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Grid>
+      </>
+    
   );
 };
 
